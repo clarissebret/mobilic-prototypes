@@ -27,6 +27,8 @@ Barre d'onglets pleine largeur ; chaque onglet : icône (20 px), libellé (`fr-t
 | Séparation basse | `--border-default-grey` |
 | Onglet actif | `--text-active-blue-france`, `--border-active-blue-france` |
 
+Espacements (valeurs de la maquette) : 6 px entre l'icône et le libellé, padding de 12 px en haut et 10 px en bas.
+
 ## Accessibilité
 
 Rôles `tablist` / `tab` avec `aria-selected`. Le nombre du badge est inclus dans le nom accessible de l'onglet.
