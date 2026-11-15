@@ -4,6 +4,7 @@
 
 - Lire les specs de l'interface concernée dans `prototypes/<interface>/SPECS.md`. La spec fait foi sur le produit : si une demande la contredit, mettre la spec à jour dans la même pull request.
 - Lire la doc des composants Mobilic utilisés dans `composants/`. Un changement de composant met sa doc à jour dans la même pull request.
+- Ce dépôt est public. Lire `CONFIDENTIALITE.md`. Uniquement des données fictives, aucun lien Figma, aucune adresse e-mail ou donnée réelle.
 
 ## Écrire une spec
 
@@ -12,7 +13,6 @@
 - Une règle commune à plusieurs flux n'est écrite qu'une fois, dans les règles communes. Numérotation continue dans tout le fichier.
 - Ne pas y mettre : le comportement ou le style d'un composant (il va dans `composants/`), des détails d'implémentation, des valeurs de mise en page, des questions ouvertes ou des notes internes.
 - Rester au bon niveau : « une infraction n'est retenue que si au moins un jour est sélectionné », pas « le contour passe en bleu ».
-- Ce dépôt est public. Lire `CONFIDENTIALITE.md`. Uniquement des données fictives, aucun lien Figma, aucune adresse e-mail ou donnée réelle.
 
 ## Organisation
 
