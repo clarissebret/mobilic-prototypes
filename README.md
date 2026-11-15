@@ -16,8 +16,8 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- Le panneau « Parcours » à gauche liste les parcours à tester, propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
-- Au-dessus du téléphone, un menu permet de choisir la taille d'écran (petit, moyen, grand). Le téléphone est réduit si la fenêtre n'est pas assez haute.
+- Le panneau « Parcours » à gauche liste les parcours à tester (bouton ▷ pour démarrer), propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
+- En bas du panneau, le menu « Téléphone » permet de choisir la taille d'écran (Galaxy S5, Galaxy S8+, Pixel 7). Le téléphone est réduit si la fenêtre n'est pas assez haute.
 - La barre Android du bas est active : le bouton Retour revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 

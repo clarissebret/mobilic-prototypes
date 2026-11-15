@@ -19,7 +19,7 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Le cadre des prototypes mobiles (panneau « Parcours » à gauche, téléphone au centre avec le choix du modèle, aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
+- Le cadre des prototypes mobiles (panneau à gauche : parcours, remplissage, réinitialisation, choix du téléphone ; téléphone au centre ; aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
 - Chaque prototype a un `prototype.json` : titre, parcours listés dans le panneau, activités proposées pour « Remplir le formulaire ». Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
 

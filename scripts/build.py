@@ -39,7 +39,7 @@ ICONS = {
     'send-plane-line': 'send-plane-line', 'printer-line': 'printer-line', 'close-line': 'close-line',
     'signal-wifi-fill': 'signal-wifi-fill', 'signal-cellular-3-fill': 'signal-cellular-3-fill', 'battery-fill': 'battery-fill',
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
-    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line',
+    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
 }
 rules = []
 for cls, remix in ICONS.items():
@@ -54,8 +54,9 @@ CONF = json.load(open(B + 'prototype.json'))
 SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
   .replace('{{TITRE}}', escape(CONF['titre']))
   .replace('{{PARCOURS}}', '\n'.join(
-    f'      <li><a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="#{p["commande"]}" '
-    f'onclick="cmd(\'{p["commande"]}\'); return false;">{escape(p["libelle"])}</a></li>' for p in CONF['parcours']))
+    f'      <li class="flow"><span class="flow__label">{escape(p["libelle"])}</span>'
+    f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '
+    f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours']))
   .replace('{{DONNEES_TEST}}', '\n'.join(f'          <option>{escape(o)}</option>' for o in CONF['donnees_test'])))
 app_css = open(B + 'app.css').read()
 for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):

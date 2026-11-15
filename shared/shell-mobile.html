@@ -14,11 +14,14 @@
   .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); border-right: 1px solid var(--border-default-grey); }
   .side h2 { margin-bottom: 1rem; }
   .side .flows { list-style: none; margin: 0 0 2rem; padding: 0; }
-  .side .flows li { margin-bottom: .75rem; }
+  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--border-default-grey); }
+  .side .flow:first-child { border-top: 1px solid var(--border-default-grey); }
+  .side .flow__label { font-size: .875rem; line-height: 1.5rem; }
+  .side .flow .fr-btn { flex-shrink: 0; }
+  .side .device-pick { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-default-grey); }
   .side .fill { margin-bottom: 1.5rem; }
   .side .fill[hidden] { display: none; }
   .stage { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
-  .stage .fr-select-group { width: 22rem; margin-bottom: 1.5rem; }
   .device-box { position: relative; }
   .device-box > .device { position: absolute; top: 0; left: 0; transform-origin: top left; }
 
@@ -84,17 +87,17 @@
       <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
     </div>
     <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset')">Réinitialiser</button>
+    <div class="fr-select-group device-pick">
+      <label class="fr-label" for="device-size">Téléphone</label>
+      <select class="fr-select" id="device-size" onchange="setDevice(this.value)">
+        <option value="360x640">Galaxy S5 · 360 × 640</option>
+        <option value="360x740" selected>Galaxy S8+ · 360 × 740</option>
+        <option value="412x915">Pixel 7 · 412 × 915</option>
+      </select>
+    </div>
   </aside>
 
   <main class="stage">
-    <div class="fr-select-group">
-      <label class="fr-label" for="device-size">Téléphone</label>
-      <select class="fr-select" id="device-size" onchange="setDevice(this.value)">
-        <option value="360x640">Petit · Galaxy S5 · 360 × 640</option>
-        <option value="360x740" selected>Moyen · Galaxy S8+ · 360 × 740</option>
-        <option value="412x915">Grand · Pixel 7 · 412 × 915</option>
-      </select>
-    </div>
     <div class="device-box" id="device-box">
   <div class="device">
     <div class="screen-wrap">
