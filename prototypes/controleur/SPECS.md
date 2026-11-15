@@ -122,7 +122,8 @@ Le parcours est le même pour tous les types de contrôle :
 
 | Activité | Texte |
 |---|---|
-| TRS | Les textes du parcours mentionnent « livret individuel de contrôle ou feuille de route » |
+| TRS | Le relevé des infractions porte sur la feuille de route : « Sélectionnez des infractions que vous souhaitez verbaliser à partir de la feuille de route présentée : » |
+| Autres activités | Le relevé des infractions porte sur le LIC : « Sélectionnez des infractions que vous souhaitez verbaliser à partir du livret individuel de contrôle présenté : » |
 
 ## Infractions
 
