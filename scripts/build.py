@@ -52,7 +52,7 @@ css += '\n:root{--chevron:url(' + datauri(glob.glob(f'{REMIX}*/arrow-down-s-line
 from html import escape
 CONF = json.load(open(B + 'prototype.json'))
 SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
-  .replace('{{TITRE}}', escape(CONF['titre']))
+  .replace('{{TITRE}}', escape(CONF['titre'])).replace('{{DESCRIPTION}}', escape(CONF['description']))
   .replace('{{PARCOURS}}', '\n'.join(
     f'      <li class="flow"><span class="flow__label">{escape(p["libelle"])}</span>'
     f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '

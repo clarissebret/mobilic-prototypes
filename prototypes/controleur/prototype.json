@@ -1,7 +1,14 @@
 {
-  "titre": "interface contrôleur",
+  "titre": "Interface contrôleur",
+  "description": "Application mobile des agents de contrôle (contrôle en bord de route ou en entreprise).",
   "parcours": [
-    { "libelle": "Contrôle LIC papier / feuille de route", "commande": "flow-lic" }
+    {
+      "libelle": "Contrôle LIC papier / feuille de route",
+      "commande": "flow-lic"
+    }
   ],
-  "donnees_test": ["TRM - Courte distance", "TRS - Transport sanitaire"]
+  "donnees_test": [
+    "TRM - Courte distance",
+    "TRS - Transport sanitaire"
+  ]
 }

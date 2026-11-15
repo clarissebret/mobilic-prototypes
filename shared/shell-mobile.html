@@ -11,14 +11,15 @@
   /* Cadre du prototype (hors application) */
   html, body { min-height: 100%; background-color: var(--background-contrast-grey); }
   .proto { display: grid; grid-template-columns: 18rem 1fr; min-height: 100vh; }
-  .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); border-right: 1px solid var(--border-default-grey); }
+  .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); }
   .side h2 { margin-bottom: 1rem; }
   .side .flows { list-style: none; margin: 0 0 2rem; padding: 0; }
-  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--border-default-grey); }
-  .side .flow:first-child { border-top: 1px solid var(--border-default-grey); }
+  .side .context { margin-bottom: 2rem; }
+  .side .context__kicker { margin: 0 0 .25rem; color: var(--text-mention-grey); font-size: .75rem; line-height: 1.25rem; text-transform: uppercase; letter-spacing: .02em; }
+  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; }
   .side .flow__label { font-size: .875rem; line-height: 1.5rem; }
   .side .flow .fr-btn { flex-shrink: 0; }
-  .side .device-pick { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-default-grey); }
+  .side .device-pick { margin-top: 2rem; }
   .side .fill { margin-bottom: 1.5rem; }
   .side .fill[hidden] { display: none; }
   .stage { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
@@ -73,6 +74,11 @@
 <body>
 <div class="proto">
   <aside class="side" aria-label="Commandes du prototype">
+    <div class="context">
+      <p class="context__kicker">Prototype Mobilic</p>
+      <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
+      <p class="fr-text--sm fr-mb-0">{{DESCRIPTION}}</p>
+    </div>
     <h2 class="fr-h6">Parcours</h2>
     <ul class="flows">
 {{PARCOURS}}
