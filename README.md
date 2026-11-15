@@ -34,6 +34,7 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
   prototype.json       titre, description, parcours du panneau
 composants/            documentation des composants Mobilic hors DSFR
+shared/mobilic.css     styles Mobilic communs à toutes les interfaces
 shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/

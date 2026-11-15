@@ -172,7 +172,7 @@ function renderHistory(openDay) {
     return `<section class="fr-accordion">
       <h3 class="fr-accordion__title"><button type="button" class="fr-accordion__btn" aria-expanded="${open}" aria-controls="${id}" onclick="toggleAcc(this)">${dayTitle(h.date)}</button></h3>
       <div class="fr-collapse${open ? ' fr-collapse--expanded' : ''}" id="${id}">
-        ${items.length ? `<div class="fr-table fr-table--no-caption fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+        ${items.length ? `<div class="fr-table fr-table--no-caption mobilic-table fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
           <table><caption>Contrôles du ${dayTitle(h.date).toLowerCase()}</caption>
             <thead><tr><th scope="col">Salarié</th><th scope="col">Véhicule</th><th scope="col">Heure</th><th scope="col">Lieu de contrôle</th><th scope="col">Type</th>
               <th scope="col">Bulletin de contrôle</th><th scope="col">Nom entreprise</th><th scope="col">Jours contrôlés</th><th scope="col">Infractions retenues</th></tr></thead>

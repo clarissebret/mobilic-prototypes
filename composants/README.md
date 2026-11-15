@@ -22,7 +22,8 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | [Barre d'actions fixe](barre-actions-fixe.md) | Groupe de boutons | Contrôleur : relevé des infractions |
 | [Onglets du contrôle](onglets-controle.md) | Onglets (variante) + badge | Contrôleur : page du contrôle |
 | [Tuile de choix](tuile-choix.md) | Tuile (variante) | Contrôleur : accueil |
+| [Tableau Mobilic](tableau.md) | Tableau (variante) | Toutes les interfaces ; contrôleur : derniers contrôles |
 
 ## Documenter un composant
 
-Un fichier par composant, avec : rôle, anatomie, variantes, états, tokens, accessibilité. Le code est dans le `app.css` de l'interface qui l'utilise.
+Un fichier par composant, avec : rôle, anatomie, variantes, états, tokens, accessibilité. Le code d'un composant commun à toutes les interfaces est dans `shared/mobilic.css` ; celui d'un composant propre à une interface est dans son `app.css`.
