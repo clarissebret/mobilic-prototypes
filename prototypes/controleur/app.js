@@ -223,7 +223,7 @@ const ACT_PDF = {
   'TRM - Longue distance': 'Transport de marchandise - Longue distance',
   'TRM - Messagerie, Fonds et valeur': 'Transport de marchandise - Messagerie, fonds et valeurs',
   'TRV': 'Transport de voyageurs',
-  'TRS - Transport sanitaire': 'Transport sanitaire'
+  'TRS': 'Transport sanitaire'
 };
 const isTRS = () => !!state.control && state.control.act.startsWith('TRS');
 function fillSelect(sel, opts, ph) { sel.innerHTML = `<option value="" selected disabled hidden>${ph}</option>` + opts.map(o => `<option>${o}</option>`).join(''); }
