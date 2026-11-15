@@ -10,7 +10,7 @@ Un prototype par interface de Mobilic. Chaque interface contient plusieurs flux,
 
 | Interface | Dossier | Flux | Spec |
 |---|---|---|---|
-| Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [specs/lic-papier.md](prototypes/controleur/specs/lic-papier.md) |
+| Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [specs/controle-papier.md](prototypes/controleur/specs/controle-papier.md) |
 
 Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dépôt.
 
