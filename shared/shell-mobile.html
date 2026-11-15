@@ -12,15 +12,10 @@
   html, body { min-height: 100%; background-color: var(--background-contrast-grey); }
   .proto { display: grid; grid-template-columns: 18rem 1fr; min-height: 100vh; }
   .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); }
-  .side h2 { margin-bottom: 1rem; }
-  .side .flows { list-style: none; margin: 0 0 2rem; padding: 0; }
-  .side .context { margin-bottom: 2rem; }
-  .side .context__kicker { margin: 0 0 .25rem; color: var(--text-mention-grey); font-size: .75rem; line-height: 1.25rem; text-transform: uppercase; letter-spacing: .02em; }
-  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; }
-  .side .flow__label { font-size: .875rem; line-height: 1.5rem; }
+  .side .flows { list-style: none; padding: 0; }
+  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0; }
   .side .flow .fr-btn { flex-shrink: 0; }
-  .side .device-pick { margin-top: 2rem; }
-  .side .fill { margin-bottom: 1.5rem; }
+  .side .mention { color: var(--text-mention-grey); }
   .side .fill[hidden] { display: none; }
   .stage { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
   .device-box { position: relative; }
@@ -74,17 +69,16 @@
 <body>
 <div class="proto">
   <aside class="side" aria-label="Commandes du prototype">
-    <div class="context">
-      <p class="context__kicker">Prototype Mobilic</p>
-      <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
-      <p class="fr-text--sm fr-mb-0">{{DESCRIPTION}}</p>
-    </div>
-    <h2 class="fr-h6">Parcours</h2>
-    <ul class="flows">
+    <p class="fr-text--xs fr-mb-1v mention">Prototype Mobilic</p>
+    <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
+    <p class="fr-text--sm fr-mb-4w">{{DESCRIPTION}}</p>
+
+    <h2 class="fr-h6 fr-mb-2w">Parcours</h2>
+    <ul class="flows fr-mb-4w">
 {{PARCOURS}}
     </ul>
-    <div class="fill" id="fill" hidden>
-      <div class="fr-select-group fr-mb-1w" id="fill-act-group">
+    <div class="fill fr-mb-3w" id="fill" hidden>
+      <div class="fr-select-group fr-mb-2w" id="fill-act-group">
         <label class="fr-label" for="demo-act">Activité des données de test</label>
         <select class="fr-select" id="demo-act">
 {{DONNEES_TEST}}
@@ -92,8 +86,8 @@
       </div>
       <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
     </div>
-    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset')">Réinitialiser</button>
-    <div class="fr-select-group device-pick">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left fr-mb-4w" onclick="cmd('reset')">Réinitialiser</button>
+    <div class="fr-select-group">
       <label class="fr-label" for="device-size">Téléphone</label>
       <select class="fr-select" id="device-size" onchange="setDevice(this.value)">
         <option value="360x640">Galaxy S5 · 360 × 640</option>

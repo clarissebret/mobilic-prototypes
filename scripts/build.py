@@ -54,7 +54,7 @@ CONF = json.load(open(B + 'prototype.json'))
 SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
   .replace('{{TITRE}}', escape(CONF['titre'])).replace('{{DESCRIPTION}}', escape(CONF['description']))
   .replace('{{PARCOURS}}', '\n'.join(
-    f'      <li class="flow"><span class="flow__label">{escape(p["libelle"])}</span>'
+    f'      <li class="flow fr-mb-2w"><span class="fr-text--sm fr-mb-0">{escape(p["libelle"])}</span>'
     f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '
     f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours']))
   .replace('{{DONNEES_TEST}}', '\n'.join(f'          <option>{escape(o)}</option>' for o in CONF['donnees_test'])))
