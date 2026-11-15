@@ -6,11 +6,11 @@ Prototypes interactifs de [Mobilic](https://mobilic.beta.gouv.fr), construits su
 
 ## Prototypes
 
-Un prototype par interface de Mobilic. Chaque interface contient plusieurs flux, listés dans le panneau « Flux à tester », et chaque flux a sa spec dans `specs/`.
+Un prototype par interface de Mobilic : contrôleur, gestionnaire, salarié. Chaque interface contient plusieurs flux, listés dans le panneau « Flux à tester », et un seul fichier `SPECS.md` qui réunit les specs de tous ses flux.
 
 | Interface | Dossier | Flux | Spec |
 |---|---|---|---|
-| Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [specs/controle-papier.md](prototypes/controleur/specs/controle-papier.md) |
+| Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [SPECS.md](prototypes/controleur/SPECS.md) |
 
 Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dépôt.
 
@@ -26,7 +26,7 @@ Voir aussi [CLAUDE.md](CLAUDE.md) pour les conventions de travail.
 
 ```
 prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
-  specs/<flux>.md      règles fonctionnelles et design de chaque flux
+  SPECS.md             specs de l'interface (règles communes + règles propres à chaque flux)
   app.html             écrans de l'application (rendus dans le cadre du téléphone, 360 px)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
