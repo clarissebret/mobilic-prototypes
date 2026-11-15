@@ -32,6 +32,7 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
   shell.html           cadre du prototype : panneau de commandes, téléphone Android, aperçu PDF
+composants/            documentation des composants Mobilic hors DSFR
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/
 scripts/build-index.mjs  page d'accueil listant les prototypes
