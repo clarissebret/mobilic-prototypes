@@ -27,10 +27,10 @@
 
 - DSFR 1.15.4 d'abord : composants et classes DSFR. Le CSS propre à Mobilic (`app.css`) n'utilise que les tokens DSFR (`var(--…)`), jamais de couleur en dur.
 - Typographie : uniquement les classes DSFR (`fr-h1` à `fr-h6`, `fr-text--lead|lg|sm|xs`, `fr-text--bold`). Pas de `font-size`, `letter-spacing` ni `text-transform` personnalisés, pas de capitales.
-- Espacements : uniquement les classes utilitaires DSFR (`fr-m*-*`, `fr-p*-*` : `1v` = 4 px, `1w` = 8 px). Le CSS personnalisé ne sert qu'à la mise en page (flex, grid, position), pas aux marges ni aux tailles de texte.
+- Espacements : les marges entre éléments passent par les classes utilitaires DSFR (`fr-m*-*` : `1v` = 4 px, `1w` = 8 px), y compris dans le HTML généré en JS. Le CSS personnalisé sert à la mise en page (flex, grid, position) et au padding interne d'un composant Mobilic, toujours sur la grille de 4 px et documenté dans sa fiche `composants/`. Seule exception : neutraliser une marge interne du DSFR qui casse un espacement.
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
 - Icônes : classes `fr-icon-*` (Remix Icon).
-- Espacements : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
+- Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
 - Écran du téléphone rendu dans un iframe, en 3 tailles : 360 × 640, 360 × 740 (par défaut) et 412 × 915. Les règles responsives du DSFR sont donc celles du mobile. Vérifier chaque écran modifié sur les 3 tailles.
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.

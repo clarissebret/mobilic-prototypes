@@ -99,7 +99,7 @@ function renderControl() {
   $('c-ent').textContent = c.ent; $('c-act').textContent = c.act; $('c-veh').textContent = c.veh;
   const since = new Date(c.date); since.setDate(since.getDate() - 56);
   $('c-since').textContent = 'Depuis le ' + fmt(since).split(' à ')[0];
-  $('notes').innerHTML = state.notes.map(n => `<div class="note">${n.replace(/</g, '&lt;')}</div>`).join('');
+  $('notes').innerHTML = state.notes.map(n => `<div class="note fr-text--sm fr-mb-1w">${n.replace(/</g, '&lt;')}</div>`).join('');
   $('notes-empty').hidden = state.notes.length > 0;
 }
 function tab(i) {
@@ -144,7 +144,7 @@ function renderHistory(openDay) {
     return `<div class="day-acc">
       <button type="button" class="day-acc__btn ${open ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-right-s-line'}" aria-expanded="${open}" onclick="toggleDay(this)">${h.date}</button>
       <div class="day-acc__content" ${open ? '' : 'hidden'}>${items.length ? items.map(it =>
-        `<div class="ctrl-item"><span>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-ml-1w">Nouveau</span>' : ''}</span><span class="mention">${it.time}</span></div>`).join('')
+        `<div class="ctrl-item fr-text--sm fr-mb-0"><span>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-ml-1w">Nouveau</span>' : ''}</span><span class="mention">${it.time}</span></div>`).join('')
         : '<p class="fr-text--sm mention fr-mb-0">Aucun contrôle de ce type.</p>'}</div>
     </div>`;
   }).join('');
@@ -224,18 +224,18 @@ function renderBdc() {
 function renderBdcInto(el) {
   const b = state.bdc;
   if (!b) {
-    el.innerHTML = `<div class="section-head"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--sm" onclick="startBdc()">Créer</button></div>
+    el.innerHTML = `<div class="section-head fr-mb-3v"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--sm" onclick="startBdc()">Créer</button></div>
       <p class="fr-text--sm mention">Vous pourrez le transmettre à l'entreprise de manière dématérialisée.</p>`;
     return;
   }
   const sent = b.sentEnt || b.sentDrv;
   const badges = [b.sentDrv && 'Remis au conducteur (via email)', b.sentEnt && "Envoyé à l'entreprise"].filter(Boolean)
     .map(s => `<li><p class="fr-badge fr-badge--sm fr-badge--info">${s}</p></li>`).join('');
-  el.innerHTML = `<div class="section-head"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="startBdc()">Modifier</button></div>
+  el.innerHTML = `<div class="section-head fr-mb-3v"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="startBdc()">Modifier</button></div>
     <div class="bdc-card">
       <div class="bdc-card__title"><span class="fr-icon-file-text-fill" aria-hidden="true"></span><div><p class="fr-text--bold fr-mb-0">Bulletin ${b.num}</p><p class="fr-text--sm mention fr-mb-0">édité le ${fmtLong(b.edited)}</p></div></div>
       ${sent ? `<ul class="fr-badges-group fr-mt-2w">${badges}</ul>` : `<div class="fr-checkbox-group fr-checkbox-group--sm fr-mt-2w"><input type="checkbox" id="b-paper" ${b.paper ? 'checked' : ''} onchange="state.bdc.paper=this.checked"><label class="fr-label" for="b-paper">Remis au format papier</label></div>`}
-      <div class="bdc-card__actions">
+      <div class="bdc-card__actions fr-mt-3v">
         <button type="button" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-download-line fr-btn--icon-left" onclick="openPdf()">Télécharger</button>
         <button type="button" class="fr-btn fr-btn--sm fr-icon-send-plane-line fr-btn--icon-left" onclick="openSend()">Envoyer</button>
       </div>
