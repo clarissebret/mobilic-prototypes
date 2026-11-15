@@ -102,7 +102,7 @@ Le parcours est le même pour tous les types de contrôle :
 
 ## Accueil
 
-- **ACC-01** L'accueil présente les derniers contrôles de l'agent, regroupés par jour, du plus récent au plus ancien.
+- **ACC-01** L'accueil présente les derniers contrôles de l'agent, regroupés par jour, du plus récent au plus ancien. Chaque jour est intitulé « Aujourd’hui » ou par sa date complète (ex. « Samedi 14 novembre 2026 »).
 - **ACC-02** Pour chaque contrôle sont affichés : le salarié, le véhicule, l'heure, le lieu de contrôle, le type de contrôle, le statut du bulletin de contrôle, l'entreprise, le nombre de jours contrôlés et le nombre d'infractions retenues.
 - **ACC-03** Le statut du bulletin de contrôle est l'un des suivants :
 

@@ -153,8 +153,7 @@ const BDC_BADGE = {
 function dayTitle(d) {
   const n = Math.round((daysAgo(0) - d) / 864e5);
   if (n === 0) return 'Aujourd’hui';
-  if (n === 1) return 'Hier';
-  const l = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const l = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   return l.charAt(0).toUpperCase() + l.slice(1);
 }
 /* Derniers contrôles : un accordéon DSFR par jour, avec un tableau DSFR défilant horizontalement */
