@@ -18,6 +18,7 @@ function weeksBefore(d) {
 function ruleFor(rules, act) {
   if (!rules) return DESC;
   if (act.startsWith('TRS')) return rules.TRS || DESC;
+  if (act.startsWith('Déménagement')) return rules.DEM || DESC;
   if (act.startsWith('TRV')) return rules.TRV || DESC;
   if (act.includes('Courte')) return rules.TRMC || rules.TRM || DESC;
   if (act.includes('Longue')) return rules.TRML || rules.TRM || DESC;
