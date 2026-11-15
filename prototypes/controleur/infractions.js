@@ -18,6 +18,7 @@ function weeksBefore(d) {
 function ruleFor(rules, act) {
   if (!rules) return DESC;
   if (act.startsWith('TRS')) return rules.TRS || DESC;
+  if (act.startsWith('Déménagement')) return rules.DEM || DESC;
   if (act.startsWith('TRV')) return rules.TRV || DESC;
   if (act.includes('Courte')) return rules.TRMC || rules.TRM || DESC;
   if (act.includes('Longue')) return rules.TRML || rules.TRM || DESC;
@@ -57,19 +58,19 @@ function calendarHTML(inf, ctx) {
     const d = addDays(start, i), k = iso(d);
     if (i >= 35 && i % 7 === 0 && d.getMonth() !== mo) break;
     const out = d.getMonth() !== mo, future = d > max, on = inf.sel.includes(k);
-    cells += `<button type="button" class="cal__day${out ? ' cal__day--out' : ''}${on ? ' cal__day--on' : ''}${k === today ? ' cal__day--today' : ''}" ${future || out ? 'disabled' : ''} aria-pressed="${on}" aria-label="${dayLabel(k, true)}" onclick="infToggle('${ctx}','${inf.id}','${k}')">${d.getDate()}</button>`;
+    cells += `<button type="button" class="fr-text--xs fr-mb-0 cal__day${out ? ' cal__day--out' : ''}${on ? ' cal__day--on' : ''}${k === today ? ' cal__day--today' : ''}" ${future || out ? 'disabled' : ''} aria-pressed="${on}" aria-label="${dayLabel(k, true)}" onclick="infToggle('${ctx}','${inf.id}','${k}')">${d.getDate()}</button>`;
   }
   const years = [y - 1, y, y + 1].filter(v => v <= max.getFullYear());
   return `<div class="cal">
-    <div class="cal__head">
+    <div class="cal__head fr-mb-1w">
       <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-left-line" title="Mois précédent" onclick="infMonth('${ctx}','${inf.id}',-1)">Mois précédent</button>
       <span class="cal__selects">
-        <span class="cal__selwrap"><select class="cal__sel" aria-label="Mois" onchange="infSetMonth('${ctx}','${inf.id}',this.value,null)">${MOIS.map((n, i) => `<option value="${i}" ${i === mo ? 'selected' : ''}>${n}</option>`).join('')}</select><span class="fr-icon-arrow-down-s-line" aria-hidden="true"></span></span>
-        <span class="cal__selwrap"><select class="cal__sel" aria-label="Année" onchange="infSetMonth('${ctx}','${inf.id}',null,this.value)">${years.map(v => `<option ${v === y ? 'selected' : ''}>${v}</option>`).join('')}</select><span class="fr-icon-arrow-down-s-line" aria-hidden="true"></span></span>
+        <span class="cal__selwrap"><select class="cal__sel fr-text--sm fr-mb-0" aria-label="Mois" onchange="infSetMonth('${ctx}','${inf.id}',this.value,null)">${MOIS.map((n, i) => `<option value="${i}" ${i === mo ? 'selected' : ''}>${n}</option>`).join('')}</select><span class="fr-icon-arrow-down-s-line" aria-hidden="true"></span></span>
+        <span class="cal__selwrap"><select class="cal__sel fr-text--sm fr-mb-0" aria-label="Année" onchange="infSetMonth('${ctx}','${inf.id}',null,this.value)">${years.map(v => `<option ${v === y ? 'selected' : ''}>${v}</option>`).join('')}</select><span class="fr-icon-arrow-down-s-line" aria-hidden="true"></span></span>
       </span>
       <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-right-line" title="Mois suivant" onclick="infMonth('${ctx}','${inf.id}',1)">Mois suivant</button>
     </div>
-    <div class="cal__grid">${['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'].map(j => `<span class="cal__wd">${j}</span>`).join('')}${cells}</div>
+    <div class="cal__grid">${['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'].map(j => `<span class="cal__wd fr-text--sm fr-mb-0">${j}</span>`).join('')}${cells}</div>
   </div>`;
 }
 function tagsHTML(inf, edit, ctx) {
@@ -84,18 +85,18 @@ function tagsHTML(inf, edit, ctx) {
 }
 function infractionHTML(inf, edit, ctx) {
   const n = inf.sel.length, open = !!inf.open, uid = `${ctx}-${inf.id}`;
-  const content = `${inf.rule ? `<p class="inf__rule">${inf.rule}</p>` : ''}
+  const content = `${inf.rule ? `<p class="inf__rule fr-text--sm fr-mb-0 mention">${inf.rule}</p>` : ''}
       ${!edit ? tagsHTML(inf, false, ctx)
         : inf.seuil === 'semaine'
-          ? `<fieldset class="fr-fieldset inf__weeks"><legend class="fr-fieldset__legend fr-fieldset__legend--regular">Sélectionnez la ou les semaines concernées :</legend>
-              ${inf.weeks.map((w, i) => `<div class="fr-fieldset__element"><div class="fr-checkbox-group fr-checkbox-group--sm"><input type="checkbox" id="${uid}-w${i}" ${inf.sel.includes(w) ? 'checked' : ''} onchange="infToggle('${ctx}','${inf.id}','${w}')"><label class="fr-label" for="${uid}-w${i}">${w}</label></div></div>`).join('')}
+          ? `<fieldset class="fr-fieldset inf__weeks fr-mt-3w fr-mb-0"><legend class="fr-fieldset__legend fr-fieldset__legend--regular">Sélectionnez la ou les semaines concernées :</legend>
+              ${inf.weeks.map((w, i) => `<div class="fr-fieldset__element${i === inf.weeks.length - 1 ? ' fr-mb-0' : ''}"><div class="fr-checkbox-group fr-checkbox-group--sm"><input type="checkbox" id="${uid}-w${i}" ${inf.sel.includes(w) ? 'checked' : ''} onchange="infToggle('${ctx}','${inf.id}','${w}')"><label class="fr-label" for="${uid}-w${i}">${w}</label></div></div>`).join('')}
             </fieldset>`
-          : `<p class="fr-mb-2w">Sélectionnez la ou les journées concernées :</p>${calendarHTML(inf, ctx)}${tagsHTML(inf, true, ctx)}`}`;
-  return `<section class="inf${n ? ' inf--selected' : ''}${open ? ' inf--open' : ''}" id="inf-${uid}">
+          : `<p class="fr-mt-3w fr-mb-2w">Sélectionnez la ou les journées concernées :</p>${calendarHTML(inf, ctx)}${tagsHTML(inf, true, ctx)}`}`;
+  return `<section class="fr-mb-3v inf${n ? ' inf--selected' : ''}${open ? ' inf--open' : ''}" id="inf-${uid}">
     <h3 class="inf__title">
       <button type="button" class="inf__btn${edit && inf.type === 'autre' ? ' inf__btn--delete' : ''}" aria-expanded="${open}" aria-controls="inf-body-${uid}" onclick="infOpen('${ctx}','${inf.id}',this)">
-        <span class="inf__natinf">${code(inf)}${n ? `<span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon">${n}<span class="fr-sr-only"> ${inf.seuil === 'semaine' ? 'semaine(s)' : 'journée(s)'} retenue(s)</span></span>` : ''}</span>
-        <span class="inf__label${inf.type === 'autre' ? ' inf__label--upper' : ''}">${inf.label}</span>
+        <span class="inf__natinf fr-text--sm fr-text--bold fr-mb-0">${code(inf)}${n ? `<span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon">${n}<span class="fr-sr-only"> ${inf.seuil === 'semaine' ? 'semaine(s)' : 'journée(s)'} retenue(s)</span></span>` : ''}</span>
+        <span class="inf__label${inf.type === 'autre' ? ' fr-text--sm fr-mb-0' : ''}">${inf.label}</span>
       </button>
     </h3>
     ${edit && inf.type === 'autre' ? `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-delete-line inf__delete" title="Supprimer l'infraction ${code(inf)}" onclick="infDelete('${ctx}','${inf.id}')">Supprimer</button>` : ''}
@@ -142,7 +143,7 @@ function renderTab() {
     el.innerHTML = `<div class="fr-container fr-pt-3w has-sticky">
         <p>Sélectionnez des infractions que vous souhaitez verbaliser à partir du ${isTRS() ? 'livret individuel de contrôle ou de la feuille de route présentés' : 'livret individuel de contrôle présenté'} :</p>
         <div id="tab-inf-list">${rel.draft.map(i => infractionHTML(i, true, 't')).join('')}</div>
-        <button type="button" class="fr-btn fr-btn--tertiary fr-icon-add-line fr-btn--icon-left inf-add" onclick="openAddInf()">Ajouter une autre infraction</button>
+        <button type="button" class="fr-btn fr-btn--tertiary fr-icon-add-line fr-btn--icon-left fr-mt-3v" onclick="openAddInf()">Ajouter une autre infraction</button>
       </div>
       <div class="sticky-actions">
         ${rel.saved ? `<button type="button" class="fr-btn fr-btn--secondary" onclick="cancelReleve()">Annuler</button>` : ''}
@@ -151,7 +152,7 @@ function renderTab() {
   } else {
     el.innerHTML = `<div class="fr-container fr-pt-3w fr-pb-5w">
         <section>
-          <div class="section-head"><h2 class="fr-h6 fr-mb-0">Infractions retenues</h2><button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="startReleve()">Modifier</button></div>
+          <div class="section-head fr-mb-3v"><h2 class="fr-h6 fr-mb-0">Infractions retenues</h2><button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="startReleve()">Modifier</button></div>
           ${state.infractions.map(i => infractionHTML(i, false, 's')).join('')}
           <p class="fr-text--xs mention fr-mb-0">Dernière modification le ${fmt(rel.saved)}</p>
         </section>

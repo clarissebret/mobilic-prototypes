@@ -2,9 +2,9 @@
 import { readdirSync, writeFileSync, existsSync } from 'node:fs';
 
 const PROTOTYPES = {
-  'controle-lic-papier': {
-    titre: 'Contrôle LIC papier / feuille de route',
-    description: "Interface contrôleur (mobile) : création du contrôle, relevé des infractions, édition et envoi du bulletin de contrôle. Inclut le secteur TRS.",
+  controleur: {
+    titre: 'Interface contrôleur',
+    description: "Application mobile des agents de contrôle. Flux disponibles : contrôle LIC papier / feuille de route (création du contrôle, relevé des infractions, bulletin de contrôle, secteur TRS).",
   },
 };
 

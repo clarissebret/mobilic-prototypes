@@ -4,26 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Prototype Mobilic Contrôleur : LIC papier / feuille de route</title>
+<title>Prototype Mobilic : {{TITRE}}</title>
 <style id="dsfr-css">{{DSFR_CSS}}</style>
 <style id="app-css">{{APP_CSS}}</style>
 <style>
   /* Cadre du prototype (hors application) */
   html, body { min-height: 100%; background-color: var(--background-contrast-grey); }
-  .proto { display: flex; gap: 1.5rem; justify-content: center; align-items: flex-start; padding: 1.5rem; }
-  .side { width: 17rem; position: sticky; top: 1.5rem; }
-  .side h2 { margin-bottom: 1rem; }
-  .side .flows { list-style: none; margin: 0 0 1.5rem; padding: 0; }
-  .side .flows li { margin-bottom: .5rem; }
-  .side .flows .fr-btn { width: 100%; }
-  .side .fill { margin-bottom: 1.5rem; }
+  .proto { display: grid; grid-template-columns: 18rem 1fr; min-height: 100vh; }
+  .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); }
+  .side .flows { list-style: none; padding: 0; }
+  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0; }
+  .side .flow .fr-btn { flex-shrink: 0; }
+  .side .mention { color: var(--text-mention-grey); }
   .side .fill[hidden] { display: none; }
+  .stage { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
+  .device-box { position: relative; }
+  .device-box > .device { position: absolute; top: 0; left: 0; transform-origin: top left; }
 
   /* Téléphone Android */
   .device { padding: 12px; border-radius: 44px; background: #1e1e1e; box-shadow: 0 0 0 2px #3a3a3a, 0 12px 32px rgba(0,0,0,.35); position: relative; }
   .device::before { content: ""; position: absolute; right: -4px; top: 140px; width: 4px; height: 64px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
   .device::after { content: ""; position: absolute; right: -4px; top: 230px; width: 4px; height: 100px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
-  .screen-wrap { width: 360px; border-radius: 32px; overflow: hidden; background-color: var(--background-default-grey); }
+  .screen-wrap { width: var(--w, 360px); border-radius: 32px; overflow: hidden; background-color: var(--background-default-grey); }
   .android-status { position: relative; height: 32px; display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem 0 1.5rem;
     background-color: var(--background-default-grey); color: #161616; font-family: Roboto, "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 500; }
   .android-status__camera { position: absolute; left: 50%; top: 8px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1e1e1e; }
@@ -34,7 +36,7 @@
   .android-nav button:hover { background-color: rgba(0,0,0,.06); }
   .android-nav button[disabled] { cursor: default; background: none; }
   .android-nav svg { width: 18px; height: 18px; }
-  #app { display: block; width: 360px; height: 720px; border: 0; }
+  #app { display: block; width: var(--w, 360px); height: var(--h, 740px); border: 0; }
 
   /* Aperçu PDF */
   .pdf-overlay { display: none; position: fixed; inset: 0; z-index: 4000; overflow: auto; padding: 1.5rem; background-color: rgba(22,22,22,.8); }
@@ -67,24 +69,30 @@
 <body>
 <div class="proto">
   <aside class="side" aria-label="Commandes du prototype">
-    <h2 class="fr-h6">Flux à tester</h2>
-    <ul class="flows">
-      <li><button type="button" class="fr-btn fr-btn--secondary" onclick="cmd('flow-lic')">Contrôle LIC papier / feuille de route</button></li>
+    <p class="fr-text--xs fr-mb-1v mention">Prototype Mobilic</p>
+    <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
+    <p class="fr-text--sm fr-mb-4w">{{DESCRIPTION}}</p>
+
+    <h2 class="fr-h6 fr-mb-2w">Parcours</h2>
+    <ul class="flows fr-mb-4w">
+{{PARCOURS}}
     </ul>
-    <div class="fill" id="fill" hidden>
-      <div class="fr-select-group fr-mb-1w" id="fill-act-group">
-        <label class="fr-label" for="demo-act">Secteur des données de test</label>
-        <select class="fr-select" id="demo-act">
-          <option>TRM - Courte distance</option>
-          <option>TRS - Transport sanitaire</option>
-        </select>
-      </div>
+    <div class="fill fr-mb-1w" id="fill" hidden>
       <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
     </div>
-    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset')">Réinitialiser</button>
-    <p class="fr-hint-text fr-mt-2w">Données fictives. SIREN de test : 110014016.</p>
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left fr-mb-4w" onclick="cmd('reset')">Réinitialiser</button>
+    <div class="fr-select-group">
+      <label class="fr-label" for="device-size">Téléphone</label>
+      <select class="fr-select" id="device-size" onchange="setDevice(this.value)">
+        <option value="360x640">Galaxy S5 · 360 × 640</option>
+        <option value="360x740" selected>Galaxy S8+ · 360 × 740</option>
+        <option value="412x915">Pixel 7 · 412 × 915</option>
+      </select>
+    </div>
   </aside>
 
+  <main class="stage">
+    <div class="device-box" id="device-box">
   <div class="device">
     <div class="screen-wrap">
       <div class="android-status" aria-hidden="true">
@@ -92,7 +100,7 @@
         <span class="android-status__camera"></span>
         <span class="android-status__icons"><span class="fr-icon-signal-wifi-fill"></span><span class="fr-icon-signal-cellular-3-fill"></span><span class="fr-icon-battery-fill"></span></span>
       </div>
-      <iframe id="app" title="Application Mobilic contrôleur (vue mobile)"></iframe>
+      <iframe id="app" title="Application Mobilic : {{TITRE}} (vue mobile)"></iframe>
       <nav class="android-nav" aria-label="Barre de navigation Android">
         <button type="button" title="Retour" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M17 4.5v15L5 12z"/></svg></button>
         <button type="button" title="Accueil (inactif)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></button>
@@ -100,6 +108,8 @@
       </nav>
     </div>
   </div>
+    </div>
+  </main>
 </div>
 
 <div class="pdf-overlay" id="pdf" role="dialog" aria-modal="true" aria-label="Aperçu du bulletin de contrôle PDF">
@@ -120,7 +130,7 @@
   const css = document.getElementById('dsfr-css').textContent + document.getElementById('app-css').textContent;
   frame.srcdoc = '<!DOCTYPE html><html lang="fr" data-fr-scheme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'
     + css + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
-  function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name, act: document.getElementById('demo-act').value }, '*'); }
+  function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name }, '*'); }
   const pdf = document.getElementById('pdf');
   function back() {
     if (pdf.classList.contains('open')) return pdf.classList.remove('open');
@@ -131,9 +141,25 @@
     if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }
     if (m.type === 'screen') {
       document.getElementById('fill').hidden = !m.form;
-      document.getElementById('fill-act-group').hidden = m.name !== 'form';
     }
   });
+  const device = document.querySelector('.device'), box = document.getElementById('device-box');
+  let size = [360, 740];
+  function fit() {
+    const w = device.offsetWidth, h = device.offsetHeight;
+    const avail = window.innerHeight - box.getBoundingClientRect().top - window.scrollY - 24;
+    const k = Math.min(1, avail / h);
+    device.style.transform = `scale(${k})`;
+    box.style.width = w * k + 'px'; box.style.height = h * k + 'px';
+  }
+  function setDevice(v) {
+    size = v.split('x').map(Number);
+    document.documentElement.style.setProperty('--w', size[0] + 'px');
+    document.documentElement.style.setProperty('--h', size[1] + 'px');
+    fit();
+  }
+  window.addEventListener('resize', fit);
+  setDevice(document.getElementById('device-size').value);
   const tick = () => { const d = new Date(); document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
   tick(); setInterval(tick, 30000);
 </script>

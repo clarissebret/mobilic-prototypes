@@ -5,7 +5,7 @@ DIST = os.path.join(ROOT, 'node_modules/@gouvfr/dsfr/dist/')
 REMIX = os.path.join(ROOT, 'node_modules/remixicon/icons/')
 DSFR_VERSION = json.load(open(os.path.join(ROOT, 'node_modules/@gouvfr/dsfr/package.json')))['version']
 CDN = f'https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@{DSFR_VERSION}/dist/'
-PROTO = sys.argv[1] if len(sys.argv) > 1 else 'controle-lic-papier'
+PROTO = sys.argv[1] if len(sys.argv) > 1 else 'controleur'
 B = os.path.join(ROOT, 'prototypes', PROTO) + '/'
 LOGO = os.path.join(ROOT, 'assets/logo-mobilic.png')
 
@@ -39,7 +39,7 @@ ICONS = {
     'send-plane-line': 'send-plane-line', 'printer-line': 'printer-line', 'close-line': 'close-line',
     'signal-wifi-fill': 'signal-wifi-fill', 'signal-cellular-3-fill': 'signal-cellular-3-fill', 'battery-fill': 'battery-fill',
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
-    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line',
+    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
 }
 rules = []
 for cls, remix in ICONS.items():
@@ -49,8 +49,16 @@ css += '\n/* Icônes Remix Icon utilisées par le prototype */\n' + '\n'.join(ru
 css += '\n:root{--chevron:url(' + datauri(glob.glob(f'{REMIX}*/arrow-down-s-line.svg')[0]) + ')}'
 
 # 3. App pieces
-app_css = open(B + 'app.css').read()
-for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + open(B + 'shell.html').read()):
+from html import escape
+CONF = json.load(open(B + 'prototype.json'))
+SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
+  .replace('{{TITRE}}', escape(CONF['titre'])).replace('{{DESCRIPTION}}', escape(CONF['description']))
+  .replace('{{PARCOURS}}', '\n'.join(
+    f'      <li class="flow fr-mb-2w"><span class="fr-text--sm fr-mb-0">{escape(p["libelle"])}</span>'
+    f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '
+    f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours'])))
+app_css = open(os.path.join(ROOT, 'shared/mobilic.css')).read() + '\n' + open(B + 'app.css').read()
+for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):
     if f'--{tok}:' not in css and tok not in ('icon-size',):
         raise SystemExit(f'Token DSFR inconnu : --{tok}')
 
@@ -101,7 +109,7 @@ def star(m):
 app = re.sub(r'<label class="fr-label" for="([^"]+)">(.*?)</label>', star, app, flags=re.S)
 assert '{{' not in app, re.findall(r'\{\{[^}]*\}\}', app)
 
-out = (open(B + 'shell.html').read()
+out = (SHELL
        .replace('{{DSFR_CSS}}', css).replace('{{APP_CSS}}', app_css)
        .replace('{{APP_HTML}}', app).replace('{{APP_JS}}', open(B + 'app.js').read() + '\n' + open(B + 'infractions.js').read() + "\nrenderHistory(); go('home');\n"))
 import shutil

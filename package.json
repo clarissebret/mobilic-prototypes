@@ -4,7 +4,7 @@
   "description": "Prototypes interactifs de Mobilic (données fictives), construits sur le DSFR.",
   "license": "MIT",
   "scripts": {
-    "build": "python3 scripts/build.py controle-lic-papier && node scripts/build-index.mjs",
+    "build": "python3 scripts/build.py controleur && node scripts/build-index.mjs",
     "check": "node scripts/check-confidentiality.mjs"
   },
   "devDependencies": {

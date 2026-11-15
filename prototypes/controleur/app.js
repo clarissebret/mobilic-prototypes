@@ -1,10 +1,18 @@
 const $ = id => document.getElementById(id);
 const v = id => $(id).value.trim();
 const pad = n => String(n).padStart(2, '0');
+/* Historique fictif des derniers contrôles, daté par rapport à aujourd'hui */
+const daysAgo = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d; };
+const ctrl = (type, name, veh, time, lieu, bdc, ent, jours, inf) => ({ type, name, veh, time, lieu, bdc, ent, jours, inf });
 const state = { control: null, bdc: null, notes: [], history: [
-  { date: 'Jeudi 27 janvier 2028', items: [{ type: 'mobilic', name: 'Basset Hugo', time: '10:12' }] },
-  { date: 'Mercredi 26 janvier 2028', items: [{ type: 'mobilic', name: 'Pleyel Lucie', time: '15:40' }, { type: 'lic', name: 'Allard Sophie', time: '08:05' }] },
-  { date: 'Lundi 22 janvier 2028', items: [{ type: 'lic', name: 'Letronc Yves', time: '11:30' }] }
+  { date: daysAgo(0), items: [
+    ctrl('mobilic', 'Basset Hugo', 'GH-512-KL', '10:12', 'Aire de Paimpont-Brocéliande', 'remis', 'Transports Basset', '8 jours', 1),
+    ctrl('lic', 'Allard Sophie', 'AB-123-CD', '08:05', 'Aire de Paimpont-Brocéliande', 'non', 'Déménagements Allard', '28 jours', 0)] },
+  { date: daysAgo(1), items: [
+    ctrl('mobilic', 'Pleyel Lucie', 'EF-456-GH', '15:40', 'Rennes', 'attente', 'Pleyel Logistique', '8 jours', 2),
+    ctrl('lic', 'Letronc Yves', 'JK-789-LM', '11:30', 'Vitré', 'non', 'Letronc et Fils', '28 jours', 0)] },
+  { date: daysAgo(5), items: [
+    ctrl('mobilic', 'Marchal Inès', 'NP-246-QR', '09:20', 'Saint-Malo', 'remis', 'Marchal Express', '8 jours', 0)] }
 ] };
 
 /* ---------- Navigation ---------- */
@@ -52,8 +60,9 @@ function clearCompany() { $('f-ent-nom').value = ''; $('f-ent-adr').value = ''; 
 function searchSiren() {
   hideSirenError();
   const s = v('f-siren').replace(/\s/g, '');
-  if (!/^\d{9}$/.test(s)) return showSirenError('Le numéro SIREN doit comporter 9 chiffres.');
-  if (s === '000000000') return showSirenError('Aucune entreprise trouvée pour ce numéro SIREN.');
+  if (!s) return showSirenError("Saisissez le numéro SIREN de l'entreprise.");
+  if (!/^\d{9}$/.test(s)) return showSirenError('Saisissez un numéro SIREN de 9 chiffres, par exemple 123 456 789.');
+  if (s === '000000000') return showSirenError('Aucune entreprise ne correspond à ce numéro SIREN. Vérifiez le numéro saisi.');
   const known = s === '110014016';
   $('f-ent-nom').value = known ? 'DUPONT TRANSPORT SARL' : 'ENTREPRISE FICTIVE ' + s.slice(-3);
   $('f-ent-adr').value = known ? 'HOTEL DE BEAUVAU 1 PLACE BEAUVAU 75008 PARIS' : "12 RUE DE L'EXEMPLE 69003 LYON";
@@ -66,9 +75,11 @@ function resetForm() {
   });
   clearCompany();
 }
-function fillDemo(act) {
+/* Remplit le formulaire avec des données fictives. L'activité choisie par la personne qui teste est conservée. */
+function fillDemo() {
+  const act = $('f-activite').value;
   resetForm(); go('form');
-  $('f-activite').value = act || 'TRM - Courte distance';
+  $('f-activite').value = act;
   $('f-nom').value = 'Vincent'; $('f-prenom').value = 'Arthur';
   $('f-jour').value = '12'; $('f-mois').value = '02'; $('f-annee').value = '1992';
   $('f-nat').value = 'France'; $('f-siren').value = '110014016'; searchSiren();
@@ -84,6 +95,7 @@ function createControl() {
     act: $('f-activite').value, veh: v('f-immat').toUpperCase(), siren: v('f-siren'),
     jour: v('f-jour'), mois: v('f-mois'), annee: v('f-annee'), nat: $('f-nat').value
   };
+  state.reopened = null;
   state.bdc = null; state.notes = []; state.infractions = catalog(state.control.act, state.control.date, radio('page') === 'Non');
   rel.editing = true; rel.saved = null; rel.draft = clone(state.infractions);
   renderTab(); renderTabBadge();
@@ -98,7 +110,7 @@ function renderControl() {
   $('c-ent').textContent = c.ent; $('c-act').textContent = c.act; $('c-veh').textContent = c.veh;
   const since = new Date(c.date); since.setDate(since.getDate() - 56);
   $('c-since').textContent = 'Depuis le ' + fmt(since).split(' à ')[0];
-  $('notes').innerHTML = state.notes.map(n => `<div class="note">${n.replace(/</g, '&lt;')}</div>`).join('');
+  $('notes').innerHTML = state.notes.map(n => `<div class="note fr-text--sm fr-mb-1w">${n.replace(/</g, '&lt;')}</div>`).join('');
   $('notes-empty').hidden = state.notes.length > 0;
 }
 function tab(i) {
@@ -125,34 +137,79 @@ function requestClose() {
 }
 function closeControl() {
   closeModal('modal-bdc');
-  const c = state.control, d = c.date;
-  const label = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const day = label.charAt(0).toUpperCase() + label.slice(1);
-  let entry = state.history.find(h => h.date === day);
+  const c = state.control, d = c.date, b = state.bdc;
+  const day = new Date(d); day.setHours(0, 0, 0, 0);
+  let entry = state.history.find(h => h.date.getTime() === day.getTime());
   if (!entry) { entry = { date: day, items: [] }; state.history.unshift(entry); }
-  entry.items.unshift({ type: 'lic', name: c.nom + ' ' + c.prenom, time: fmt(d).split(' à ')[1], isNew: true });
+  const bdc = !b ? 'non' : (b.sentEnt || b.sentDrv || b.paper) ? 'remis' : 'attente';
+  const lieu = b ? [b.commune, b.lieu].filter(Boolean).join(' ') : '';
+  const inf = state.infractions.filter(i => i.sel.length).length;
+  const item = ctrl('lic', c.nom + ' ' + c.prenom, c.veh, fmt(d).split(' à ')[1], lieu || '–', bdc, c.ent, '–', inf);
+  item.snap = snapshot();
+  if (state.reopened) { item.isNew = state.reopened.isNew; Object.assign(state.reopened, item); state.reopened = null; }
+  else { item.isNew = true; entry.items.unshift(item); }
   $('hist-type').value = 'lic';
   resetForm(); go('home'); renderHistory(day); toast('Contrôle enregistré');
 }
-
-/* ---------- Accueil : derniers contrôles ---------- */
+const BDC_BADGE = {
+  remis: ['success', 'Remis'], attente: ['warning', "En attente d'envoi"], non: ['error', 'Non créé'] };
+function dayTitle(d) {
+  const n = Math.round((daysAgo(0) - d) / 864e5);
+  if (n === 0) return 'Aujourd’hui';
+  const l = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return l.charAt(0).toUpperCase() + l.slice(1);
+}
+/* Derniers contrôles : un accordéon DSFR par jour, avec un tableau DSFR défilant horizontalement */
 function renderHistory(openDay) {
   const type = $('hist-type').value;
-  $('history').innerHTML = state.history.map(h => {
-    const items = h.items.filter(it => it.type === type), open = h.date === openDay;
-    return `<div class="day-acc">
-      <button type="button" class="day-acc__btn ${open ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-right-s-line'}" aria-expanded="${open}" onclick="toggleDay(this)">${h.date}</button>
-      <div class="day-acc__content" ${open ? '' : 'hidden'}>${items.length ? items.map(it =>
-        `<div class="ctrl-item"><span>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-ml-1w">Nouveau</span>' : ''}</span><span class="mention">${it.time}</span></div>`).join('')
-        : '<p class="fr-text--sm mention fr-mb-0">Aucun contrôle de ce type.</p>'}</div>
-    </div>`;
+  $('history').innerHTML = state.history.map((h, k) => {
+    const items = h.items.filter(it => it.type === type);
+    const open = openDay ? h.date.getTime() === openDay.getTime() : k === 0;
+    const id = 'hist-' + k;
+    const rows = items.map((it, i) => {
+      const [kind, label] = BDC_BADGE[it.bdc];
+      return `<tr onclick="openHistory(${k}, ${i})"><td><a href="#" class="row-link" onclick="event.preventDefault()">${it.name}</a>${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-badge--no-icon">Nouveau</span>' : ''}</td><td>${it.veh}</td><td>${it.time}</td><td>${it.lieu}</td>
+        <td>${it.type === 'mobilic' ? 'Mobilic' : 'LIC papier'}</td><td><span class="fr-badge fr-badge--sm fr-badge--${kind} fr-badge--no-icon">${label}</span></td>
+        <td>${it.ent}</td><td>${it.jours}</td><td>${it.inf}</td></tr>`;
+    }).join('');
+    return `<section class="fr-accordion">
+      <h3 class="fr-accordion__title"><button type="button" class="fr-accordion__btn" aria-expanded="${open}" aria-controls="${id}" onclick="toggleAcc(this)">${dayTitle(h.date)}</button></h3>
+      <div class="fr-collapse${open ? ' fr-collapse--expanded' : ''}" id="${id}">
+        ${items.length ? `<div class="fr-table fr-table--no-caption mobilic-table mobilic-table--clickable fr-mt-0 fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+          <table><caption>Contrôles du ${dayTitle(h.date).toLowerCase()}</caption>
+            <thead><tr><th scope="col">Salarié</th><th scope="col">Véhicule</th><th scope="col">Heure</th><th scope="col">Lieu de contrôle</th><th scope="col">Type</th>
+              <th scope="col">Bulletin de contrôle</th><th scope="col">Nom entreprise</th><th scope="col">Jours contrôlés</th><th scope="col">Infractions retenues</th></tr></thead>
+            <tbody>${rows}</tbody></table></div></div></div></div>`
+        : '<p class="fr-text--sm mention fr-mb-0">Aucun contrôle de ce type.</p>'}
+      </div>
+    </section>`;
   }).join('');
 }
-function toggleDay(btn) {
+/* Rouvrir un contrôle depuis « Derniers contrôles » */
+function snapshot() {
+  return { control: { ...state.control, date: new Date(state.control.date) }, bdc: state.bdc && { ...state.bdc },
+    notes: [...state.notes], infractions: clone(state.infractions), saved: rel.saved && new Date(rel.saved) };
+}
+function openHistory(k, i) {
+  const h = state.history[k], it = h.items.filter(x => x.type === $('hist-type').value)[i];
+  if (it.type === 'mobilic') return toast('Contrôle Mobilic : hors scope');
+  let s = it.snap;
+  if (!s) {   /* contrôle fictif : reconstitué à partir de la ligne */
+    const [nom, prenom] = it.name.split(' '), date = new Date(h.date), [hh, mm] = it.time.split(':');
+    date.setHours(+hh, +mm);
+    s = { control: { nom, prenom, date, ent: it.ent, adr: '', act: 'TRM - Courte distance', veh: it.veh, siren: '110014016', jour: '', mois: '', annee: '', nat: 'France' },
+      bdc: null, notes: [], infractions: catalog('TRM - Courte distance', date, false), saved: date };
+  }
+  state.control = { ...s.control, date: new Date(s.control.date) }; state.bdc = s.bdc && { ...s.bdc };
+  state.notes = [...s.notes]; state.infractions = clone(s.infractions); state.reopened = it;
+  rel.saved = s.saved ? new Date(s.saved) : null; rel.editing = !rel.saved; rel.draft = rel.editing ? clone(state.infractions) : null;
+  renderTab(); renderTabBadge(); renderControl(); renderBdc(); tab(0); go('control');
+}
+/* Ouverture / fermeture d'un accordéon DSFR sans le JS du DSFR */
+function toggleAcc(btn) {
   const open = btn.getAttribute('aria-expanded') !== 'true';
   btn.setAttribute('aria-expanded', open);
-  btn.classList.toggle('fr-icon-arrow-down-s-line', open); btn.classList.toggle('fr-icon-arrow-right-s-line', !open);
-  btn.nextElementSibling.hidden = !open;
+  $(btn.getAttribute('aria-controls')).classList.toggle('fr-collapse--expanded', open);
 }
 
 /* ---------- Bulletin de contrôle ---------- */
@@ -223,18 +280,18 @@ function renderBdc() {
 function renderBdcInto(el) {
   const b = state.bdc;
   if (!b) {
-    el.innerHTML = `<div class="section-head"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--sm" onclick="startBdc()">Créer</button></div>
+    el.innerHTML = `<div class="section-head fr-mb-3v"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--sm" onclick="startBdc()">Créer</button></div>
       <p class="fr-text--sm mention">Vous pourrez le transmettre à l'entreprise de manière dématérialisée.</p>`;
     return;
   }
   const sent = b.sentEnt || b.sentDrv;
   const badges = [b.sentDrv && 'Remis au conducteur (via email)', b.sentEnt && "Envoyé à l'entreprise"].filter(Boolean)
     .map(s => `<li><p class="fr-badge fr-badge--sm fr-badge--info">${s}</p></li>`).join('');
-  el.innerHTML = `<div class="section-head"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="startBdc()">Modifier</button></div>
+  el.innerHTML = `<div class="section-head fr-mb-3v"><h2 class="fr-h6 fr-mb-0">Bulletin de contrôle</h2><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="startBdc()">Modifier</button></div>
     <div class="bdc-card">
       <div class="bdc-card__title"><span class="fr-icon-file-text-fill" aria-hidden="true"></span><div><p class="fr-text--bold fr-mb-0">Bulletin ${b.num}</p><p class="fr-text--sm mention fr-mb-0">édité le ${fmtLong(b.edited)}</p></div></div>
       ${sent ? `<ul class="fr-badges-group fr-mt-2w">${badges}</ul>` : `<div class="fr-checkbox-group fr-checkbox-group--sm fr-mt-2w"><input type="checkbox" id="b-paper" ${b.paper ? 'checked' : ''} onchange="state.bdc.paper=this.checked"><label class="fr-label" for="b-paper">Remis au format papier</label></div>`}
-      <div class="bdc-card__actions">
+      <div class="bdc-card__actions fr-mt-3v">
         <button type="button" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-download-line fr-btn--icon-left" onclick="openPdf()">Télécharger</button>
         <button type="button" class="fr-btn fr-btn--sm fr-icon-send-plane-line fr-btn--icon-left" onclick="openSend()">Envoyer</button>
       </div>
@@ -285,7 +342,7 @@ function openPdf() {
 
 /* ---------- Commandes du panneau "Liens rapides" ---------- */
 function resetAll() {
-  state.control = null; state.bdc = null; state.notes = []; state.infractions = null; rel.editing = true; rel.saved = null; rel.draft = null; activeTab = 0;
+  state.control = null; state.bdc = null; state.notes = []; state.infractions = null; state.reopened = null; rel.editing = true; rel.saved = null; rel.draft = null; activeTab = 0;
   state.history = state.history.filter(h => (h.items = h.items.filter(i => !i.isNew)).length);
   resetForm(); $('hist-type').value = 'mobilic';
   document.querySelectorAll('.fr-modal--opened').forEach(m => closeModal(m.id));
@@ -305,7 +362,7 @@ window.addEventListener('message', e => {
   if (m.type !== 'cmd') return;
   if (m.name === 'flow-lic') { resetAll(); go('form'); }
   if (m.name === 'fill') {
-    if (current === 'form') fillDemo(m.act);
+    if (current === 'form') fillDemo();
     else if (current === 'bdc') fillBdc();
     else if (current === 'infractions') { fillInfractions(draft); renderInfEdit(); }
     else if (current === 'control' && activeTab === 1 && rel.editing) { fillInfractions(rel.draft); renderTab(); }

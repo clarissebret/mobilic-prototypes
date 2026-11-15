@@ -3,7 +3,7 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
-const files = execSync('git ls-files', { encoding: 'utf8' }).split('\n').filter(f => f && !f.endsWith('.png') && f !== 'package-lock.json');
+const files = execSync('git ls-files --cached --others --exclude-standard', { encoding: 'utf8' }).split('\n').filter(f => f && !f.endsWith('.png') && f !== 'package-lock.json');
 
 // Adresses e-mail autorisées : exemples génériques uniquement.
 const ALLOWED_EMAILS = [/^nom@domaine\.fr$/, /^contact@entreprise\.fr$/, /@example\.(com|org|fr)$/, /^noreply@anthropic\.com$/, /@users\.noreply\.github\.com$/];
