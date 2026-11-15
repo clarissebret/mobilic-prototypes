@@ -43,7 +43,7 @@ Comportement : fermé par défaut, un seul ouvert à la fois dans une liste, ouv
 | Jour courant | contour `--border-action-high-blue-france` |
 | Jour hors mois | `--background-contrast-grey` |
 
-Espacements : padding de l'en-tête 12 × 16 px, corps 12 / 16 / 16 px, 12 px entre deux accordéons, 8 px entre les tags.
+Espacements : padding de l'en-tête 12 × 16 px, corps 12 / 16 / 16 px, 12 px entre deux accordéons, 8 px entre les tags, 4 px entre les jours du calendrier.
 
 ## Accessibilité
 

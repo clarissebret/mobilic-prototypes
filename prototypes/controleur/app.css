@@ -97,7 +97,7 @@ html, body { background-color: var(--background-default-grey); }
 .cal__selwrap [class*="fr-icon-"] { position: absolute; right: 0; pointer-events: none; }
 .cal__selwrap [class*="fr-icon-"]::before { --icon-size: .75rem; }
 .cal__sel { appearance: none; -webkit-appearance: none; border: 0; background: none; padding-right: 1rem; color: var(--text-default-grey); cursor: pointer; }
-.cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: .25rem; }
 .cal__wd { text-align: center; color: var(--text-default-grey); }
 .cal__day { height: 2rem; border: 1px solid var(--border-default-grey); background-color: var(--background-default-grey); color: var(--text-default-grey); cursor: pointer; }
 .cal__day:hover:not([disabled]) { background-color: var(--background-default-grey-hover); }
