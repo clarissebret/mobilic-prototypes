@@ -52,8 +52,9 @@ function clearCompany() { $('f-ent-nom').value = ''; $('f-ent-adr').value = ''; 
 function searchSiren() {
   hideSirenError();
   const s = v('f-siren').replace(/\s/g, '');
-  if (!/^\d{9}$/.test(s)) return showSirenError('Le numéro SIREN doit comporter 9 chiffres.');
-  if (s === '000000000') return showSirenError('Aucune entreprise trouvée pour ce numéro SIREN.');
+  if (!s) return showSirenError("Saisissez le numéro SIREN de l'entreprise.");
+  if (!/^\d{9}$/.test(s)) return showSirenError('Saisissez un numéro SIREN de 9 chiffres, par exemple 123 456 789.');
+  if (s === '000000000') return showSirenError('Aucune entreprise ne correspond à ce numéro SIREN. Vérifiez le numéro saisi.');
   const known = s === '110014016';
   $('f-ent-nom').value = known ? 'DUPONT TRANSPORT SARL' : 'ENTREPRISE FICTIVE ' + s.slice(-3);
   $('f-ent-adr').value = known ? 'HOTEL DE BEAUVAU 1 PLACE BEAUVAU 75008 PARIS' : "12 RUE DE L'EXEMPLE 69003 LYON";

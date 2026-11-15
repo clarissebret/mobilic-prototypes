@@ -55,7 +55,14 @@ Le parcours est le même pour tous les types de contrôle :
 
 - **CRE-01** L'agent crée le contrôle depuis l'accueil en choisissant le type de contrôle.
 - **CRE-02** L'agent renseigne le salarié, l'entreprise, le véhicule et l'activité. Les informations obligatoires sont signalées comme telles.
-- **CRE-03** L'entreprise est identifiée par son SIREN. Un SIREN invalide est signalé à l'agent avant la création du contrôle.
+- **CRE-03** L'entreprise est identifiée par son SIREN : l'agent saisit le numéro et lance la recherche, le nom et l'adresse de l'entreprise sont alors complétés. Une erreur est signalée sous le champ avant la création du contrôle :
+
+  | Cas | Message |
+  |---|---|
+  | Champ vide | Saisissez le numéro SIREN de l'entreprise. |
+  | Le numéro ne fait pas 9 chiffres | Saisissez un numéro SIREN de 9 chiffres, par exemple 123 456 789. |
+  | Aucune entreprise ne correspond | Aucune entreprise ne correspond à ce numéro SIREN. Vérifiez le numéro saisi. |
+  | La recherche n'a pas pu aboutir (réseau, service indisponible) | La recherche n'a pas abouti. Vérifiez votre connexion et réessayez. |
 - **CRE-04** Le contrôle n'est créé que lorsque toutes les informations obligatoires sont valides.
 
 ### Selon le type de contrôle
