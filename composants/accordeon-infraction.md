@@ -25,7 +25,7 @@ Code : classes `.inf*` et `.cal*` dans `prototypes/controleur/app.css`, rendu da
 | Non retenue | Contour gris |
 | Retenue (au moins une période) | Contour bleu Marianne |
 | Ouvert | En-tête sur fond gris clair, chevron retourné |
-| Survol / appui | Fond transparent teinté (tokens DSFR des éléments sans fond) |
+| Survol / appui | Fond gris clair / gris appuyé |
 
 Comportement : fermé par défaut, un seul ouvert à la fois dans une liste, ouverture animée en 0,3 s (désactivée si `prefers-reduced-motion`).
 
@@ -34,8 +34,8 @@ Comportement : fermé par défaut, un seul ouvert à la fois dans une liste, ouv
 | Élément | Token |
 |---|---|
 | Contour | `--border-default-grey`, retenu : `--border-plain-blue-france` |
-| Fond en-tête ouvert | `--background-default-grey-hover` (choix de la maquette, le DSFR utilise `--background-open-blue-france`) |
-| Fond en-tête survol / appui | `--background-transparent-hover` / `--background-transparent-active` |
+| Fond en-tête survol / ouvert | `--background-default-grey-hover` (survol : comme le DSFR sur fond blanc ; ouvert : choix de la maquette, le DSFR utilise `--background-open-blue-france`) |
+| Fond appuyé | `--background-default-grey-active` |
 | Code NATINF | `--text-title-blue-france`, 14 px gras |
 | Règle | `--text-mention-grey`, 14 px |
 | Chevron, suppression | `--text-action-high-blue-france` |
