@@ -112,6 +112,8 @@ Le parcours est le même pour tous les types de contrôle :
   | En attente d'envoi | Le bulletin a été créé mais pas encore envoyé ni remis |
   | Non créé | Aucun bulletin n'a été créé pour ce contrôle |
 
+- **ACC-04** En sélectionnant un contrôle dans « Derniers contrôles », l'agent le rouvre et retrouve la page du contrôle telle qu'il l'a laissée.
+
 ## Navigation
 
 - **NAV-01** Le bouton Retour du téléphone ramène à l'étape précédente sans perte de données silencieuse : il ferme d'abord une fenêtre ouverte, et demande confirmation avant d'abandonner une saisie en cours.

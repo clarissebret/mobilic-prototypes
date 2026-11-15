@@ -15,3 +15,9 @@
 /* En-tête DSFR : le bloc marque (logos) ne change pas de fond au survol ni à l'appui */
 .fr-header__brand.fr-enlarge-link:hover,
 .fr-header__brand.fr-enlarge-link:active { background-color: var(--background-default-grey); }
+
+/* Tableau Mobilic cliquable : toute la ligne ouvre l'élément ; le premier lien porte le focus clavier */
+.fr-table.mobilic-table--clickable .fr-table__content table tbody tr { cursor: pointer; }
+.fr-table.mobilic-table--clickable .fr-table__content table tbody tr:hover td { background-color: var(--background-default-grey-hover); }
+.fr-table.mobilic-table--clickable .fr-table__content table tbody tr:active td { background-color: var(--background-default-grey-active); }
+.fr-table.mobilic-table--clickable .row-link { color: inherit; background-image: none; }

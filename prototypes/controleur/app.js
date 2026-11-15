@@ -7,7 +7,7 @@ const ctrl = (type, name, veh, time, lieu, bdc, ent, jours, inf) => ({ type, nam
 const state = { control: null, bdc: null, notes: [], history: [
   { date: daysAgo(0), items: [
     ctrl('mobilic', 'Basset Hugo', 'GH-512-KL', '10:12', 'Aire de Paimpont-Brocéliande', 'remis', 'Transports Basset', '8 jours', 1),
-    ctrl('lic', 'Allard Sophie', 'AB-123-CD', '08:05', 'Aire de Paimpont-Brocéliande', 'attente', 'Déménagements Allard', '28 jours', 0)] },
+    ctrl('lic', 'Allard Sophie', 'AB-123-CD', '08:05', 'Aire de Paimpont-Brocéliande', 'non', 'Déménagements Allard', '28 jours', 0)] },
   { date: daysAgo(1), items: [
     ctrl('mobilic', 'Pleyel Lucie', 'EF-456-GH', '15:40', 'Rennes', 'attente', 'Pleyel Logistique', '8 jours', 2),
     ctrl('lic', 'Letronc Yves', 'JK-789-LM', '11:30', 'Vitré', 'non', 'Letronc et Fils', '28 jours', 0)] },
@@ -95,6 +95,7 @@ function createControl() {
     act: $('f-activite').value, veh: v('f-immat').toUpperCase(), siren: v('f-siren'),
     jour: v('f-jour'), mois: v('f-mois'), annee: v('f-annee'), nat: $('f-nat').value
   };
+  state.reopened = null;
   state.bdc = null; state.notes = []; state.infractions = catalog(state.control.act, state.control.date, radio('page') === 'Non');
   rel.editing = true; rel.saved = null; rel.draft = clone(state.infractions);
   renderTab(); renderTabBadge();
@@ -143,8 +144,10 @@ function closeControl() {
   const bdc = !b ? 'non' : (b.sentEnt || b.sentDrv || b.paper) ? 'remis' : 'attente';
   const lieu = b ? [b.commune, b.lieu].filter(Boolean).join(' ') : '';
   const inf = state.infractions.filter(i => i.sel.length).length;
-  entry.items.unshift(ctrl('lic', c.nom + ' ' + c.prenom, c.veh, fmt(d).split(' à ')[1], lieu || '–', bdc, c.ent, '–', inf));
-  entry.items[0].isNew = true;
+  const item = ctrl('lic', c.nom + ' ' + c.prenom, c.veh, fmt(d).split(' à ')[1], lieu || '–', bdc, c.ent, '–', inf);
+  item.snap = snapshot();
+  if (state.reopened) { item.isNew = state.reopened.isNew; Object.assign(state.reopened, item); state.reopened = null; }
+  else { item.isNew = true; entry.items.unshift(item); }
   $('hist-type').value = 'lic';
   resetForm(); go('home'); renderHistory(day); toast('Contrôle enregistré');
 }
@@ -163,16 +166,16 @@ function renderHistory(openDay) {
     const items = h.items.filter(it => it.type === type);
     const open = openDay ? h.date.getTime() === openDay.getTime() : k === 0;
     const id = 'hist-' + k;
-    const rows = items.map(it => {
+    const rows = items.map((it, i) => {
       const [kind, label] = BDC_BADGE[it.bdc];
-      return `<tr><td>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-badge--no-icon">Nouveau</span>' : ''}</td><td>${it.veh}</td><td>${it.time}</td><td>${it.lieu}</td>
+      return `<tr onclick="openHistory(${k}, ${i})"><td><a href="#" class="row-link" onclick="event.preventDefault()">${it.name}</a>${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-badge--no-icon">Nouveau</span>' : ''}</td><td>${it.veh}</td><td>${it.time}</td><td>${it.lieu}</td>
         <td>${it.type === 'mobilic' ? 'Mobilic' : 'LIC papier'}</td><td><span class="fr-badge fr-badge--sm fr-badge--${kind} fr-badge--no-icon">${label}</span></td>
         <td>${it.ent}</td><td>${it.jours}</td><td>${it.inf}</td></tr>`;
     }).join('');
     return `<section class="fr-accordion">
       <h3 class="fr-accordion__title"><button type="button" class="fr-accordion__btn" aria-expanded="${open}" aria-controls="${id}" onclick="toggleAcc(this)">${dayTitle(h.date)}</button></h3>
       <div class="fr-collapse${open ? ' fr-collapse--expanded' : ''}" id="${id}">
-        ${items.length ? `<div class="fr-table fr-table--no-caption mobilic-table fr-mt-0 fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+        ${items.length ? `<div class="fr-table fr-table--no-caption mobilic-table mobilic-table--clickable fr-mt-0 fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
           <table><caption>Contrôles du ${dayTitle(h.date).toLowerCase()}</caption>
             <thead><tr><th scope="col">Salarié</th><th scope="col">Véhicule</th><th scope="col">Heure</th><th scope="col">Lieu de contrôle</th><th scope="col">Type</th>
               <th scope="col">Bulletin de contrôle</th><th scope="col">Nom entreprise</th><th scope="col">Jours contrôlés</th><th scope="col">Infractions retenues</th></tr></thead>
@@ -181,6 +184,26 @@ function renderHistory(openDay) {
       </div>
     </section>`;
   }).join('');
+}
+/* Rouvrir un contrôle depuis « Derniers contrôles » */
+function snapshot() {
+  return { control: { ...state.control, date: new Date(state.control.date) }, bdc: state.bdc && { ...state.bdc },
+    notes: [...state.notes], infractions: clone(state.infractions), saved: rel.saved && new Date(rel.saved) };
+}
+function openHistory(k, i) {
+  const h = state.history[k], it = h.items.filter(x => x.type === $('hist-type').value)[i];
+  if (it.type === 'mobilic') return toast('Contrôle Mobilic : hors scope');
+  let s = it.snap;
+  if (!s) {   /* contrôle fictif : reconstitué à partir de la ligne */
+    const [nom, prenom] = it.name.split(' '), date = new Date(h.date), [hh, mm] = it.time.split(':');
+    date.setHours(+hh, +mm);
+    s = { control: { nom, prenom, date, ent: it.ent, adr: '', act: 'TRM - Courte distance', veh: it.veh, siren: '110014016', jour: '', mois: '', annee: '', nat: 'France' },
+      bdc: null, notes: [], infractions: catalog('TRM - Courte distance', date, false), saved: date };
+  }
+  state.control = { ...s.control, date: new Date(s.control.date) }; state.bdc = s.bdc && { ...s.bdc };
+  state.notes = [...s.notes]; state.infractions = clone(s.infractions); state.reopened = it;
+  rel.saved = s.saved ? new Date(s.saved) : null; rel.editing = !rel.saved; rel.draft = rel.editing ? clone(state.infractions) : null;
+  renderTab(); renderTabBadge(); renderControl(); renderBdc(); tab(0); go('control');
 }
 /* Ouverture / fermeture d'un accordéon DSFR sans le JS du DSFR */
 function toggleAcc(btn) {
@@ -319,7 +342,7 @@ function openPdf() {
 
 /* ---------- Commandes du panneau "Liens rapides" ---------- */
 function resetAll() {
-  state.control = null; state.bdc = null; state.notes = []; state.infractions = null; rel.editing = true; rel.saved = null; rel.draft = null; activeTab = 0;
+  state.control = null; state.bdc = null; state.notes = []; state.infractions = null; state.reopened = null; rel.editing = true; rel.saved = null; rel.draft = null; activeTab = 0;
   state.history = state.history.filter(h => (h.items = h.items.filter(i => !i.isNew)).length);
   resetForm(); $('hist-type').value = 'mobilic';
   document.querySelectorAll('.fr-modal--opened').forEach(m => closeModal(m.id));
