@@ -1,0 +1,14 @@
+{
+  "name": "mobilic-prototypes",
+  "private": true,
+  "description": "Prototypes interactifs de Mobilic (données fictives), construits sur le DSFR.",
+  "license": "MIT",
+  "scripts": {
+    "build": "python3 scripts/build.py controle-lic-papier && node scripts/build-index.mjs",
+    "check": "node scripts/check-confidentiality.mjs"
+  },
+  "devDependencies": {
+    "@gouvfr/dsfr": "1.15.4",
+    "remixicon": "4.9.1"
+  }
+}

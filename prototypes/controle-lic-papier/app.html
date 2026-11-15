@@ -1,0 +1,257 @@
+<!-- ===== APP (rendu dans l'iframe 360 px) ===== -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ACCUEIL -->
+<section class="screen" id="screen-home">
+  <header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo"><p class="fr-logo">République<br>française</p></div>
+              <div class="fr-header__operator"><a href="#" onclick="go('home');return false" title="Accueil - Mobilic"><img class="fr-responsive-img" style="width:6rem" src="{{LOGO}}" alt="Mobilic"></a></div>
+              <div class="fr-header__navbar"><button type="button" class="fr-btn--menu fr-btn" title="Menu" onclick="toast('Menu : hors scope')">Menu</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="fr-container fr-pb-5w">
+    <p class="fr-h4 fr-mt-4w fr-mb-4w" style="text-align:center">Bonjour, Martin</p>
+    <h2 class="fr-h5 fr-mb-3w">Nouveau contrôle</h2>
+    <button type="button" class="choice" onclick="toast('Flux hors scope')"><span class="fr-icon-qr-code-line choice__lead" aria-hidden="true"></span><span>QR Code Mobilic présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <button type="button" class="choice" onclick="go('form')"><span class="fr-icon-edit-box-fill choice__lead" aria-hidden="true"></span><span>LIC papier / feuille de route présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <button type="button" class="choice" onclick="toast('Flux hors scope')"><span class="fr-icon-notification-3-fill choice__lead" aria-hidden="true"></span><span>Pas de LIC à bord</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <p class="fr-mt-3w fr-mb-0"><a class="fr-link fr-link--sm fr-icon-arrow-right-line fr-link--icon-right" href="#" onclick="toast('Hors scope');return false">Un horaire de service est présenté ?</a></p>
+    <p class="fr-mt-5w fr-mb-2w">Vérifier si une entreprise est inscrite sur Mobilic :</p>
+    <button type="button" class="fr-btn fr-btn--secondary fr-icon-search-line fr-btn--icon-left" onclick="toast('Hors scope')">Rechercher une entreprise</button>
+    <h2 class="fr-h5 fr-mt-5w fr-mb-3w">Derniers contrôles</h2>
+    <div class="fr-select-group">
+      <label class="fr-label" for="hist-type">Type de contrôle</label>
+      <select class="fr-select" id="hist-type" onchange="renderHistory()">
+        <option value="mobilic">Mobilic</option>
+        <option value="lic">LIC papier / feuille de route</option>
+      </select>
+    </div>
+    <div id="history"></div>
+    <p class="fr-mt-3w fr-mb-0"><a class="fr-link fr-link--sm fr-icon-arrow-right-line fr-link--icon-right" href="#" onclick="toast('Hors scope');return false">Afficher tout l'historique</a></p>
+  </div>
+</section>
+
+<!-- FORMULAIRE DE CREATION -->
+<section class="screen" id="screen-form">
+  <div class="fr-container fr-pt-2w fr-pb-5w">
+    <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="go('home');return false">Fermer</a>
+    <h1 class="fr-h3 fr-mt-3w fr-mb-1w">Nouveau contrôle « LIC papier / feuille de route présenté »</h1>
+    <p class="fr-mb-1w">Veuillez renseigner ces informations afin de créer le contrôle :</p>
+    <p class="fr-hint-text fr-mb-4w"><span class="required">*</span> Informations obligatoires</p>
+
+    <div id="lic-form" oninput="validate()" onchange="validate()">
+      <div class="fr-select-group">
+        <label class="fr-label" for="f-activite">Type d'activité</label>
+        <select class="fr-select" id="f-activite" required>
+          <option value="" selected disabled hidden>Sélectionner une activité</option>
+          <option>TRM - Courte distance</option>
+          <option>TRM - Longue distance</option>
+          <option>TRM - Messagerie, Fonds et valeur</option>
+          <option>TRV</option>
+          <option>TRS - Transport sanitaire</option>
+        </select>
+      </div>
+      <div class="fr-input-group"><label class="fr-label" for="f-nom">Nom du salarié</label><input class="fr-input" id="f-nom" required autocomplete="off"></div>
+      <div class="fr-input-group"><label class="fr-label" for="f-prenom">Prénom du salarié</label><input class="fr-input" id="f-prenom" required autocomplete="off"></div>
+      {{DATE:f}}
+      <div class="fr-select-group">
+        <label class="fr-label" for="f-nat">Nationalité du salarié</label>
+        <select class="fr-select" id="f-nat" required>
+          <option value="" selected disabled hidden>Sélectionner une nationalité</option>
+          {{NATS}}
+        </select>
+      </div>
+      <div class="fr-input-group" id="siren-group">
+        <label class="fr-label" for="f-siren">N° SIREN de l'entreprise responsable (de rattachement)</label>
+        <div class="fr-search-bar fr-mt-1w" role="search">
+          <input class="fr-input" id="f-siren" type="search" inputmode="numeric" maxlength="9" required oninput="clearCompany()">
+          <button type="button" class="fr-btn" title="Rechercher l'entreprise" onclick="searchSiren()">Rechercher</button>
+        </div>
+        <p class="fr-error-text" id="siren-error" style="display:none"></p>
+        <a class="fr-link fr-link--sm fr-mt-1w" href="https://annuaire-entreprises.data.gouv.fr" target="_blank" rel="noopener" title="Annuaire des entreprises - nouvelle fenêtre">Annuaire des entreprises</a>
+      </div>
+      <div class="fr-input-group"><label class="fr-label" for="f-ent-nom">Nom de l'entreprise</label><input class="fr-input" id="f-ent-nom" disabled></div>
+      <div class="fr-input-group"><label class="fr-label" for="f-ent-adr">Adresse de l'entreprise</label><textarea class="fr-input" id="f-ent-adr" rows="1" disabled style="resize:none"></textarea></div>
+      <div class="fr-input-group"><label class="fr-label" for="f-immat">Immatriculation du véhicule</label><input class="fr-input" id="f-immat" required autocomplete="off" style="text-transform:uppercase"></div>
+      <fieldset class="fr-fieldset" id="f-page">
+        <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Page du jour remplie <span class="required">*</span></legend>
+        <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="page-oui" name="page" value="Oui"><label class="fr-label" for="page-oui">Oui</label></div></div>
+        <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="page-non" name="page" value="Non"><label class="fr-label" for="page-non">Non</label></div></div>
+      </fieldset>
+      <ul class="fr-btns-group fr-mt-2w">
+        <li><button type="button" class="fr-btn" id="btn-create" disabled onclick="createControl()">Créer le contrôle</button></li>
+        <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('home')">Annuler</button></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE DU CONTROLE -->
+<section class="screen" id="screen-control">
+  <div class="ctrl-head fr-container fr-pt-2w fr-pb-3w">
+    <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="requestClose();return false">Fermer</a>
+    <div class="ctrl-head__row fr-mt-3w">
+      <div>
+        <p class="fr-text--sm fr-mb-1w">Contrôle LIC papier / feuille de route</p>
+        <h1 class="fr-h3 fr-mb-0 ctrl-title" id="c-title"></h1>
+      </div>
+      <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="toast('Export : hors scope')">Exporter</button>
+    </div>
+  </div>
+  <div class="ctrl-tabs" role="tablist">
+    <button type="button" role="tab" aria-selected="true" onclick="tab(0)"><span class="fr-icon-information-fill" aria-hidden="true"></span>Informations</button>
+    <button type="button" role="tab" aria-selected="false" onclick="tab(1)"><span class="fr-icon-warning-line" aria-hidden="true"></span>Infractions<span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon ctrl-tabs__badge" id="tab-inf-badge" hidden>0<span class="fr-sr-only"> infraction(s) retenue(s)</span></span></button>
+    <button type="button" role="tab" aria-selected="false" onclick="tab(2)"><span class="fr-icon-time-line" aria-hidden="true"></span>Historique</button>
+  </div>
+
+  <div id="tab-0" class="fr-container fr-pb-5w">
+    <section class="fr-mt-3w">
+      <h2 class="fr-h6 fr-mb-2w">Lors du contrôle</h2>
+      <div class="data"><div><p class="data__k">Date et heure</p><p class="data__v" id="c-date"></p></div><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="openDateModal()">Modifier</button></div>
+      <div class="data"><div><p class="data__k">Entreprise</p><p class="data__v" id="c-ent"></p></div></div>
+      <div class="data"><div><p class="data__k">Type d'activité</p><p class="data__v" id="c-act"></p></div></div>
+      <div class="data"><div><p class="data__k">Véhicule</p><p class="data__v" id="c-veh"></p></div></div>
+    </section>
+    <section class="fr-mt-4w">
+      <h2 class="fr-h6 fr-mb-1v">Les 56 derniers jours</h2>
+      <p class="fr-text--sm fr-mb-2w mention" id="c-since"></p>
+      <div class="alert-card">
+        <div class="alert-card__top"><span>Alertes réglementaires</span><span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon" id="alert-count">1</span></div>
+        <a class="fr-link fr-link--sm fr-icon-arrow-right-line fr-link--icon-right" href="#" onclick="tab(1);return false">Voir le détail</a>
+      </div>
+    </section>
+    <section class="fr-mt-4w">
+      <div class="section-head"><h2 class="fr-h6 fr-mb-0">Photos du LIC</h2><button type="button" class="fr-btn fr-btn--sm" onclick="toast('Prise en photo : hors scope')">Prendre en photo</button></div>
+      <p class="fr-text--sm mention">Ajoutez des photos du livret individuel de contrôle et retrouvez-les dans votre historique de contrôle afin de relever des infractions.</p>
+    </section>
+    <section class="fr-mt-4w">
+      <div class="section-head"><h2 class="fr-h6 fr-mb-0">Vos notes</h2><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="toggleNote()">Ajouter</button></div>
+      <p class="fr-text--sm mention" id="notes-empty">Vous n'avez pas encore renseigné d'annotations de contrôle.</p>
+      <div id="notes"></div>
+      <div id="note-editor" hidden>
+        <div class="fr-input-group"><label class="fr-label" for="note-text">Note</label><textarea class="fr-input" id="note-text" rows="3"></textarea></div>
+        <ul class="fr-btns-group fr-btns-group--inline-sm"><li><button type="button" class="fr-btn fr-btn--sm" onclick="saveNote()">Enregistrer</button></li><li><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="toggleNote()">Annuler</button></li></ul>
+      </div>
+    </section>
+    <section class="fr-mt-4w" id="bdc-section"></section>
+  </div>
+  <div id="tab-1" hidden></div>
+  <div id="tab-2" class="fr-container" hidden><p class="placeholder">Onglet Historique : hors scope.</p></div>
+</section>
+
+<!-- EDITION DU BDC -->
+<section class="screen" id="screen-bdc">
+  <div class="fr-container fr-pt-2w fr-pb-5w" id="bdc-form" oninput="bdcValidate()" onchange="bdcValidate()">
+
+    <div class="bdc-step" id="bdc-step-1">
+      <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="go('control');return false">Retour au contrôle</a>
+      <h1 class="fr-h3 fr-mt-3w fr-mb-3w">Éditer un bulletin de contrôle</h1>
+      {{STEPPER:1}}
+      <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
+      <div class="fr-select-group"><label class="fr-label" for="b-dept">Département de contrôle<span class="fr-hint-text">Sélectionnez un lieu dans la liste</span></label>
+        <select class="fr-select" id="b-dept" required onchange="bdcPlaces()"><option value="" selected disabled hidden>Sélectionner un département</option><option>AIN</option><option>ILLE-ET-VILAINE</option><option>PARIS</option></select></div>
+      <div class="fr-select-group"><label class="fr-label" for="b-commune">Commune de contrôle<span class="fr-hint-text">Sélectionnez un lieu dans la liste</span></label>
+        <select class="fr-select" id="b-commune" required onchange="bdcPlaces(true)"></select></div>
+      <div class="fr-select-group"><label class="fr-label" for="b-lieu">Lieu du contrôle<span class="fr-hint-text">Sélectionnez un lieu dans la liste</span></label>
+        <select class="fr-select" id="b-lieu" required></select></div>
+      <div class="fr-input-group"><label class="fr-label" for="b-nom">Nom du salarié</label><input class="fr-input" id="b-nom" required></div>
+      <div class="fr-input-group"><label class="fr-label" for="b-prenom">Prénom du salarié</label><input class="fr-input" id="b-prenom" required></div>
+      {{DATE:b}}
+      <div class="fr-select-group"><label class="fr-label" for="b-nat">Nationalité du salarié</label>
+        <select class="fr-select" id="b-nat" required><option value="" selected disabled hidden>Sélectionner une nationalité</option>{{NATS}}</select></div>
+      <ul class="fr-btns-group fr-mt-2w">
+        <li><button type="button" class="fr-btn" id="b-next-1" onclick="bdcStep(2)">Suivant</button></li>
+        <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('control')">Annuler</button></li>
+      </ul>
+    </div>
+
+    <div class="bdc-step" id="bdc-step-2" hidden>
+      <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="bdcStep(1);return false">Retour étape 1/3</a>
+      <h1 class="fr-h3 fr-mt-3w fr-mb-3w">Éditer un bulletin de contrôle</h1>
+      {{STEPPER:2}}
+      <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
+      <div class="fr-input-group">
+        <label class="fr-label" for="b-siren">N° SIREN de l'entreprise responsable (de rattachement)</label>
+        <div class="fr-search-bar fr-mt-1w" role="search">
+          <input class="fr-input" id="b-siren" type="search" inputmode="numeric" maxlength="9" required>
+          <button type="button" class="fr-btn" title="Rechercher l'entreprise" onclick="toast('Entreprise retrouvée')">Rechercher</button>
+        </div>
+        <a class="fr-link fr-link--sm fr-mt-1w" href="https://annuaire-entreprises.data.gouv.fr" target="_blank" rel="noopener" title="Annuaire des entreprises - nouvelle fenêtre">Annuaire des entreprises</a>
+      </div>
+      <div class="fr-input-group"><label class="fr-label" for="b-ent">Nom de l'entreprise</label><input class="fr-input" id="b-ent" disabled></div>
+      <div class="fr-input-group"><label class="fr-label" for="b-adr">Adresse de l'entreprise</label><textarea class="fr-input" id="b-adr" rows="2" disabled style="resize:none"></textarea></div>
+      <div class="fr-input-group"><label class="fr-label" for="b-immat">Immatriculation du véhicule</label><input class="fr-input" id="b-immat" required style="text-transform:uppercase"></div>
+        <div class="fr-select-group"><label class="fr-label" for="b-pays">Pays d'immatriculation</label>
+          <select class="fr-select" id="b-pays" required><option value="" selected disabled hidden>Sélectionner un pays</option><option>FRANCE</option><option>BELGIQUE</option><option>ESPAGNE</option><option>ITALIE</option><option>POLOGNE</option></select></div>
+        <div class="not-trs fr-input-group"><label class="fr-label" for="b-prov">Provenance</label><input class="fr-input" id="b-prov" required></div>
+        <div class="not-trs fr-input-group"><label class="fr-label" for="b-dest">Destination</label><input class="fr-input" id="b-dest" required></div>
+        <fieldset class="not-trs fr-fieldset">
+          <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Type de transport <span class="required">*</span></legend>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="tt-int" name="b-type" value="Intérieur"><label class="fr-label" for="tt-int">Intérieur</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="tt-intl" name="b-type" value="International"><label class="fr-label" for="tt-intl">International</label></div></div>
+          <div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" id="tt-cab" name="b-type" value="Cabotage"><label class="fr-label" for="tt-cab">Cabotage</label></div></div>
+        </fieldset>
+        <div class="not-trs fr-input-group"><label class="fr-label" for="b-march">Nature de la marchandise</label><input class="fr-input" id="b-march"></div>
+        <div class="not-trs fr-input-group"><label class="fr-label" for="b-lic">N° de la licence</label><input class="fr-input" id="b-lic"></div>
+        <div class="not-trs fr-input-group"><label class="fr-label" for="b-copie">N° de copie conforme de licence</label><input class="fr-input" id="b-copie"></div>
+        <div class="not-trs fr-select-group"><label class="fr-label" for="b-poids">Poids du véhicule</label>
+          <select class="fr-select" id="b-poids" onchange="bdcPoids()"><option value="" selected disabled hidden>Sélectionner une option</option><option>Poids réel constaté</option><option>PTAC inférieur ou égal à 3,5 tonnes</option><option>PTAC supérieur à 3,5 tonnes</option></select></div>
+        <div class="not-trs fr-input-group" id="b-poids-reel-wrap" hidden><label class="fr-label" for="b-poids-reel">Poids réel constaté (en tonnes)</label><input class="fr-input" id="b-poids-reel" inputmode="decimal"></div>
+      <fieldset class="fr-fieldset">
+        <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Immobilisation du véhicule</legend>
+        <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="im-oui" name="b-immo" value="Oui"><label class="fr-label" for="im-oui">Oui</label></div></div>
+        <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="im-non" name="b-immo" value="Non"><label class="fr-label" for="im-non">Non</label></div></div>
+      </fieldset>
+      <ul class="fr-btns-group fr-mt-2w">
+        <li><button type="button" class="fr-btn" id="b-next-2" onclick="bdcStep(3)">Suivant</button></li>
+        <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('control')">Annuler</button></li>
+      </ul>
+    </div>
+
+    <div class="bdc-step" id="bdc-step-3" hidden>
+      <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="bdcStep(2);return false">Retour étape 2/3</a>
+      <h1 class="fr-h3 fr-mt-3w fr-mb-3w">Éditer un bulletin de contrôle</h1>
+      {{STEPPER:3}}
+      <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
+      <div class="fr-input-group"><label class="fr-label" for="b-agent">Numéro de contrôleur<span class="fr-hint-text">Numéro présent sur votre carte contrôleur</span></label><input class="fr-input" id="b-agent" required></div>
+      <div class="section-head"><p class="fr-mb-0">Infractions retenues</p><button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="openInfractions()">Modifier</button></div>
+      <div id="b-natinfs"></div>
+      <div class="fr-input-group fr-mt-3w"><label class="fr-label" for="b-obs">Observations</label><textarea class="fr-input" id="b-obs" rows="3"></textarea></div>
+      <ul class="fr-btns-group fr-mt-2w">
+        <li><button type="button" class="fr-btn" id="b-save" onclick="bdcSave()">Enregistrer</button></li>
+        <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('control')">Annuler</button></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- INFRACTIONS RETENUES (édition) -->
+<section class="screen" id="screen-infractions">
+  <div class="fr-container fr-pt-2w has-sticky">
+    <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="cancelInfractions();return false">Retour étape 3/3</a>
+    <h1 class="fr-h3 fr-mt-3w fr-mb-1w">Infractions retenues</h1>
+    <p class="fr-mb-3w">Sélectionnez les infractions que vous souhaitez verbaliser :</p>
+    <div id="inf-list"></div>
+    <button type="button" class="fr-btn fr-btn--tertiary fr-icon-add-line fr-btn--icon-left inf-add" onclick="openAddInf()">Ajouter une autre infraction</button>
+  </div>
+  <div class="sticky-actions">
+    <button type="button" class="fr-btn fr-btn--secondary" onclick="cancelInfractions()">Annuler</button>
+    <button type="button" class="fr-btn" onclick="saveInfractions()">Enregistrer</button>
+  </div>
+</section>
+
+<!-- MODALES (composant DSFR fr-modal) -->
+{{MODAL:modal-cancel|Confirmation d'annulation|<p>Les modifications apportées au relevé des infractions ne seront pas enregistrées.</p>|<li><button type="button" class="fr-btn" onclick="confirmCancel()">Confirmer l'annulation</button></li><li><button type="button" class="fr-btn fr-btn--secondary" onclick="closeModal('modal-cancel')">Revenir au relevé</button></li>}}
+{{MODAL:modal-bdc|Éditer le bulletin de contrôle|<p class="fr-text--bold">Vous pourrez l'envoyer à l'entreprise de manière dématérialisée.</p><p>La création comme l'envoi peuvent aussi être réalisés a posteriori. Pensez à demander l'adresse e-mail de l'entreprise.</p>|<li><button type="button" class="fr-btn" onclick="closeModal('modal-bdc');startBdc()">Créer le bulletin</button></li><li><button type="button" class="fr-btn fr-btn--secondary" onclick="closeControl()">Fermer le contrôle</button></li>}}
+{{MODAL:modal-date|Modifier la date et l'heure du contrôle|<div class="fr-input-group"><label class="fr-label" for="date-edit">Date et heure</label><input class="fr-input" type="datetime-local" id="date-edit"></div>|<li><button type="button" class="fr-btn" onclick="saveDate()">Enregistrer</button></li><li><button type="button" class="fr-btn fr-btn--secondary" onclick="closeModal('modal-date')">Annuler</button></li>}}
+{{MODAL:modal-send|Envoi du bulletin de contrôle par email|<div class="fr-input-group"><label class="fr-label" for="send-ent">Adresse e-mail de l'entreprise<span class="fr-hint-text">Format attendu : nom@domaine.fr</span></label><input class="fr-input" type="email" id="send-ent"></div><div class="fr-checkbox-group fr-mb-3w"><input type="checkbox" id="send-copy" onchange="document.getElementById('send-drv-wrap').hidden=!this.checked"><label class="fr-label" for="send-copy">Envoyer aussi une copie au conducteur</label></div><div class="fr-input-group" id="send-drv-wrap" hidden><label class="fr-label" for="send-drv">Adresse e-mail du conducteur</label><input class="fr-input" type="email" id="send-drv"></div>|<li><button type="button" class="fr-btn" onclick="bdcSend()">Envoyer</button></li><li><button type="button" class="fr-btn fr-btn--secondary" onclick="closeModal('modal-send')">Annuler</button></li>}}
+{{MODAL:modal-notsent|Bulletin de contrôle non remis|<p>Le bulletin n'a pas été remis au conducteur ni envoyé à l'entreprise. Vous pourrez le faire plus tard depuis votre historique de contrôles.</p>|<li><button type="button" class="fr-btn" onclick="closeModal('modal-notsent');openSend()">Envoyer le bulletin</button></li><li><button type="button" class="fr-btn fr-btn--secondary" onclick="closeModal('modal-notsent');closeControl()">Fermer le contrôle</button></li>}}
