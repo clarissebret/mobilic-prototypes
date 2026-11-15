@@ -5,7 +5,7 @@ DIST = os.path.join(ROOT, 'node_modules/@gouvfr/dsfr/dist/')
 REMIX = os.path.join(ROOT, 'node_modules/remixicon/icons/')
 DSFR_VERSION = json.load(open(os.path.join(ROOT, 'node_modules/@gouvfr/dsfr/package.json')))['version']
 CDN = f'https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@{DSFR_VERSION}/dist/'
-PROTO = sys.argv[1] if len(sys.argv) > 1 else 'controle-lic-papier'
+PROTO = sys.argv[1] if len(sys.argv) > 1 else 'controleur'
 B = os.path.join(ROOT, 'prototypes', PROTO) + '/'
 LOGO = os.path.join(ROOT, 'assets/logo-mobilic.png')
 

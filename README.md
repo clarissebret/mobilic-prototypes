@@ -6,9 +6,11 @@ Prototypes interactifs de [Mobilic](https://mobilic.beta.gouv.fr), construits su
 
 ## Prototypes
 
-| Prototype | Dossier | Contenu |
-|---|---|---|
-| Contrôle LIC papier / feuille de route | `prototypes/controle-lic-papier` | Interface contrôleur mobile : création du contrôle, relevé des infractions, édition, envoi et export du bulletin de contrôle. Inclut le secteur TRS. |
+Un prototype par interface de Mobilic. Chaque interface contient plusieurs flux, listés dans le panneau « Flux à tester », et chaque flux a sa spec dans `specs/`.
+
+| Interface | Dossier | Flux | Spec |
+|---|---|---|---|
+| Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [specs/lic-papier.md](prototypes/controleur/specs/lic-papier.md) |
 
 Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dépôt.
 
@@ -20,15 +22,18 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Structure
 
+Voir aussi [CLAUDE.md](CLAUDE.md) pour les conventions de travail.
+
 ```
-prototypes/<nom>/      sources d'un prototype
+prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
+  specs/<flux>.md      règles fonctionnelles et design de chaque flux
   app.html             écrans de l'application (rendus dans le cadre du téléphone, 360 px)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
   shell.html           cadre du prototype : panneau de commandes, téléphone Android, aperçu PDF
 assets/                logo Mobilic
-scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<nom>/
+scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/
 scripts/build-index.mjs  page d'accueil listant les prototypes
 scripts/check-confidentiality.mjs  garde-fou avant publication
 ```
