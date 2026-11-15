@@ -32,7 +32,7 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
-  prototype.json       titre, description, parcours du panneau, données de test
+  prototype.json       titre, description, parcours du panneau
 composants/            documentation des composants Mobilic hors DSFR
 shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
 assets/                logo Mobilic

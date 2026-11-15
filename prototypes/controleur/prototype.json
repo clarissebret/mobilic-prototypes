@@ -6,9 +6,5 @@
       "libelle": "Contrôle LIC papier / feuille de route",
       "commande": "flow-lic"
     }
-  ],
-  "donnees_test": [
-    "TRM - Courte distance",
-    "TRS - Transport sanitaire"
   ]
 }

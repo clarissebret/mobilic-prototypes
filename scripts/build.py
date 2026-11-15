@@ -56,8 +56,7 @@ SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
   .replace('{{PARCOURS}}', '\n'.join(
     f'      <li class="flow fr-mb-2w"><span class="fr-text--sm fr-mb-0">{escape(p["libelle"])}</span>'
     f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '
-    f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours']))
-  .replace('{{DONNEES_TEST}}', '\n'.join(f'          <option>{escape(o)}</option>' for o in CONF['donnees_test'])))
+    f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours'])))
 app_css = open(B + 'app.css').read()
 for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):
     if f'--{tok}:' not in css and tok not in ('icon-size',):

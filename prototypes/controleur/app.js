@@ -67,9 +67,11 @@ function resetForm() {
   });
   clearCompany();
 }
-function fillDemo(act) {
+/* Remplit le formulaire avec des données fictives. L'activité choisie par la personne qui teste est conservée. */
+function fillDemo() {
+  const act = $('f-activite').value;
   resetForm(); go('form');
-  $('f-activite').value = act || 'TRM - Courte distance';
+  $('f-activite').value = act;
   $('f-nom').value = 'Vincent'; $('f-prenom').value = 'Arthur';
   $('f-jour').value = '12'; $('f-mois').value = '02'; $('f-annee').value = '1992';
   $('f-nat').value = 'France'; $('f-siren').value = '110014016'; searchSiren();
@@ -306,7 +308,7 @@ window.addEventListener('message', e => {
   if (m.type !== 'cmd') return;
   if (m.name === 'flow-lic') { resetAll(); go('form'); }
   if (m.name === 'fill') {
-    if (current === 'form') fillDemo(m.act);
+    if (current === 'form') fillDemo();
     else if (current === 'bdc') fillBdc();
     else if (current === 'infractions') { fillInfractions(draft); renderInfEdit(); }
     else if (current === 'control' && activeTab === 1 && rel.editing) { fillInfractions(rel.draft); renderTab(); }

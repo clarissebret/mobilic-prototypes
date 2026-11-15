@@ -78,12 +78,6 @@
 {{PARCOURS}}
     </ul>
     <div class="fill fr-mb-3w" id="fill" hidden>
-      <div class="fr-select-group fr-mb-2w" id="fill-act-group">
-        <label class="fr-label" for="demo-act">Activité des données de test</label>
-        <select class="fr-select" id="demo-act">
-{{DONNEES_TEST}}
-        </select>
-      </div>
       <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
     </div>
     <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left fr-mb-4w" onclick="cmd('reset')">Réinitialiser</button>
@@ -136,7 +130,7 @@
   const css = document.getElementById('dsfr-css').textContent + document.getElementById('app-css').textContent;
   frame.srcdoc = '<!DOCTYPE html><html lang="fr" data-fr-scheme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'
     + css + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
-  function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name, act: document.getElementById('demo-act').value }, '*'); }
+  function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name }, '*'); }
   const pdf = document.getElementById('pdf');
   function back() {
     if (pdf.classList.contains('open')) return pdf.classList.remove('open');
@@ -147,7 +141,6 @@
     if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }
     if (m.type === 'screen') {
       document.getElementById('fill').hidden = !m.form;
-      document.getElementById('fill-act-group').hidden = m.name !== 'form';
     }
   });
   const device = document.querySelector('.device'), box = document.getElementById('device-box');

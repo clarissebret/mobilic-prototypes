@@ -6,14 +6,14 @@ Code : `.ctrl-tabs` dans `prototypes/controleur/app.css`.
 
 ## Anatomie
 
-Barre d'onglets pleine largeur ; chaque onglet : icône (20 px), libellé, badge DSFR optionnel.
+Barre d'onglets pleine largeur ; chaque onglet : icône (20 px), libellé (`fr-text--sm`), badge DSFR optionnel.
 
 ## États
 
 | État | Rendu |
 |---|---|
 | Inactif | Texte `--text-default-grey` |
-| Actif | Texte `--text-active-blue-france`, poids 500, soulignement `--border-active-blue-france` |
+| Actif | Texte `--text-active-blue-france`, graisse 500 (valeur de la maquette, sans classe DSFR équivalente), soulignement `--border-active-blue-france` |
 
 ## Badge
 
