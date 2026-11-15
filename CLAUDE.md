@@ -8,11 +8,13 @@
 
 ## Écrire une spec
 
-- Une spec décrit le comportement attendu du produit, sous forme de règles numérotées, du point de vue de l'utilisateur. Elle sert de source de vérité et aide les devs à implémenter.
-- Un seul fichier par interface. Structure : objectif, utilisateurs et contexte, types de flux, règles communes (groupées par étape du parcours), puis une section par flux avec ses règles propres et ses données de référence (ex. liste des NATINF), enfin les composants utilisés (liens).
-- Une règle commune à plusieurs flux n'est écrite qu'une fois, dans les règles communes. Numérotation continue dans tout le fichier.
+- Une spec décrit le comportement attendu du produit, du point de vue de l'utilisateur. Elle sert de source de vérité et aide les devs à implémenter.
+- Un seul fichier `SPECS.md` par interface. Structure : utilisateurs et contexte (qui, où, ce qui est contrôlé), parcours, une section par étape du parcours, navigation, textes propres à une activité, données de référence (ex. infractions), composants utilisés.
+- Deux dimensions font varier les règles : le **type de contrôle** (Mobilic, papier, sans LIC) et l'**activité** (marchandises, déménagement, voyageurs, sanitaire). Une règle commune est écrite une seule fois ; une règle qui varie va dans un tableau « Selon le type de contrôle » ou « Selon l'activité » de son étape.
+- Chaque règle a un identifiant stable : préfixe de l'étape + numéro (`CRE-`, `REL-`, `BDC-`, `NAV-`). On ajoute à la suite, on ne renumérote jamais, un identifiant supprimé n'est pas réutilisé. L'historique des changements est celui de Git.
+- Être précis sur ce qui compte pour l'implémentation : règles métier, conditions, messages d'erreur et de confirmation (texte exact), cas limites.
 - Ne pas y mettre : le comportement ou le style d'un composant (il va dans `composants/`), des détails d'implémentation, des valeurs de mise en page, des questions ouvertes ou des notes internes.
-- Rester au bon niveau : « une infraction n'est retenue que si au moins un jour est sélectionné », pas « le contour passe en bleu ».
+- Ne jamais inventer une règle métier, un texte ou une valeur par activité. Quand un cas n'est pas couvert pendant le prototypage (erreur, cas limite, état vide, différence par activité ou type de contrôle, texte manquant), poser la question à la propriétaire du dépôt, une question à la fois, avant de l'écrire dans la spec.
 
 ## Organisation
 

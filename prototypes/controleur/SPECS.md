@@ -1,78 +1,121 @@
 # Specs : interface contrôleur
 
-Interface mobile des agents de contrôle. Ce document décrit le comportement attendu du produit et fait foi pour l'implémentation.
+Ce document décrit le comportement attendu de l'interface contrôleur. Il fait foi pour l'implémentation.
 
-## Objectif
-
-Permettre à l'agent de contrôle de contrôler le temps de travail d'un salarié du transport léger ou du déménagement, de relever les infractions et de produire le bulletin de contrôle.
+Chaque règle a un identifiant stable (ex. `REL-03`) : il ne change pas quand on ajoute ou supprime d'autres règles, et un identifiant supprimé n'est jamais réutilisé.
 
 ## Utilisateurs et contexte
 
-- **Agent de contrôle**, sur le bord de la route, sur mobile.
-- Le salarié contrôlé peut tenir son temps de travail dans Mobilic, sur un livret individuel de contrôle (LIC) papier ou, pour le transport sanitaire (TRS), sur une feuille de route. Il peut aussi ne présenter aucun document.
+### Qui contrôle
 
-## Types de contrôle
+L'interface est utilisée par l'ensemble des corps habilités à contrôler le temps de travail dans le transport routier léger et le déménagement :
 
-| Type | Situation | Règles propres |
-|---|---|---|
-| Contrôle Mobilic | Le salarié utilise Mobilic | À spécifier |
-| Contrôle papier | Le salarié présente un LIC papier ou une feuille de route | [Contrôle papier](#contrôle-papier) |
-| Contrôle sans LIC | Le salarié ne présente aucun document | À spécifier |
+- agents de contrôle des transports ;
+- inspecteurs du travail ;
+- forces de l'ordre ;
+- agents de l'URSSAF.
 
-Les trois types partagent le même parcours : création du contrôle, relevé des infractions, bulletin de contrôle. Les règles communes s'appliquent à tous ; chaque type ajoute ses règles propres.
+### Où
 
-## Règles communes
+- **En bord de route** : contrôle d'un salarié en activité, sur mobile, souvent debout et en extérieur. L'agent doit pouvoir créer le contrôle et relever les infractions rapidement.
+- **En entreprise** : contrôle dans les locaux de l'entreprise.
 
-### Création du contrôle
+### Ce qui est contrôlé
 
-1. L'agent crée le contrôle depuis l'accueil en choisissant le type de contrôle.
-2. L'agent renseigne le salarié, l'entreprise, le véhicule et le secteur d'activité. Les informations obligatoires sont signalées comme telles.
-3. L'entreprise est identifiée par son SIREN. Un SIREN invalide est signalé à l'agent avant la création du contrôle.
-4. Le contrôle n'est créé que lorsque toutes les informations obligatoires sont valides.
+Un contrôle se caractérise par deux dimensions indépendantes.
 
-### Relevé des infractions
+**Le type de contrôle**, selon ce que le salarié présente pour justifier de son temps de travail :
 
-5. La liste des infractions proposées dépend du type de contrôle et du secteur d'activité.
-6. Pour chaque infraction, l'agent indique quand elle a été constatée : par jour, ou par semaine selon l'infraction.
-7. Une infraction n'est retenue que si au moins un jour ou une semaine est sélectionné.
-8. Le nombre d'infractions retenues est visible depuis la page du contrôle.
-9. Les infractions relevées sont les mêmes partout où elles apparaissent : page du contrôle, bulletin de contrôle et export PDF. Une modification à un endroit est reflétée partout.
-10. Les modifications ne sont prises en compte que lorsque l'agent les enregistre. S'il quitte le relevé avec des modifications non enregistrées, il lui est demandé de confirmer l'abandon.
+| Type de contrôle | Le salarié présente |
+|---|---|
+| Contrôle Mobilic | Son temps de travail saisi dans Mobilic |
+| Contrôle papier | Un livret individuel de contrôle (LIC) papier, ou une feuille de route en transport sanitaire |
+| Contrôle sans LIC | Aucun document |
 
-### Bulletin de contrôle
+**L'activité** de l'entreprise contrôlée :
 
-11. L'agent complète le bulletin de contrôle en 3 étapes ; il peut revenir à l'étape précédente sans perdre ce qu'il a saisi.
-12. Le bulletin reprend les infractions retenues.
-13. Une fois le bulletin complété, l'agent peut l'envoyer, indiquer qu'il n'a pas pu être remis, ou l'exporter en PDF.
+| Activité | Code |
+|---|---|
+| Transport de marchandises | TRM |
+| Déménagement | À préciser |
+| Transport de voyageurs | TRV |
+| Transport sanitaire | TRS |
 
-### Secteur transport sanitaire (TRS)
+Les infractions proposées et certaines informations demandées dépendent de ces deux dimensions. Les règles ci-dessous sont communes, sauf mention « selon le type de contrôle » ou « selon l'activité ». Dans ces tableaux, une case vide signifie que la règle n'est pas encore spécifiée pour ce cas.
 
-14. Les informations sans objet pour le transport sanitaire ne sont ni demandées ni affichées : provenance, destination, type de transport, nature de la marchandise, licence, copie conforme et poids. Le pays d'immatriculation reste demandé.
-15. Les règles affichées pour chaque infraction sont celles applicables au TRS.
+## Parcours
 
-### Navigation
+Le parcours est le même pour tous les types de contrôle :
 
-16. Le bouton Retour du téléphone ramène à l'étape précédente sans perte de données silencieuse : il ferme d'abord une fenêtre ouverte, et demande confirmation avant d'abandonner une saisie en cours.
+1. création du contrôle ;
+2. relevé des infractions ;
+3. bulletin de contrôle.
 
-## Contrôle papier
+## 1. Création du contrôle
 
-S'applique quand le salarié présente un LIC papier ou une feuille de route.
+- **CRE-01** L'agent crée le contrôle depuis l'accueil en choisissant le type de contrôle.
+- **CRE-02** L'agent renseigne le salarié, l'entreprise, le véhicule et l'activité. Les informations obligatoires sont signalées comme telles.
+- **CRE-03** L'entreprise est identifiée par son SIREN. Un SIREN invalide est signalé à l'agent avant la création du contrôle.
+- **CRE-04** Le contrôle n'est créé que lorsque toutes les informations obligatoires sont valides.
 
-17. À la création, l'agent indique si la page du jour du LIC est remplie.
-18. L'agent relève les infractions à partir du document présenté.
-19. En TRS, le contrôle peut porter sur le LIC ou sur la feuille de route ; les textes du parcours mentionnent les deux.
+### Selon le type de contrôle
 
-### Infractions proposées
+| Règle | Mobilic | Papier | Sans LIC |
+|---|---|---|---|
+| **CRE-05** L'agent indique si la page du jour du LIC est remplie | | Oui | |
 
-| NATINF | Infraction | Constatée par |
-|---|---|---|
-| 23103 | Tenue non conforme du livret individuel de contrôle | jour |
-| 11292 | Dépassement(s) de la durée maximale du travail quotidien | jour |
-| 11298 | Dépassement(s) de la durée maximale du travail hebdomadaire sur une semaine civile isolée | semaine |
-| 13152 | Non-respect(s) du repos hebdomadaire | semaine |
-| 20525 | Non-respect(s) du repos quotidien | jour |
-| 32083 | Dépassement(s) de la durée maximale de travail de nuit | jour |
-| 35187 | Non-respect(s) du temps de pause et/ou dépassement(s) de la durée maximale du travail ininterrompu | jour |
+## 2. Relevé des infractions
+
+- **REL-01** Pour chaque infraction, l'agent indique quand elle a été constatée : par jour, ou par semaine selon l'infraction.
+- **REL-02** Une infraction n'est retenue que si au moins un jour ou une semaine est sélectionné.
+- **REL-03** Le nombre d'infractions retenues est visible depuis la page du contrôle.
+- **REL-04** Les infractions relevées sont les mêmes partout où elles apparaissent : page du contrôle, bulletin de contrôle et export PDF. Une modification à un endroit est reflétée partout.
+- **REL-05** Les modifications ne sont prises en compte que lorsque l'agent les enregistre. S'il quitte le relevé avec des modifications non enregistrées, il lui est demandé de confirmer l'abandon.
+- **REL-06** Les infractions proposées dépendent du type de contrôle et de l'activité (voir [Infractions](#infractions)).
+- **REL-07** Pour chaque infraction, la règle affichée est celle qui s'applique à l'activité contrôlée.
+
+### Selon le type de contrôle
+
+| Règle | Mobilic | Papier | Sans LIC |
+|---|---|---|---|
+| **REL-08** L'agent relève les infractions à partir du document présenté | | Oui | |
+
+## 3. Bulletin de contrôle
+
+- **BDC-01** L'agent complète le bulletin de contrôle en 3 étapes ; il peut revenir à l'étape précédente sans perdre ce qu'il a saisi.
+- **BDC-02** Le bulletin reprend les infractions retenues.
+- **BDC-03** Une fois le bulletin complété, l'agent peut l'envoyer, indiquer qu'il n'a pas pu être remis, ou l'exporter en PDF.
+
+### Selon l'activité
+
+| Règle | TRM | Déménagement | TRV | TRS |
+|---|---|---|---|---|
+| **BDC-04** Provenance, destination, type de transport, nature de la marchandise, licence, copie conforme et poids sont demandés et affichés | Oui | | | Non |
+| **BDC-05** Le pays d'immatriculation est demandé | Oui | | | Oui |
+
+## Navigation
+
+- **NAV-01** Le bouton Retour du téléphone ramène à l'étape précédente sans perte de données silencieuse : il ferme d'abord une fenêtre ouverte, et demande confirmation avant d'abandonner une saisie en cours.
+
+## Textes propres à une activité
+
+| Activité | Texte |
+|---|---|
+| TRS | Les textes du parcours mentionnent « livret individuel de contrôle ou feuille de route » |
+
+## Infractions
+
+Infractions proposées par type de contrôle. Les différences par activité seront ajoutées dans ce tableau.
+
+| NATINF | Infraction | Constatée par | Papier |
+|---|---|---|---|
+| 23103 | Tenue non conforme du livret individuel de contrôle | jour | Oui |
+| 11292 | Dépassement(s) de la durée maximale du travail quotidien | jour | Oui |
+| 11298 | Dépassement(s) de la durée maximale du travail hebdomadaire sur une semaine civile isolée | semaine | Oui |
+| 13152 | Non-respect(s) du repos hebdomadaire | semaine | Oui |
+| 20525 | Non-respect(s) du repos quotidien | jour | Oui |
+| 32083 | Dépassement(s) de la durée maximale de travail de nuit | jour | Oui |
+| 35187 | Non-respect(s) du temps de pause et/ou dépassement(s) de la durée maximale du travail ininterrompu | jour | Oui |
 
 ## Composants utilisés
 
