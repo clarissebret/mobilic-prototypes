@@ -9,7 +9,7 @@ const state = { control: null, bdc: null, notes: [], history: [
     ctrl('mobilic', 'Basset Hugo', 'GH-512-KL', '10:12', 'Aire de Paimpont-Brocéliande', 'remis', 'Transports Basset', '8 jours', 1),
     ctrl('lic', 'Allard Sophie', 'AB-123-CD', '08:05', 'Aire de Paimpont-Brocéliande', 'attente', 'Déménagements Allard', '28 jours', 0)] },
   { date: daysAgo(1), items: [
-    ctrl('mobilic', 'Pleyel Lucie', 'EF-456-GH', '15:40', 'Rennes', 'cours', 'Pleyel Logistique', '8 jours', 2),
+    ctrl('mobilic', 'Pleyel Lucie', 'EF-456-GH', '15:40', 'Rennes', 'attente', 'Pleyel Logistique', '8 jours', 2),
     ctrl('lic', 'Letronc Yves', 'JK-789-LM', '11:30', 'Vitré', 'non', 'Letronc et Fils', '28 jours', 0)] },
   { date: daysAgo(5), items: [
     ctrl('mobilic', 'Marchal Inès', 'NP-246-QR', '09:20', 'Saint-Malo', 'remis', 'Marchal Express', '8 jours', 0)] }
@@ -149,7 +149,7 @@ function closeControl() {
   resetForm(); go('home'); renderHistory(day); toast('Contrôle enregistré');
 }
 const BDC_BADGE = {
-  remis: ['success', 'Remis'], attente: ['warning', "En attente d'envoi"], cours: ['warning', 'En cours'], non: ['error', 'Non créé'] };
+  remis: ['success', 'Remis'], attente: ['warning', "En attente d'envoi"], non: ['error', 'Non créé'] };
 function dayTitle(d) {
   const n = Math.round((daysAgo(0) - d) / 864e5);
   if (n === 0) return 'Aujourd’hui';

@@ -100,6 +100,18 @@ Le parcours est le même pour tous les types de contrôle :
 | **BDC-04** Provenance, destination, type de transport, nature de la marchandise, licence, copie conforme et poids sont demandés et affichés | Oui | | | Non |
 | **BDC-05** Le pays d'immatriculation est demandé | Oui | | | Oui |
 
+## Accueil
+
+- **ACC-01** L'accueil présente les derniers contrôles de l'agent, regroupés par jour, du plus récent au plus ancien.
+- **ACC-02** Pour chaque contrôle sont affichés : le salarié, le véhicule, l'heure, le lieu de contrôle, le type de contrôle, le statut du bulletin de contrôle, l'entreprise, le nombre de jours contrôlés et le nombre d'infractions retenues.
+- **ACC-03** Le statut du bulletin de contrôle est l'un des suivants :
+
+  | Statut | Situation |
+  |---|---|
+  | Remis | Le bulletin a été envoyé ou remis au salarié |
+  | En attente d'envoi | Le bulletin a été créé mais pas encore envoyé ni remis |
+  | Non créé | Aucun bulletin n'a été créé pour ce contrôle |
+
 ## Navigation
 
 - **NAV-01** Le bouton Retour du téléphone ramène à l'étape précédente sans perte de données silencieuse : il ferme d'abord une fenêtre ouverte, et demande confirmation avant d'abandonner une saisie en cours.
