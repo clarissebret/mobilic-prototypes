@@ -6,7 +6,7 @@ Prototypes interactifs de [Mobilic](https://mobilic.beta.gouv.fr), construits su
 
 ## Prototypes
 
-Un prototype par interface de Mobilic : contrôleur, gestionnaire, salarié. Chaque interface contient plusieurs flux, listés dans le panneau « Flux à tester », et un seul fichier `SPECS.md` qui réunit les specs de tous ses flux.
+Un prototype par interface de Mobilic : contrôleur, gestionnaire, salarié. Chaque interface contient plusieurs flux, listés dans le panneau « Parcours », et un seul fichier `SPECS.md` qui réunit les specs de tous ses flux.
 
 | Interface | Dossier | Flux | Spec |
 |---|---|---|---|
@@ -16,7 +16,8 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- Le panneau de gauche liste les flux à tester, propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
+- Le panneau « Parcours » à gauche liste les parcours à tester, propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
+- Au-dessus du téléphone, un menu permet de choisir la taille d'écran (petit, moyen, grand). Le téléphone est réduit si la fenêtre n'est pas assez haute.
 - La barre Android du bas est active : le bouton Retour revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 
@@ -31,8 +32,9 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
-  shell.html           cadre du prototype : panneau de commandes, téléphone Android, aperçu PDF
+  prototype.json       titre, parcours du panneau, données de test
 composants/            documentation des composants Mobilic hors DSFR
+shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/
 scripts/build-index.mjs  page d'accueil listant les prototypes

@@ -19,7 +19,8 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Un nouveau flux s'ajoute au panneau « Flux à tester » de `shell.html` et dans la table du `README.md`.
+- Le cadre des prototypes mobiles (panneau « Parcours » à gauche, téléphone au centre avec le choix du modèle, aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
+- Chaque prototype a un `prototype.json` : titre, parcours listés dans le panneau, activités proposées pour « Remplir le formulaire ». Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
 
 ## Conventions UI
@@ -27,7 +28,7 @@
 - DSFR 1.15.4 d'abord : composants et classes DSFR. Le CSS propre à Mobilic (`app.css`) n'utilise que les tokens DSFR (`var(--…)`), jamais de couleur en dur.
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Espacements : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
-- Écran du téléphone : 360 px de large, rendu dans un iframe. Les règles responsives du DSFR sont donc celles du mobile.
+- Écran du téléphone rendu dans un iframe, en 3 tailles : 360 × 640, 360 × 740 (par défaut) et 412 × 915. Les règles responsives du DSFR sont donc celles du mobile. Vérifier chaque écran modifié sur les 3 tailles.
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.
 

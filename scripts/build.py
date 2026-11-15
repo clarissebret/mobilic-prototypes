@@ -49,8 +49,16 @@ css += '\n/* Icônes Remix Icon utilisées par le prototype */\n' + '\n'.join(ru
 css += '\n:root{--chevron:url(' + datauri(glob.glob(f'{REMIX}*/arrow-down-s-line.svg')[0]) + ')}'
 
 # 3. App pieces
+from html import escape
+CONF = json.load(open(B + 'prototype.json'))
+SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
+  .replace('{{TITRE}}', escape(CONF['titre']))
+  .replace('{{PARCOURS}}', '\n'.join(
+    f'      <li><a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="#{p["commande"]}" '
+    f'onclick="cmd(\'{p["commande"]}\'); return false;">{escape(p["libelle"])}</a></li>' for p in CONF['parcours']))
+  .replace('{{DONNEES_TEST}}', '\n'.join(f'          <option>{escape(o)}</option>' for o in CONF['donnees_test'])))
 app_css = open(B + 'app.css').read()
-for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + open(B + 'shell.html').read()):
+for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):
     if f'--{tok}:' not in css and tok not in ('icon-size',):
         raise SystemExit(f'Token DSFR inconnu : --{tok}')
 
@@ -101,7 +109,7 @@ def star(m):
 app = re.sub(r'<label class="fr-label" for="([^"]+)">(.*?)</label>', star, app, flags=re.S)
 assert '{{' not in app, re.findall(r'\{\{[^}]*\}\}', app)
 
-out = (open(B + 'shell.html').read()
+out = (SHELL
        .replace('{{DSFR_CSS}}', css).replace('{{APP_CSS}}', app_css)
        .replace('{{APP_HTML}}', app).replace('{{APP_JS}}', open(B + 'app.js').read() + '\n' + open(B + 'infractions.js').read() + "\nrenderHistory(); go('home');\n"))
 import shutil
