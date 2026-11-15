@@ -24,6 +24,12 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | [Tuile de choix](tuile-choix.md) | Tuile (variante) | Contrôleur : accueil |
 | [Tableau Mobilic](tableau.md) | Tableau (variante) | Toutes les interfaces ; contrôleur : derniers contrôles |
 
+## Ajustements des composants DSFR
+
+| Composant DSFR | Ajustement Mobilic |
+|---|---|
+| En-tête (`fr-header`) | Le bloc des logos ne change pas de fond au survol ni à l'appui |
+
 ## Documenter un composant
 
 Un fichier par composant, avec : rôle, anatomie, variantes, états, tokens, accessibilité. Le code d'un composant commun à toutes les interfaces est dans `shared/mobilic.css` ; celui d'un composant propre à une interface est dans son `app.css`.
