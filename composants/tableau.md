@@ -18,6 +18,7 @@ Code : classe `mobilic-table` à ajouter sur `.fr-table`, styles dans `shared/mo
 |---|---|---|
 | Fond de l'en-tête | `--background-alt-grey` | `--background-contrast-grey` (plus foncé) |
 | Ligne sous l'en-tête | 1 px `--border-plain-grey` | 2 px `--border-plain-grey` |
+| Survol de l'en-tête | Fond plus foncé | Aucun changement |
 | Séparateur entre les lignes | 1 px `--border-contrast-grey` | 1 px `--border-default-grey` (clair) |
 
 Tout le reste est celui du DSFR : typographie, défilement horizontal sur mobile.
