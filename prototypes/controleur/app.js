@@ -1,10 +1,18 @@
 const $ = id => document.getElementById(id);
 const v = id => $(id).value.trim();
 const pad = n => String(n).padStart(2, '0');
+/* Historique fictif des derniers contrôles, daté par rapport à aujourd'hui */
+const daysAgo = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d; };
+const ctrl = (type, name, veh, time, lieu, bdc, ent, jours, inf) => ({ type, name, veh, time, lieu, bdc, ent, jours, inf });
 const state = { control: null, bdc: null, notes: [], history: [
-  { date: 'Jeudi 27 janvier 2028', items: [{ type: 'mobilic', name: 'Basset Hugo', time: '10:12' }] },
-  { date: 'Mercredi 26 janvier 2028', items: [{ type: 'mobilic', name: 'Pleyel Lucie', time: '15:40' }, { type: 'lic', name: 'Allard Sophie', time: '08:05' }] },
-  { date: 'Lundi 22 janvier 2028', items: [{ type: 'lic', name: 'Letronc Yves', time: '11:30' }] }
+  { date: daysAgo(0), items: [
+    ctrl('mobilic', 'Basset Hugo', 'GH-512-KL', '10:12', 'Aire de Paimpont-Brocéliande', 'remis', 'Transports Basset', '8 jours', 1),
+    ctrl('lic', 'Allard Sophie', 'AB-123-CD', '08:05', 'Aire de Paimpont-Brocéliande', 'attente', 'Déménagements Allard', '28 jours', 0)] },
+  { date: daysAgo(1), items: [
+    ctrl('mobilic', 'Pleyel Lucie', 'EF-456-GH', '15:40', 'Rennes', 'cours', 'Pleyel Logistique', '8 jours', 2),
+    ctrl('lic', 'Letronc Yves', 'JK-789-LM', '11:30', 'Vitré', 'non', 'Letronc et Fils', '28 jours', 0)] },
+  { date: daysAgo(5), items: [
+    ctrl('mobilic', 'Marchal Inès', 'NP-246-QR', '09:20', 'Saint-Malo', 'remis', 'Marchal Express', '8 jours', 0)] }
 ] };
 
 /* ---------- Navigation ---------- */
@@ -128,34 +136,58 @@ function requestClose() {
 }
 function closeControl() {
   closeModal('modal-bdc');
-  const c = state.control, d = c.date;
-  const label = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const day = label.charAt(0).toUpperCase() + label.slice(1);
-  let entry = state.history.find(h => h.date === day);
+  const c = state.control, d = c.date, b = state.bdc;
+  const day = new Date(d); day.setHours(0, 0, 0, 0);
+  let entry = state.history.find(h => h.date.getTime() === day.getTime());
   if (!entry) { entry = { date: day, items: [] }; state.history.unshift(entry); }
-  entry.items.unshift({ type: 'lic', name: c.nom + ' ' + c.prenom, time: fmt(d).split(' à ')[1], isNew: true });
+  const bdc = !b ? 'non' : (b.sentEnt || b.sentDrv || b.paper) ? 'remis' : 'attente';
+  const lieu = b ? [b.commune, b.lieu].filter(Boolean).join(' ') : '';
+  const inf = state.infractions.filter(i => i.sel.length).length;
+  entry.items.unshift(ctrl('lic', c.nom + ' ' + c.prenom, c.veh, fmt(d).split(' à ')[1], lieu || '–', bdc, c.ent, '–', inf));
+  entry.items[0].isNew = true;
   $('hist-type').value = 'lic';
   resetForm(); go('home'); renderHistory(day); toast('Contrôle enregistré');
 }
-
-/* ---------- Accueil : derniers contrôles ---------- */
+const BDC_BADGE = {
+  remis: ['success', 'Remis'], attente: ['warning', "En attente d'envoi"], cours: ['warning', 'En cours'], non: ['error', 'Non créé'] };
+function dayTitle(d) {
+  const n = Math.round((daysAgo(0) - d) / 864e5);
+  if (n === 0) return 'Aujourd’hui';
+  if (n === 1) return 'Hier';
+  const l = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return l.charAt(0).toUpperCase() + l.slice(1);
+}
+/* Derniers contrôles : un accordéon DSFR par jour, avec un tableau DSFR défilant horizontalement */
 function renderHistory(openDay) {
   const type = $('hist-type').value;
-  $('history').innerHTML = state.history.map(h => {
-    const items = h.items.filter(it => it.type === type), open = h.date === openDay;
-    return `<div class="day-acc">
-      <button type="button" class="day-acc__btn ${open ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-right-s-line'}" aria-expanded="${open}" onclick="toggleDay(this)">${h.date}</button>
-      <div class="day-acc__content" ${open ? '' : 'hidden'}>${items.length ? items.map(it =>
-        `<div class="ctrl-item fr-text--sm fr-mb-0"><span>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-ml-1w">Nouveau</span>' : ''}</span><span class="mention">${it.time}</span></div>`).join('')
-        : '<p class="fr-text--sm mention fr-mb-0">Aucun contrôle de ce type.</p>'}</div>
-    </div>`;
+  $('history').innerHTML = state.history.map((h, k) => {
+    const items = h.items.filter(it => it.type === type);
+    const open = openDay ? h.date.getTime() === openDay.getTime() : k === 0;
+    const id = 'hist-' + k;
+    const rows = items.map(it => {
+      const [kind, label] = BDC_BADGE[it.bdc];
+      return `<tr><td>${it.name}${it.isNew ? ' <span class="fr-badge fr-badge--sm fr-badge--new fr-badge--no-icon">Nouveau</span>' : ''}</td><td>${it.veh}</td><td>${it.time}</td><td>${it.lieu}</td>
+        <td>${it.type === 'mobilic' ? 'Mobilic' : 'LIC papier'}</td><td><span class="fr-badge fr-badge--sm fr-badge--${kind} fr-badge--no-icon">${label}</span></td>
+        <td>${it.ent}</td><td>${it.jours}</td><td>${it.inf}</td></tr>`;
+    }).join('');
+    return `<section class="fr-accordion">
+      <h3 class="fr-accordion__title"><button type="button" class="fr-accordion__btn" aria-expanded="${open}" aria-controls="${id}" onclick="toggleAcc(this)">${dayTitle(h.date)}</button></h3>
+      <div class="fr-collapse${open ? ' fr-collapse--expanded' : ''}" id="${id}">
+        ${items.length ? `<div class="fr-table fr-table--sm fr-table--no-caption fr-mb-0"><div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+          <table><caption>Contrôles du ${dayTitle(h.date).toLowerCase()}</caption>
+            <thead><tr><th scope="col">Salarié</th><th scope="col">Véhicule</th><th scope="col">Heure</th><th scope="col">Lieu de contrôle</th><th scope="col">Type</th>
+              <th scope="col">Bulletin de contrôle</th><th scope="col">Nom entreprise</th><th scope="col">Jours contrôlés</th><th scope="col">Infractions retenues</th></tr></thead>
+            <tbody>${rows}</tbody></table></div></div></div></div>`
+        : '<p class="fr-text--sm mention fr-mb-0">Aucun contrôle de ce type.</p>'}
+      </div>
+    </section>`;
   }).join('');
 }
-function toggleDay(btn) {
+/* Ouverture / fermeture d'un accordéon DSFR sans le JS du DSFR */
+function toggleAcc(btn) {
   const open = btn.getAttribute('aria-expanded') !== 'true';
   btn.setAttribute('aria-expanded', open);
-  btn.classList.toggle('fr-icon-arrow-down-s-line', open); btn.classList.toggle('fr-icon-arrow-right-s-line', !open);
-  btn.nextElementSibling.hidden = !open;
+  $(btn.getAttribute('aria-controls')).classList.toggle('fr-collapse--expanded', open);
 }
 
 /* ---------- Bulletin de contrôle ---------- */
