@@ -36,6 +36,7 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
 composants/            documentation des composants Mobilic hors DSFR
 shared/mobilic.css     styles Mobilic communs à toutes les interfaces
 shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
+.claude/skills/        skills Claude Code du dépôt (dont ceux d'Emil Kowalski, licence MIT)
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/
 scripts/build-index.mjs  page d'accueil listant les prototypes

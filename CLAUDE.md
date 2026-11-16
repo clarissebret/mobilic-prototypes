@@ -16,6 +16,11 @@
 - Ne pas y mettre : le comportement ou le style d'un composant (il va dans `composants/`), des détails d'implémentation, des valeurs de mise en page, des questions ouvertes ou des notes internes.
 - Ne jamais inventer une règle métier, un texte ou une valeur par activité. Quand un cas n'est pas couvert pendant le prototypage (erreur, cas limite, état vide, différence par activité ou type de contrôle, texte manquant), poser la question à la propriétaire du dépôt, une question à la fois, avant de l'écrire dans la spec.
 
+## Skills
+
+- Des skills Claude Code sont fournis dans `.claude/skills/` (voir son `README.md`). Ils aident (tests de données extrêmes, rendu mobile, animations), mais les règles de ce fichier, le DSFR, les specs et les fiches `composants/` priment toujours.
+- Quand des corrections de design reviennent, utiliser `learn-taste` pour les inscrire comme règles ici ou dans `composants/`.
+
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
