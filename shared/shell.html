@@ -12,13 +12,13 @@
   html, body { height: 100%; margin: 0; overflow: hidden; }
   #app { display: block; width: 100%; height: 100%; border: 0; }
 
-  /* Commandes du prototype : bouton flottant + panneau qui s'ouvre depuis lui */
+  /* Commandes du prototype : bouton flottant toujours au premier plan (au-dessus de l'app, des modales et de l'aperçu PDF) + panneau qui s'ouvre depuis lui */
   :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
-  .proto-fab { position: fixed; left: 1rem; top: 50%; z-index: 3500; transform: translateY(-50%); box-shadow: var(--overlap-shadow); }
+  .proto-fab { position: fixed; left: 1rem; top: 50%; z-index: 5000; transform: translateY(-50%); box-shadow: var(--overlap-shadow); }
   .proto-fab:active { transform: translateY(-50%) scale(0.97); }
   /* Petit écran : languette collée au bord gauche, pour masquer le moins de contenu possible */
   @media (max-width: 47.99em) { .proto-fab { left: 0; min-height: 2rem; padding: .25rem; } .proto-panel { left: 2.5rem; } }
-  .proto-panel { position: fixed; left: 4.5rem; top: 50%; z-index: 3500; width: 20rem; max-width: calc(100vw - 5.5rem); max-height: calc(100vh - 2rem);
+  .proto-panel { position: fixed; left: 4.5rem; top: 50%; z-index: 5000; width: 20rem; max-width: calc(100vw - 5.5rem); max-height: calc(100vh - 2rem);
     overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); box-shadow: var(--lifted-shadow);
     transform-origin: left center; transform: translateY(-50%) scale(0.95); opacity: 0; visibility: hidden;
     transition: transform 150ms var(--ease-out), opacity 150ms var(--ease-out), visibility 0s 150ms; }
@@ -76,9 +76,9 @@
 {{PARCOURS}}
   </ul>
   <div class="fill fr-mb-1w" id="fill" hidden>
-    <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill'); togglePanel(false)">Remplir le formulaire</button>
+    <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
   </div>
-  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset'); togglePanel(false)">Réinitialiser</button>
+  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset')">Réinitialiser</button>
 </aside>
 
 <div class="pdf-overlay" id="pdf" role="dialog" aria-modal="true" aria-label="Aperçu du bulletin de contrôle PDF">
@@ -105,14 +105,12 @@
   function togglePanel(open = !panel.classList.contains('open')) {
     panel.classList.toggle('open', open); fab.setAttribute('aria-expanded', open);
   }
-  /* Fermeture : Échap, clic hors du panneau (y compris dans l'app) */
+  /* Le panneau reste ouvert quand on utilise le prototype ; fermeture : bouton ⚙, ✕ ou Échap */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     if (pdf.classList.contains('open')) return pdf.classList.remove('open');
     if (panel.classList.contains('open')) { togglePanel(false); fab.focus(); }
   });
-  document.addEventListener('click', e => { if (!panel.contains(e.target) && !fab.contains(e.target)) togglePanel(false); });
-  window.addEventListener('blur', () => togglePanel(false));   // clic dans l'iframe
   window.addEventListener('message', e => {
     const m = e.data || {};
     if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }

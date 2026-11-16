@@ -1,6 +1,6 @@
 # Panneau latéral
 
-Sur grand écran, affiche un contenu détaillé (le contrôle, son bulletin, son relevé) par-dessus la page principale, sans la quitter.
+Sur grand écran, affiche un contenu détaillé (création du contrôle, page du contrôle, création du bulletin, relevé des infractions) par-dessus la page principale, sans la quitter.
 
 Code : classes `.screen--panel`, `.panel-backdrop`, `body.has-panel` dans `prototypes/controleur/app.css` ; ouverture dans `go()` (`app.js`).
 

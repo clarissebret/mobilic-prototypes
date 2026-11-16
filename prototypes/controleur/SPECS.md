@@ -117,7 +117,7 @@ Le parcours est le même pour tous les types de contrôle :
 ## Navigation
 
 - **NAV-01** Le bouton Retour du téléphone ramène à l'étape précédente sans perte de données silencieuse : il ferme d'abord une fenêtre ouverte, et demande confirmation avant d'abandonner une saisie en cours.
-- **NAV-02** Sur grand écran, le contrôle (page du contrôle, bulletin, relevé des infractions) s'ouvre dans un panneau latéral par-dessus l'accueil ; l'accueil reste visible en arrière-plan. Sur mobile, le contrôle occupe tout l'écran.
+- **NAV-02** Sur grand écran, la création du contrôle et le contrôle lui-même (page du contrôle, création du bulletin, relevé des infractions) s'ouvrent dans un panneau latéral par-dessus l'accueil ; l'accueil reste visible en arrière-plan. Sur mobile, ces écrans occupent tout l'écran.
 
 ## Textes propres à une activité
 

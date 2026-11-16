@@ -17,8 +17,8 @@ const state = { control: null, bdc: null, notes: [], history: [
 
 /* ---------- Navigation ---------- */
 let current = 'home';
-/* Sur grand écran, le contrôle (page du contrôle, bulletin, relevé) s'ouvre dans un panneau latéral par-dessus l'accueil */
-const PANEL = ['control', 'bdc', 'infractions'];
+/* Sur grand écran, la création du contrôle et le contrôle (page, bulletin, relevé) s'ouvrent dans un panneau latéral par-dessus l'accueil */
+const PANEL = ['form', 'control', 'bdc', 'infractions'];
 function go(name) {
   const wasPanel = PANEL.includes(current), isPanel = PANEL.includes(name);
   current = name;

@@ -17,7 +17,7 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 ## Utilisation du prototype
 
 - L'app occupe toute la fenêtre et s'adapte à sa largeur : réduisez la fenêtre ou utilisez le mode responsive du navigateur pour tester le mobile.
-- Le bouton ⚙ à gauche ouvre les commandes du prototype : parcours à tester (bouton ▷), « Remplir le formulaire » sur les écrans qui en ont un, « Réinitialiser ».
+- Le bouton ⚙ à gauche, toujours visible, ouvre les commandes du prototype (le panneau reste ouvert pendant les tests ; ⚙, ✕ ou Échap pour le fermer) : parcours à tester (bouton ▷), « Remplir le formulaire » sur les écrans qui en ont un, « Réinitialiser ».
 - La touche Échap revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 
