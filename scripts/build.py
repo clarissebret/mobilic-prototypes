@@ -87,7 +87,7 @@ def modal(m):
     <div class="fr-modal__body">
       <div class="fr-modal__header"><button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" onclick="closeModal('{mid}')">Fermer</button></div>
       <div class="fr-modal__content"><h1 id="{mid}-title" class="fr-modal__title">{title}</h1>{body}</div>
-      <div class="fr-modal__footer"><ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--equisized">{btns}</ul></div>
+      <div class="fr-modal__footer"><ul class="fr-btns-group fr-btns-group--inline-lg">{btns}</ul></div>
     </div>
   </div></div></div>
 </div>'''
