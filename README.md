@@ -16,9 +16,9 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- Le panneau « Parcours » à gauche liste les parcours à tester (bouton ▷ pour démarrer), propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
-- En bas du panneau, le menu « Téléphone » permet de choisir la taille d'écran (Galaxy S5, Galaxy S8+, Pixel 7). Le téléphone est réduit si la fenêtre n'est pas assez haute.
-- La barre Android du bas est active : le bouton Retour revient à l'écran précédent ou ferme la modale ouverte.
+- L'app occupe toute la fenêtre et s'adapte à sa largeur : réduisez la fenêtre ou utilisez le mode responsive du navigateur pour tester le mobile.
+- Le bouton ⚙ à gauche ouvre les commandes du prototype : parcours à tester (bouton ▷), « Remplir le formulaire » sur les écrans qui en ont un, « Réinitialiser ».
+- La touche Échap revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 
 ## Structure
@@ -28,14 +28,14 @@ Voir aussi [CLAUDE.md](CLAUDE.md) pour les conventions de travail.
 ```
 prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   SPECS.md             specs de l'interface (règles communes + règles propres à chaque flux)
-  app.html             écrans de l'application (rendus dans le cadre du téléphone, 360 px)
+  app.html             écrans de l'application (responsive)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
   prototype.json       titre, description, parcours du panneau
 composants/            documentation des composants Mobilic hors DSFR
 shared/mobilic.css     styles Mobilic communs à toutes les interfaces
-shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
+shared/shell.html      cadre commun des prototypes : app pleine fenêtre, commandes du prototype, aperçu PDF
 .claude/skills/        skills Claude Code du dépôt (dont ceux d'Emil Kowalski, licence MIT)
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/

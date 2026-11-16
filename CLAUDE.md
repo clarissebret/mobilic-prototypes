@@ -24,7 +24,7 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Le cadre des prototypes mobiles (panneau à gauche : parcours, remplissage, réinitialisation, choix du téléphone ; téléphone au centre ; aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
+- Le cadre des prototypes est commun : `shared/shell.html`. L'app occupe toute la fenêtre (responsive) ; un bouton flottant ouvre le panneau des commandes du prototype (parcours, remplissage, réinitialisation) ; aperçu PDF. Ne pas le dupliquer dans un prototype.
 - Chaque prototype a un `prototype.json` : titre, description (affichés en haut du panneau), parcours listés dans le panneau. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
 
@@ -37,9 +37,10 @@
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
-- Écran du téléphone rendu dans un iframe, en 3 tailles : 360 × 640, 360 × 740 (par défaut) et 412 × 915. Les règles responsives du DSFR sont donc celles du mobile. Vérifier chaque écran modifié sur les 3 tailles.
+- Responsive : l'app est rendue dans un iframe pleine fenêtre, les points de rupture du DSFR s'appliquent. Vérifier chaque écran modifié en mobile (390 px) et sur ordinateur (1440 px).
+- Interface contrôleur : l'accueil occupe toute la page ; à partir de 768 px (48em), le contrôle (page du contrôle, bulletin, relevé) s'ouvre dans le panneau latéral par-dessus l'accueil (voir `composants/panneau-lateral.md`). En dessous, ces écrans sont des pages pleine largeur.
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR. Ne pas utiliser les options DSFR qui dépendent de son JS (ex. `fr-btns-group--equisized`) : sur mobile, les boutons empilés doivent prendre toute la largeur.
-- Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.
+- Toute action ajoutée doit avoir un comportement de retour défini (fonction `back()` : touche Échap, clic sur le fond du panneau).
 
 ## Vérifier avant de pousser
 
@@ -49,7 +50,7 @@ npm run check   # garde-fou de confidentialité
 npm run build   # dist/<interface>/index.html
 ```
 
-Tester le parcours modifié dans `dist/`, sur les secteurs TRM et TRS.
+Tester le parcours modifié dans `dist/`, sur les secteurs TRM et TRS, en mobile et sur ordinateur.
 
 ## Git
 

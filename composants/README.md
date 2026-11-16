@@ -22,6 +22,7 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | [Barre d'actions fixe](barre-actions-fixe.md) | Groupe de boutons | Contrôleur : relevé des infractions |
 | [Onglets du contrôle](onglets-controle.md) | Onglets (variante) + badge | Contrôleur : page du contrôle |
 | [Tuile de choix](tuile-choix.md) | Tuile (variante) | Contrôleur : accueil |
+| [Panneau latéral](panneau-lateral.md) | Modale (variante) | Contrôleur : contrôle ouvert sur grand écran |
 | [Tableau Mobilic](tableau.md) | Tableau (variante) | Toutes les interfaces ; contrôleur : derniers contrôles |
 
 ## Ajustements des composants DSFR

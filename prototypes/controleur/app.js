@@ -17,10 +17,18 @@ const state = { control: null, bdc: null, notes: [], history: [
 
 /* ---------- Navigation ---------- */
 let current = 'home';
+/* Sur grand écran, le contrôle (page du contrôle, bulletin, relevé) s'ouvre dans un panneau latéral par-dessus l'accueil */
+const PANEL = ['control', 'bdc', 'infractions'];
 function go(name) {
+  const wasPanel = PANEL.includes(current), isPanel = PANEL.includes(name);
   current = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + name));
-  window.scrollTo(0, 0);
+  document.body.classList.toggle('has-panel', isPanel);
+  if (isPanel && !wasPanel) {   // animation d'entrée seulement à l'ouverture du panneau
+    document.body.classList.add('panel-entering');
+    setTimeout(() => document.body.classList.remove('panel-entering'), 400);
+  }
+  window.scrollTo(0, 0); if (isPanel) $('screen-' + name).scrollTop = 0;
   notify();
 }
 const currentStep = () => [1, 2, 3].find(i => !$('bdc-step-' + i).hidden);
@@ -29,11 +37,11 @@ function notify() {
   const form = current === 'form' || current === 'bdc' || current === 'infractions' || (current === 'control' && activeTab === 1 && rel.editing);
   parent.postMessage({ type: 'screen', name: current, form }, '*');
 }
-/* Bouton "Retour" de la barre Android */
+/* Retour : touche Échap ou clic sur le fond du panneau */
 function back() {
   const open = document.querySelector('.fr-modal--opened');
   if (open) return closeModal(open.id);
-  if (current === 'home') return toast("Vous êtes sur l'accueil");
+  if (current === 'home') return;
   if (current === 'form') return go('home');
   if (current === 'control' && activeTab === 1 && rel.editing && rel.saved) return cancelReleve();
   if (current === 'control') return requestClose();
@@ -357,6 +365,7 @@ function fillBdc() {
   if (s === 3) { $('b-agent').value = '45602COX'; $('b-obs').value = 'Conducteur coopératif.'; }
   bdcValidate();
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && current !== 'home') back(); });
 window.addEventListener('message', e => {
   const m = e.data || {};
   if (m.type !== 'cmd') return;

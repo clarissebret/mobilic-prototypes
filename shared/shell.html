@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Prototype Mobilic : {{TITRE}}</title>
+<style id="dsfr-css">{{DSFR_CSS}}</style>
+<style id="app-css">{{APP_CSS}}</style>
+<style>
+  /* Cadre du prototype (hors application) : l'app occupe toute la fenêtre */
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  #app { display: block; width: 100%; height: 100%; border: 0; }
+
+  /* Commandes du prototype : bouton flottant + panneau qui s'ouvre depuis lui */
+  :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
+  .proto-fab { position: fixed; left: 1rem; top: 50%; z-index: 3500; transform: translateY(-50%); box-shadow: var(--overlap-shadow); }
+  .proto-fab:active { transform: translateY(-50%) scale(0.97); }
+  /* Petit écran : languette collée au bord gauche, pour masquer le moins de contenu possible */
+  @media (max-width: 47.99em) { .proto-fab { left: 0; min-height: 2rem; padding: .25rem; } .proto-panel { left: 2.5rem; } }
+  .proto-panel { position: fixed; left: 4.5rem; top: 50%; z-index: 3500; width: 20rem; max-width: calc(100vw - 5.5rem); max-height: calc(100vh - 2rem);
+    overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); box-shadow: var(--lifted-shadow);
+    transform-origin: left center; transform: translateY(-50%) scale(0.95); opacity: 0; visibility: hidden;
+    transition: transform 150ms var(--ease-out), opacity 150ms var(--ease-out), visibility 0s 150ms; }
+  .proto-panel.open { transform: translateY(-50%) scale(1); opacity: 1; visibility: visible;
+    transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out), visibility 0s; }
+  @media (prefers-reduced-motion: reduce) {
+    .proto-panel, .proto-panel.open { transform: translateY(-50%); transition: opacity 150ms ease, visibility 0s; }
+  }
+  .proto-panel .flows { list-style: none; padding: 0; }
+  .proto-panel .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .proto-panel .flow .fr-btn { flex-shrink: 0; }
+  .proto-panel .mention { color: var(--text-mention-grey); }
+  .proto-panel .fill[hidden] { display: none; }
+  .proto-panel__close { position: absolute; top: .5rem; right: .5rem; }
+
+  /* Aperçu PDF */
+  .pdf-overlay { display: none; position: fixed; inset: 0; z-index: 4000; overflow: auto; padding: 1.5rem; background-color: rgba(22,22,22,.8); }
+  .pdf-overlay.open { display: block; }
+  .pdf-bar { display: flex; justify-content: space-between; align-items: center; max-width: 842px; margin: 0 auto 1rem; color: #fff; }
+  .pdf-bar .fr-btn { background-color: var(--background-default-grey); }
+  .pdf-page { width: 595px; min-height: 842px; margin: 0 auto 1.5rem; padding: 1rem 1rem 1.5rem; background-color: #fff; color: #161616; }
+  .pdf-page, .pdf-page p, .pdf-page span, .pdf-page td, .pdf-page th { font-size: 10px; line-height: 1.4; }
+  .pdf-page--landscape { width: 842px; min-height: 595px; }
+  .pdf-head { display: flex; gap: 1rem; align-items: center; padding-bottom: .75rem; margin-bottom: .75rem; border-bottom: 1px solid var(--border-default-grey); }
+  .pdf-head .fr-logo { font-size: .55rem; }
+  .pdf-head strong { display: block; font-size: 13px; }
+  .pdf-block { padding: .5rem .75rem; margin-bottom: .5rem; background-color: var(--background-alt-grey); }
+  .pdf-block h3 { margin: 0 0 .25rem; font-size: 10px; line-height: 1.4; font-weight: 700; text-transform: uppercase; }
+  .pdf-block h3.pdf-plain { text-transform: none; }
+  .pdf-row { display: flex; }
+  .pdf-row span:first-child { width: 50%; }
+  .pdf-cols { display: flex; gap: .5rem; }
+  .pdf-cols .pdf-block { flex: 1; }
+  .pdf-inline { display: flex; }
+  .pdf-inline h3 { width: 50%; margin: 0; }
+  .pdf-obs { min-height: 7.5rem; }
+  .pdf-table { width: 100%; border-collapse: collapse; }
+  .pdf-table th, .pdf-table td { padding: .375rem .5rem; border: 1px solid var(--border-default-grey); text-align: left; vertical-align: top; }
+  .pdf-table th { background-color: var(--background-alt-grey); }
+  .pdf-foot { margin: 1rem 0 0; color: var(--text-mention-grey); }
+  @media print { #app, .proto-fab, .proto-panel, .pdf-bar { display: none !important; } .pdf-overlay { position: static; padding: 0; background: none; } }
+</style>
+</head>
+<body>
+<iframe id="app" title="Application Mobilic : {{TITRE}}"></iframe>
+
+<button type="button" class="fr-btn fr-btn--secondary fr-icon-settings-5-line proto-fab" id="proto-fab" aria-expanded="false" aria-controls="proto-panel" title="Commandes du prototype" onclick="togglePanel()">Commandes du prototype</button>
+<aside class="proto-panel" id="proto-panel" aria-label="Commandes du prototype">
+  <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-close-line proto-panel__close" title="Fermer les commandes" onclick="togglePanel(false)">Fermer les commandes</button>
+  <p class="fr-text--xs fr-mb-1v mention">Prototype Mobilic</p>
+  <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
+  <p class="fr-text--sm fr-mb-4w">{{DESCRIPTION}}</p>
+  <h2 class="fr-h6 fr-mb-2w">Parcours</h2>
+  <ul class="flows fr-mb-4w">
+{{PARCOURS}}
+  </ul>
+  <div class="fill fr-mb-1w" id="fill" hidden>
+    <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill'); togglePanel(false)">Remplir le formulaire</button>
+  </div>
+  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left" onclick="cmd('reset'); togglePanel(false)">Réinitialiser</button>
+</aside>
+
+<div class="pdf-overlay" id="pdf" role="dialog" aria-modal="true" aria-label="Aperçu du bulletin de contrôle PDF">
+  <div class="pdf-bar">
+    <strong>Aperçu du PDF téléchargé</strong>
+    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--sm">
+      <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-printer-line fr-btn--icon-left" onclick="window.print()">Imprimer</button></li>
+      <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line fr-btn--icon-left" onclick="pdf.classList.remove('open')">Fermer</button></li>
+    </ul>
+  </div>
+  <div id="pdf-pages"></div>
+</div>
+
+<template id="app-tpl">{{APP_HTML}}<script>{{APP_JS}}</script></template>
+
+<script>
+  const frame = document.getElementById('app');
+  const css = document.getElementById('dsfr-css').textContent + document.getElementById('app-css').textContent;
+  frame.srcdoc = '<!DOCTYPE html><html lang="fr" data-fr-scheme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'
+    + css + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
+  function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name }, '*'); }
+  const pdf = document.getElementById('pdf');
+  const fab = document.getElementById('proto-fab'), panel = document.getElementById('proto-panel');
+  function togglePanel(open = !panel.classList.contains('open')) {
+    panel.classList.toggle('open', open); fab.setAttribute('aria-expanded', open);
+  }
+  /* Fermeture : Échap, clic hors du panneau (y compris dans l'app) */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (pdf.classList.contains('open')) return pdf.classList.remove('open');
+    if (panel.classList.contains('open')) { togglePanel(false); fab.focus(); }
+  });
+  document.addEventListener('click', e => { if (!panel.contains(e.target) && !fab.contains(e.target)) togglePanel(false); });
+  window.addEventListener('blur', () => togglePanel(false));   // clic dans l'iframe
+  window.addEventListener('message', e => {
+    const m = e.data || {};
+    if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }
+    if (m.type === 'screen') document.getElementById('fill').hidden = !m.form;
+  });
+</script>
+</body>
+</html>
