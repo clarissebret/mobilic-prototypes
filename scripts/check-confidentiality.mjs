@@ -6,7 +6,11 @@ import { readFileSync } from 'node:fs';
 const files = execSync('git ls-files --cached --others --exclude-standard', { encoding: 'utf8' }).split('\n').filter(f => f && !f.endsWith('.png') && f !== 'package-lock.json');
 
 // Adresses e-mail autorisées : exemples génériques uniquement.
-const ALLOWED_EMAILS = [/^nom@domaine\.fr$/, /^contact@entreprise\.fr$/, /@example\.(com|org|fr)$/, /^noreply@anthropic\.com$/, /@users\.noreply\.github\.com$/];
+// Domaines réservés aux exemples (RFC 2606 / 6761) : example.*, *.example.*, .test, .invalid.
+const ALLOWED_EMAILS = [/^nom@domaine\.fr$/, /^contact@entreprise\.fr$/, /@([\w-]+\.)*example(\.(com|org|net|fr))?$/, /\.(test|invalid)$/,
+  /^noreply@anthropic\.com$/, /@users\.noreply\.github\.com$/,
+  /^jane@acme\.com$/,   // exemple fictif dans le skill tiers .claude/skills/break-ui
+];
 
 const RULES = [
   { name: 'Lien vers un fichier Figma', re: /figma\.com\/(design|file|board|proto|make)\//gi },
