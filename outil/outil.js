@@ -327,7 +327,7 @@ function basculerBarre() {
     pied.classList.remove('outil__pied--sortie');
     revelerBas(delta, false).then(() => { if (!pied.classList.contains('outil__pied--sortie')) { outil.classList.remove('outil--sans-barre'); ajuster(); } annulerMasques(); });
   }
-  annoncer(masquer ? 'Barre masquée. Appuyez sur @ pour l\'afficher.' : 'Barre affichée');
+  annoncer(masquer ? 'Outils masqués. Appuyez sur @ pour les afficher.' : 'Outils affichés');
 }
 let masques = [];
 function annulerMasques() { masques.forEach(a => a.cancel()); masques = []; }
