@@ -99,7 +99,13 @@ Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. 
 
 - **NAV-01** Retour (bouton Android ou Échap) : de 1b vers le choix du métier, de 2a vers 1b, de 2b vers 2a, de la finalisation vers les détails de l'entreprise, de la confirmation vers la finalisation. Sans effet sur le choix du métier.
 
+## En-tête (non connecté)
+
+- **ENT-01** Les écrans Mobilic du parcours (hors pages Cerbère) ont l'en-tête Mobilic non connecté : liens « Nous contacter », « Créer un compte » et « Se connecter », puis la navigation principale « Accueil », « Documentation », « Partenaires et logiciels », « Certificat » et « Centre d'aide ».
+- **ENT-02** « Centre d'aide » s'ouvre dans une nouvelle fenêtre. « Créer un compte » ramène au choix du métier et efface les saisies.
+- **ENT-03** Sous 992 px, liens et navigation sont regroupés dans le menu (bouton « Menu ») ; « Fermer », Échap ou Retour le referment.
+
 ## Composants utilisés
 
-- DSFR : en-tête, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
+- DSFR : en-tête (liens et navigation principale), tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
 - Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md).

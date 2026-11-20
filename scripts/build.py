@@ -43,6 +43,8 @@ ICONS = {
     # Outil de prototypage (barre de contrôle et inspecteur)
     'magic-line': 'magic-line', 'check-line': 'check-line', 'restart-line': 'restart-line', 'external-link-line': 'external-link-line', 'cursor-line': 'cursor-line',
     'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line',
+    # En-tête gestionnaire
+    'mail-line': 'mail-line', 'account-circle-fill': 'account-circle-fill',
 }
 rules = []
 for cls, remix in ICONS.items():
@@ -104,7 +106,8 @@ def modal(m):
 
 def picto(m):
     return 'data:image/svg+xml;base64,' + base64.b64encode(open(DIST + 'artwork/pictograms/' + m.group(1) + '.svg', 'rb').read()).decode()
-app = re.sub(r'\{\{FILE:([a-z.-]+)\}\}', lambda m: open(B + m.group(1)).read(), app)
+while '{{FILE:' in app:   # fragments, éventuellement imbriqués
+    app = re.sub(r'\{\{FILE:([a-z.-]+)\}\}', lambda m: open(B + m.group(1)).read(), app)
 app = re.sub(r'\{\{PICTO:([a-z/-]+)\}\}', picto, app)
 app = (app.replace('{{LOGO}}', logo).replace('{{NATS}}', NATS)
        .replace('{{DATE:f}}', date_group('f')).replace('{{DATE:b}}', date_group('b')))

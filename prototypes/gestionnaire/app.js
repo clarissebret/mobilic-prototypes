@@ -29,8 +29,21 @@ function go(name) {
   window.scrollTo(0, 0);
   parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'fin'].includes(name) }, '*');
 }
+/* Menu de l'en-tête sous 992 px : modale DSFR ouverte sans le JS du DSFR */
+function openMenu(btn) {
+  const m = btn.closest('header').querySelector('.fr-header__menu');
+  m.classList.add('fr-modal--opened'); m.setAttribute('aria-modal', 'true'); btn.setAttribute('aria-expanded', 'true');
+  m.querySelector('.fr-btn--close').focus();
+}
+function closeMenu() {
+  document.querySelectorAll('.fr-header__menu.fr-modal--opened').forEach(m => {
+    m.classList.remove('fr-modal--opened'); m.removeAttribute('aria-modal');
+    m.closest('header').querySelector('.fr-btn--menu').setAttribute('aria-expanded', 'false');
+  });
+}
 /* Retour Android / Échap. Le compte est créé à la sortie de Cerbère : pas de retour vers Cerbère depuis Mobilic. */
 function back() {
+  if (document.querySelector('.fr-header__menu.fr-modal--opened')) return closeMenu();
   if (current === 'compte') return go('metier');
   if (current === 'cerbere-1') return go('compte');
   if (current === 'cerbere-2') return go('cerbere-1');
