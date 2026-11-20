@@ -932,7 +932,7 @@ function rendreElement(els) {
   const id = identite(els[0]), sb = lienStorybook(id);
   z.innerHTML = `<div class="outil-element__titre"><h3 class="fr-h6 fr-mb-0">${esc(id.type)}</h3>`
     + (id.origine ? `<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--blue-france">Composant ${id.origine}</span>` : '')
-    + (sb ? `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-links-line" data-lien="${esc(sb)}" title="Ouvrir ${esc(id.type)} dans le Storybook du DSFR (nouvel onglet)">Ouvrir ${esc(id.type)} dans le Storybook du DSFR</button>` : '')
+    + (sb ? `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-external-link-line" data-lien="${esc(sb)}" title="Ouvrir ${esc(id.type)} dans le Storybook du DSFR (nouvel onglet)">Ouvrir ${esc(id.type)} dans le Storybook du DSFR</button>` : '')
     + `</div><p class="fr-text--xs fr-mb-0 outil-mention outil-element__nom">${esc(nom(els[0]))}${els[0].id ? ' #' + esc(els[0].id) : ''}</p>`;
 }
 $('insp-element').addEventListener('click', e => { const b = e.target.closest('[data-lien]'); if (b) window.open(b.dataset.lien, '_blank', 'noopener'); });
