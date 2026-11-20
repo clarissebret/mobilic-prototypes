@@ -93,7 +93,7 @@ function infractionHTML(inf, edit, ctx) {
             </fieldset>`
           : `<p class="fr-mt-3w fr-mb-2w">Sélectionnez la ou les journées concernées :</p>${calendarHTML(inf, ctx)}${tagsHTML(inf, true, ctx)}`}`;
   return `<section class="fr-mb-3v inf${n ? ' inf--selected' : ''}${open ? ' inf--open' : ''}" id="inf-${uid}">
-    <h3 class="inf__title">
+    <h3 class="inf__title fr-text--md fr-mb-0">
       <button type="button" class="inf__btn${edit && inf.type === 'autre' ? ' inf__btn--delete' : ''}" aria-expanded="${open}" aria-controls="inf-body-${uid}" onclick="infOpen('${ctx}','${inf.id}',this)">
         <span class="inf__natinf fr-text--sm fr-text--bold fr-mb-0">${code(inf)}${n ? `<span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon">${n}<span class="fr-sr-only"> ${inf.seuil === 'semaine' ? 'semaine(s)' : 'journée(s)'} retenue(s)</span></span>` : ''}</span>
         <span class="inf__label${inf.type === 'autre' ? ' fr-text--sm fr-mb-0' : ''}">${inf.label}</span>
