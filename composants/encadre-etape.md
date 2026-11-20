@@ -6,7 +6,7 @@ Code : `.encadre` dans `prototypes/gestionnaire/app.css`.
 
 ## Anatomie
 
-Indicateur d'étapes DSFR en tête (32 px dessous), puis le contenu, puis le groupe de boutons aligné à droite à partir de 768 px (32 px au-dessus). Les cartes posées dedans (ex. [Carte d'établissement](carte-etablissement.md)) ont un fond `--background-default-grey`.
+Sous le titre de page (64 px au-dessus du titre, 40 px dessous), indicateur d’étapes DSFR en tête (32 px dessous), puis le contenu, puis le groupe de boutons aligné à droite à partir de 768 px (32 px au-dessus). Les cartes posées dedans (ex. [Carte d'établissement](carte-etablissement.md)) ont un fond `--background-default-grey`.
 
 ## Tokens et espacements
 
