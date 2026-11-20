@@ -1196,7 +1196,7 @@ function rendreAssets() {
   p.innerHTML = section('Export', seg('asset-format', 'Format', [['png', 'PNG'], ['jpg', 'JPG'], ['svg', 'SVG']], assetFormat, 'fr-mr-3w')
     + (assetFormat === 'svg' ? '<p class="fr-text--xs fr-mb-1w outil-mention">SVG : format vectoriel, sans échelle.</p>' : seg('asset-echelle', 'Échelle', [[1, '1x'], [2, '2x'], [3, '3x'], [4, '4x']], assetEchelle)))
     + section('Aperçu', '<div class="outil-apercu fr-mb-1w" id="asset-apercu"></div>')
-    + section('Fichiers', `<fieldset class="fr-fieldset fr-mb-0"><legend class="fr-sr-only">Fichiers à exporter</legend>`
+    + section('Fichiers', `<fieldset class="fr-fieldset fr-mb-0 outil-fichiers"><legend class="fr-sr-only">Fichiers à exporter</legend>`
     + assetsCourants.map((a, i) => `<div class="fr-fieldset__element"><div class="fr-checkbox-group fr-checkbox-group--sm"><input type="checkbox" id="asset-${i}" checked data-asset="${i}"><label class="fr-label" for="asset-${i}"><span class="outil-asset"><span class="outil-asset__vignette" id="asset-vignette-${i}"></span><span class="outil-asset__nom fr-text--sm fr-mb-0">${esc(noms[i])}</span></span></label></div></div>`).join('')
     + '</fieldset><button type="button" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-download-line fr-mb-1w" id="asset-exporter">Télécharger</button>');
   apercus();

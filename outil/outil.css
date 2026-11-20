@@ -128,6 +128,8 @@
 .outil-asset { display: flex; align-items: center; gap: 8px; }
 .outil-asset__vignette { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; background-color: var(--background-alt-grey); }
 .outil-asset__vignette img { max-width: 24px; max-height: 24px; }
+/* Case à cocher centrée sur la ligne de 32 px (vignette) : le DSFR l'aligne sur une première ligne de 24 px */
+.outil-fichiers .fr-checkbox-group .fr-label::before { top: 4px; }
 .outil-asset__nom { font-family: monospace; overflow-wrap: anywhere; }
 
 /* ---------- Petits écrans : barre en zones de 44 px, inspecteur en volet inférieur ---------- */

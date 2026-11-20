@@ -79,6 +79,7 @@ Données fictives, dans l'ordre des champs (un champ qui en fait apparaître un 
 | Padding de la barre | 8 px, 8 px entre boutons |
 | Padding de l'en-tête de l'inspecteur | `fr-pl-2w fr-pr-1w fr-py-1w`, séparation 1 px en bas |
 | Padding des options de liste, du code | 8 px ; 12 px |
+| Liste des fichiers (Assets) | noms en `fr-text--sm`, vignettes de 32 px (icône de 24 px), case à cocher DSFR SM recentrée sur la ligne de 32 px (`::before` décalé de 4 px) |
 
 ## Petits écrans
 
