@@ -14,6 +14,7 @@ Source : dépôt public `emilkowalski/skills` sur GitHub, licence MIT (copie dan
 | `review-animations` | Relire les animations existantes (à appeler explicitement) |
 | `find-animation-opportunities` | Proposer des animations utiles, sans les implémenter |
 | `learn-taste` | Transformer des corrections de design en règles écrites (à appeler explicitement) |
+| `apple-design` | Interactions fluides façon Apple : gestes, glisser-déposer, panneaux, ressorts, retours visuels. Ses conseils de typographie (interlettrage, tailles) ne s'appliquent pas : le DSFR fait foi |
 
 ## Priorité
 
