@@ -805,7 +805,7 @@ function rendreTokens() {
   const el = selection.find(x => x.isConnected);
   if (!el) { $('panneau-tokens').innerHTML = '<p class="fr-text--sm fr-mb-0">Sélectionnez un élément pour voir ses tokens</p>'; return; }
   const cs = win().getComputedStyle(el);
-  let html = `<p class="fr-text--xs fr-mb-2w outil-mention">Thème affiché : clair. ${selection.length > 1 ? 'Premier élément de la sélection.' : ''}</p>`;
+  let html = selection.length > 1 ? '<p class="fr-text--xs fr-mb-2w outil-mention">Premier élément de la sélection.</p>' : '';
   let k = 0;
   PROPS_TOKENS.forEach(([prop, label]) => {
     const calc = cs.getPropertyValue(prop);
