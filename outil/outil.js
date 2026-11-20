@@ -1099,7 +1099,11 @@ function choisirOnglet(o, focus) {
   if (focus) o.focus();
   void $('onglets-indicateur').offsetWidth; placerIndicateur(!focus);
   rafraichir();
+  /* Le nouveau contenu apparaît en fondu, en même temps que le soulignement glisse (pas au clavier) */
+  if (fondu) fondu.cancel();
+  fondu = focus ? null : $(o.getAttribute('aria-controls')).animate({ opacity: [0, 1] }, { duration: 200, easing: 'cubic-bezier(.23, 1, .32, 1)' });
 }
+let fondu = null;
 onglets.forEach((o, i) => {
   o.addEventListener('click', () => choisirOnglet(o));
   o.addEventListener('keydown', e => {
