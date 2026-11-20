@@ -82,7 +82,7 @@ function c2Submit() {
 const opts = (list, ph) => `<option value="" selected disabled hidden>${ph}</option>` + list.map(o => `<option>${esc(o)}</option>`).join('');
 /* Champ téléphone (composant Mobilic) : indicatif pays + numéro */
 const telField = (id, label, req) => `<div class="fr-input-group tel" id="${id}-group">
-  <label class="fr-label" for="${id}">${label}${req ? ' <span class="required">*</span>' : ''}<span class="fr-hint-text">Format attendu : 01 99 00 12 34</span></label>
+  <label class="fr-label" for="${id}">${label}${req ? ' <span class="required">*</span>' : ''}<span class="fr-hint-text">Format attendu : 01 99 00 12 34</span></label>
   <div class="tel__row">
     <select class="fr-select tel__code" id="${id}-code" aria-label="Indicatif du pays">${INDICATIFS.map(([f, c, p]) => `<option value="${c}" title="${p}">${f} ${c}</option>`).join('')}</select>
     <input class="fr-input" id="${id}" type="tel" autocomplete="tel-national"${req ? ' required' : ''}>
@@ -90,10 +90,10 @@ const telField = (id, label, req) => `<div class="fr-input-group tel" id="${id}-
 </div>`;
 function renderEtabs() {
   const ent = state.ent, seul = ent.etabs.length === 1;
-  $('e-intro').textContent = seul ? 'Votre établissement :' : 'Veuillez sélectionner un ou plusieurs établissements :';
+  $('e-intro').textContent = seul ? 'Votre établissement :' : 'Veuillez sélectionner un ou plusieurs établissements :';
   $('etabs').innerHTML = ent.etabs.map((e, i) => {
     const id = 'et' + i, sel = state.selected.includes(i);
-    const head = `<span class="fr-text--bold">${esc(e.adresse)}</span><span class="fr-text--sm mention">Nom : ${esc(e.nom)}</span><span class="fr-text--xs mention">SIRET : ${e.siret}<br>CODE NAF : ${esc(e.naf)}</span>`;
+    const head = `<span class="fr-text--bold">${esc(e.adresse)}</span><span class="fr-text--sm mention">Nom : ${esc(e.nom)}</span><span class="fr-text--xs mention">SIRET : ${e.siret}<br>CODE NAF : ${esc(e.naf)}</span>`;
     return `<div class="etab${sel ? ' etab--selected etab--open' : ''}" id="${id}">
       ${seul ? `<p class="etab__head fr-mb-0">${head}</p>` : `<div class="fr-checkbox-group"><input type="checkbox" id="${id}-check" ${sel ? 'checked' : ''} onchange="toggleEtab(${i}, this.checked)"><label class="fr-label" for="${id}-check"><span class="etab__head">${head}</span></label></div>`}
       <div class="etab__body"><div class="etab__clip" ${sel ? '' : 'inert'}><div class="etab__fields">
