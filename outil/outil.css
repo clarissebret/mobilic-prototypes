@@ -3,13 +3,17 @@
    Uniquement des tokens DSFR ; valeurs de padding sur la grille de 4 px. */
 
 /* ---------- Mise en page : scène (libellé, cadre) et inspecteur en haut, barre en bas sur toute la largeur ---------- */
-.outil { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr) auto; height: 100vh; height: 100dvh; overflow: hidden; }
+/* La place de la barre (48 px + 8 px sous elle) est réservée par le padding bas ; la barre est posée dessus en absolu */
+.outil { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; padding-bottom: 56px; overflow: hidden; }
+.outil--sans-barre { padding-bottom: 0; }
 .outil__scene { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 /* Le cadre est placé en JS (marge gauche) pour rester centré sur la fenêtre, donc sur la barre, même inspecteur ouvert */
 .outil__vue { position: relative; flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-start; justify-content: flex-start; padding: 16px; overflow: hidden; }
-.outil__pied { grid-column: 1 / -1; display: flex; justify-content: center; }
+.outil__pied { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
+.outil__pied .outil-barre { pointer-events: auto; }
 .outil__pied[hidden] { display: none; }
-/* Barre masquée (@) : elle descend hors de l'écran en s'effaçant, et remonte de la même façon */
+/* Barre masquée (@) : la place est libérée (ou réservée) d'un coup au début, puis la barre descend hors de l'écran
+   en s'effaçant par-dessus le cadre, et remonte de la même façon dans la place réservée */
 .outil__pied { transition: transform 200ms cubic-bezier(.23, 1, .32, 1), opacity 200ms cubic-bezier(.23, 1, .32, 1); }
 .outil__pied--sortie { transform: translateY(100%); opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .outil__pied { transition: opacity 200ms ease; } .outil__pied--sortie { transform: none; } }

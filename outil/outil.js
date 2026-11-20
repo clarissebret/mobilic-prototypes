@@ -312,6 +312,8 @@ function basculerBarre() {
   if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
   fermerListe(false);
   document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
+  outil.classList.toggle('outil--sans-barre', masquer);
+  ajuster();
   if (masquer) {
     pied.classList.add('outil__pied--sortie');
     finTransition(pied, () => { if (pied.classList.contains('outil__pied--sortie')) pied.hidden = true; });
