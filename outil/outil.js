@@ -378,13 +378,13 @@ const GENERIQUES = { p: 'Texte', span: 'Texte', strong: 'Texte', em: 'Texte', b:
   h1: 'Titre', h2: 'Titre', h3: 'Titre', h4: 'Titre', h5: 'Titre', h6: 'Titre', a: 'Lien', button: 'Bouton', input: 'Champ de saisie', textarea: 'Champ de saisie',
   select: 'Liste déroulante', img: 'Image', svg: 'Image vectorielle', ul: 'Liste', ol: 'Liste', li: 'Élément de liste', table: 'Tableau', form: 'Formulaire', hr: 'Séparateur' };
 /* Page du composant dans le Storybook du DSFR, par classe de composant */
-const STORYBOOK = 'https://storybook.systeme-de-design.gouv.fr/?path=/docs/';
+const STORYBOOK = 'https://www.systeme-de-design.gouv.fr/v1.14/storybook/index.html?path=/docs/';
 const STORIES = { 'fr-btns-group': 'buttons-group', 'fr-btn': 'button', 'fr-input-group': 'input', 'fr-input': 'input', 'fr-select-group': 'select', 'fr-select': 'select',
   'fr-search-bar': 'search', 'fr-radio-group': 'radio', 'fr-checkbox-group': 'checkbox', 'fr-fieldset': 'fieldset', 'fr-segmented': 'segmented', 'fr-toggle': 'toggle',
   'fr-alert': 'alert', 'fr-badge': 'badge', 'fr-tag': 'tag', 'fr-card': 'card', 'fr-tile': 'tile', 'fr-accordion': 'accordion', 'fr-modal': 'modal', 'fr-stepper': 'stepper',
   'fr-table': 'table', 'fr-tabs': 'tabs', 'fr-header': 'header', 'fr-footer': 'footer', 'fr-callout': 'callout', 'fr-notice': 'notice', 'fr-breadcrumb': 'breadcrumb',
   'fr-highlight': 'highlight', 'fr-pagination': 'pagination', 'fr-link': 'link', 'fr-logo': 'logo' };
-const lienStorybook = id => { if (id.origine !== 'DSFR' || !id.classe) return null; const s = STORIES[id.classe] || (/^fr-icon-/.test(id.classe) ? 'icon' : null); return s ? `${STORYBOOK}${s}--docs` : null; };
+const lienStorybook = id => { if (id.origine !== 'DSFR' || !id.classe) return null; const s = STORIES[id.classe] || (/^fr-icon-/.test(id.classe) ? 'icon' : null); return s ? `${STORYBOOK}${s}--docs&globals=theme:light` : null; };
 function identite(el) {
   for (const [re, type, origine, react] of LIBELLES) for (const c of el.classList) if (re.test(c)) return { type, origine, react, classe: c };
   return { type: GENERIQUES[el.tagName.toLowerCase()] || 'Conteneur', origine: null, react: null, classe: null };
