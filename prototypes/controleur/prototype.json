@@ -7,5 +7,10 @@
       "libelle": "Contrôle LIC papier / feuille de route",
       "commande": "flow-lic"
     }
-  ]
+  ],
+  "scripts": [
+    "app.js",
+    "infractions.js"
+  ],
+  "init": "renderHistory(); go('home');"
 }

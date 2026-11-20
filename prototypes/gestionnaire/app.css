@@ -1,0 +1,79 @@
+/* Styles propres à l'interface gestionnaire, uniquement à partir des tokens DSFR */
+.screen { display: none; }
+/* L'attribut hidden l'emporte sur les display des composants DSFR et Mobilic */
+.screen [hidden] { display: none !important; }
+.screen.active { display: block; }
+.mention { color: var(--text-mention-grey); }
+.required { color: var(--text-default-error); }
+.center { text-align: center; }
+.toast { position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 3000; padding: .75rem 1rem;
+  background-color: var(--background-action-high-grey); color: var(--text-inverted-grey); opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+/* Colonne de lecture sur grand écran */
+.page-col { max-width: 48rem; margin: 0 auto; }
+.page-col--etroite { max-width: 36rem; }
+
+/* Choix du métier : tuiles empilées sur mobile, côte à côte au-delà */
+.metiers { display: grid; gap: 1rem; max-width: 48rem; margin: 0 auto; }
+@media (min-width: 36em) { .metiers { grid-template-columns: 1fr 1fr; } }
+/* Illustrations des métiers à 80 px, taille des pictogrammes DSFR (la tuile --sm les réduirait à 56 px) */
+.metiers .fr-tile__pictogram, .metiers .fr-tile__pictogram img { width: 5rem; height: 5rem; }
+
+/* Pages Cerbère simulées (hors Mobilic) */
+.cerbere.active { min-height: 100vh; display: flex; flex-direction: column; background-color: var(--background-alt-blue-france); }
+.cerbere__header { padding: 1rem; }
+.cerbere__body { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding: 0 1rem 2.5rem; }
+.cerbere__card { width: 100%; max-width: 30rem; padding: 1.5rem; background-color: var(--background-default-grey); }
+
+/* Encadré gris des étapes Mobilic de l'inscription */
+.encadre { padding: 2rem 1rem; background-color: var(--background-alt-grey); }
+@media (min-width: 48em) { .encadre { padding: 2.5rem 3rem; } }
+/* Neutralise la marge basse du DSFR sous le dernier groupe de boutons */
+.encadre > .fr-btns-group:last-child { margin-bottom: -1rem; }
+
+/* Étape 1 : bouton Cerbère puis lien d'aide dessous, alignés à gauche (comme le bouton FranceConnect) */
+.cerbere-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+
+/* Établissements (composant Mobilic « Carte d'établissement ») */
+.etabs { display: flex; flex-direction: column; gap: 1rem; }
+.etab { padding: 1.5rem; border: 1px solid var(--border-default-grey); transition: border-color 200ms ease, box-shadow 200ms ease; }
+.etab--selected { border-color: var(--border-active-blue-france); box-shadow: inset 0 0 0 1px var(--border-active-blue-france); }
+/* Ouverture : la grille passe de 0fr à 1fr (accordéon, pas d'équivalent en transform), les champs apparaissent en fondu */
+.etab__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms cubic-bezier(.23, 1, .32, 1); }
+.etab--selected .etab__body { grid-template-rows: 1fr; }
+.etab__clip { min-height: 0; overflow: hidden; }
+.etab__fields { display: flex; flex-direction: column; gap: 2rem; padding-top: 2rem; opacity: 0; transform: translateY(-.5rem);
+  transition: opacity 200ms cubic-bezier(.23, 1, .32, 1), transform 250ms cubic-bezier(.23, 1, .32, 1); }
+.etab--selected .etab__fields { opacity: 1; transform: none; }
+/* Le focus DSFR (contour décalé) ne doit pas être coupé par le masque une fois ouvert */
+.etab--open .etab__clip { overflow: visible; }
+@media (prefers-reduced-motion: reduce) {
+  .etab__body { transition: none; }
+  .etab__fields { transform: none; transition: opacity 200ms ease; }
+}
+.etab__fields .fr-input-group, .etab__fields .fr-select-group { margin-bottom: 0; }
+.etab__row { display: grid; gap: 2rem 1.5rem; }
+@media (min-width: 36em) { .etab__row { grid-template-columns: 1fr 1fr; } }
+
+/* Champ téléphone : indicatif pays + numéro */
+.tel__row { display: flex; gap: .5rem; margin-top: .5rem; }
+.tel__row .fr-input, .tel__row .fr-select { margin-top: 0; }
+.tel__code { width: auto; flex: none; }
+
+/* En-tête de la carte d'établissement */
+.etab__head { display: flex; flex-direction: column; gap: .25rem; }
+.etab__head > * { margin-bottom: 0; }
+
+/* Comment avez-vous connu Mobilic : sur deux colonnes à partir de 768 px */
+@media (min-width: 48em) { .sources { columns: 2; column-gap: 1.5rem; } .sources > * { break-inside: avoid; } }
+
+/* Finalisation */
+.picto { width: 5rem; height: 5rem; }
+/* Encadré webinaire */
+.webinaire { padding: 2rem 1.5rem; background-color: var(--background-alt-grey); }
+@media (min-width: 48em) { .webinaire { padding: 2.5rem 3rem; } }
+.webinaire__row { display: flex; align-items: center; gap: 1.5rem 2.5rem; flex-wrap: wrap; padding: 1.5rem 2rem; border: 1px solid var(--border-default-grey); }
+.webinaire__date { display: flex; flex-direction: column; align-items: center; }
+.webinaire__jour { color: var(--text-title-blue-france); }
+.webinaire__titre { display: flex; gap: .75rem; flex: 1; min-width: 12rem; }

@@ -1,0 +1,24 @@
+{
+  "titre": "Interface gestionnaire",
+  "nom": "Gestionnaire",
+  "description": "Application web des gestionnaires d'entreprise : inscription, gestion des salariés et des temps de travail.",
+  "parcours": [
+    {
+      "libelle": "Inscription",
+      "commande": "flow-inscription"
+    },
+    {
+      "libelle": "Inscription : reprise à l'étape 2 (entreprise)",
+      "commande": "flow-reprise-entreprise"
+    },
+    {
+      "libelle": "Inscription : reprise à l'étape 3 (finalisation)",
+      "commande": "flow-reprise-finalisation"
+    },
+    {
+      "libelle": "Inscription : aucun webinaire programmé",
+      "commande": "flow-sans-webinaire"
+    }
+  ],
+  "init": "go('metier');"
+}

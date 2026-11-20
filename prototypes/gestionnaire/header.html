@@ -1,0 +1,33 @@
+<header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo"><p class="fr-logo">République<br>française</p></div>
+              <div class="fr-header__operator"><a href="#" onclick="return false" title="Accueil - Mobilic"><img class="fr-responsive-img" style="width:6rem" src="{{LOGO}}" alt="Mobilic"></a></div>
+              <div class="fr-header__navbar"><button type="button" class="fr-btn--menu fr-btn" title="Menu" aria-expanded="false" onclick="openMenu(this)">Menu</button></div>
+            </div>
+          </div>
+          <div class="fr-header__tools">
+            <div class="fr-header__tools-links">{{FILE:header-liens.html}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fr-header__menu fr-modal" aria-label="Menu principal">
+      <div class="fr-container">
+        <button type="button" class="fr-btn--close fr-btn" title="Fermer" onclick="closeMenu()">Fermer</button>
+        <div class="fr-header__menu-links">{{FILE:header-liens.html}}</div>
+        <nav class="fr-nav" role="navigation" aria-label="Menu principal">
+          <ul class="fr-nav__list">
+            <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="closeMenu();toast('Accueil&nbsp;: hors scope');return false">Accueil</a></li>
+            <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="closeMenu();toast('Documentation&nbsp;: hors scope');return false">Documentation</a></li>
+            <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="closeMenu();toast('Partenaires et logiciels&nbsp;: hors scope');return false">Partenaires et logiciels</a></li>
+            <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="closeMenu();toast('Certificat&nbsp;: hors scope');return false">Certificat</a></li>
+            <li class="fr-nav__item"><a class="fr-nav__link" href="#" target="_blank" rel="noopener" title="Centre d'aide - nouvelle fenêtre" onclick="closeMenu();toast('Centre d\'aide&nbsp;: hors scope');return false">Centre d'aide</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>

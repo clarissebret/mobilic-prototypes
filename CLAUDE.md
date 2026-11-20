@@ -36,6 +36,7 @@
 - Typographie : uniquement les classes DSFR (`fr-h1` à `fr-h6`, `fr-text--lead|lg|sm|xs`, `fr-text--bold`). Pas de `font-size`, `letter-spacing` ni `text-transform` personnalisés, pas de capitales.
 - Espacements : dans une mise en page flex ou grid, l'espace entre enfants passe par `gap` sur le parent (multiple de 4 px), pas par des marges sur les enfants. Ailleurs, les marges entre éléments passent par les classes utilitaires DSFR (`fr-m*-*` : `1v` = 4 px, `1w` = 8 px), y compris dans le HTML généré en JS. Le CSS personnalisé sert à la mise en page (flex, grid, gap, position) et au padding interne d'un composant Mobilic, toujours sur la grille de 4 px et documenté dans sa fiche `composants/`. Seule exception : neutraliser une marge interne du DSFR qui casse un espacement.
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
+- Ponctuation française : espace insécable avant `!`, `?`, `:` et `;` (`&nbsp;` dans le HTML, `\u00a0` dans le JS), pour qu'ils ne passent jamais seuls à la ligne.
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
 - Écran rendu dans un iframe, au format Mobile (360 px de large, par défaut) ou Desktop (1440 px), ou à une largeur libre réglée avec la poignée ; la hauteur est celle de la fenêtre. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié en Mobile, avec une fenêtre basse et une fenêtre haute.

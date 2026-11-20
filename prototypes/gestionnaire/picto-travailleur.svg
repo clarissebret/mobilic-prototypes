@@ -1,0 +1,30 @@
+<svg width="80px" height="80px" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pictogramme Mobilic « Travailleur mobile », dans le style des pictogrammes DSFR :
+       trait de 2, peu d'interruptions, toujours le même écart visible (3) entre deux traits,
+       rouge jamais superposé au bleu, points décoratifs -->
+  <style>
+    .decorative { fill: #ECECFF; }
+    .minor { fill: none; stroke: #E1000F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .major { fill: none; stroke: #000091; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+  <!-- Points décoratifs -->
+  <circle class="decorative" cx="10" cy="20" r="1"/>
+  <circle class="decorative" cx="72" cy="12" r="1"/>
+  <circle class="decorative" cx="38" cy="77" r="1"/>
+  <!-- Sol (une interruption) et marquage au sol -->
+  <path class="major" d="M6 66h33M44 66h30"/>
+  <path class="minor" d="M16 71h8M56 71h8"/>
+  <!-- Camion vu de face -->
+  <path class="major" d="M49 28v-5M63 28v-5"/>
+  <path class="major" d="M44 57V31a3 3 0 0 1 3-3h18a3 3 0 0 1 3 3v21"/>
+  <path class="major" d="M44 36h-3v5M68 36h3v5"/>
+  <path class="major" d="M48 32h16v9H48z"/>
+  <path class="major" d="M54 46h4M54 50h4"/>
+  <path class="minor" d="M49 48h0.01M63 48h0.01"/>
+  <path class="major" d="M42 57h28M47 62v4M65 62v4"/>
+  <!-- Travailleur -->
+  <path class="major" d="M31.64 19.95A6 6 0 1 1 28.15 16.4"/>
+  <path class="major" d="M16 46v-8a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v8"/>
+  <path class="major" d="M21 39v7M31 39v7"/>
+  <path class="major" d="M21 46v20M31 46v20M26 51v15"/>
+</svg>
