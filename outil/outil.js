@@ -672,28 +672,6 @@ function classeTaille(el, profondeur = 0) {
   }
   return null;
 }
-/* Échelle typographique du DSFR mesurée dans le prototype (dépend de la largeur : tailles mobiles ou desktop) */
-const TYPOS = ['fr-text--xs', 'fr-text--sm', 'fr-text--md', 'fr-text--lg', 'fr-text--lead', 'fr-h6', 'fr-h5', 'fr-h4', 'fr-h3', 'fr-h2', 'fr-h1'];
-let echelleTypo = null;
-function typos() {
-  const W = win(), cle = doc().documentElement.clientWidth;
-  if (echelleTypo && echelleTypo.doc === doc() && echelleTypo.cle === cle) return echelleTypo.l;
-  const zone = doc().createElement('div');
-  zone.setAttribute('aria-hidden', 'true'); zone.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none';
-  zone.innerHTML = TYPOS.map(c => `<p class="${c}">x</p>`).join('');
-  doc().body.appendChild(zone);
-  const l = [...zone.children].map(p => { const cs = W.getComputedStyle(p); return [p.className, cs.fontSize, cs.lineHeight]; });
-  zone.remove();
-  echelleTypo = { doc: doc(), cle, l };
-  return l;
-}
-/* Classe de taille qui s'applique ; sinon, la taille DSFR identique (taille et hauteur de ligne, ou taille seule) */
-function tailleDsfr(el, cs) {
-  const c = classeTaille(el);
-  if (c) return { classe: c };
-  const l = typos(), m = l.find(x => x[1] === cs.fontSize && x[2] === cs.lineHeight) || l.find(x => x[1] === cs.fontSize);
-  return m ? { classe: m[0], equivalent: true } : {};
-}
 const UTILITAIRE = /^\.fr-(m|p)[trblxy]?-n?\d+[vw]?$|^\.fr-text--(xs|sm|lg|lead|bold|regular|heavy)$|^\.fr-h[1-6]$/;
 
 /* ---------- Propriétés ---------- */
@@ -712,6 +690,43 @@ function largeurMode(el, cs, axe) {
   }
   if (flexP && ((ligne && /stretch|normal/.test(cs.alignSelf === 'auto' ? pcs.alignItems : cs.alignSelf)) || (!ligne && parseFloat(cs.flexGrow) > 0))) return 'Remplit le parent';
   return 'Adaptée au contenu';
+}
+/* Ombres calculées, avec le token de couleur écrit par l'auteur */
+function ombres(el, cs) {
+  if (cs.boxShadow === 'none') return [];
+  const d = declaration(el, 'box-shadow'), auteur = d ? decouper(d.v) : [];
+  return decouper(cs.boxShadow).map((texte, i) => {
+    const couleur = (texte.match(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/i) || [''])[0];
+    const [x = 0, y = 0, flou = 0, etendue = 0] = texte.replace(couleur, '').replace('inset', '').trim().split(/\s+/).map(parseFloat);
+    return { texte, inset: /\binset\b/.test(texte), couleur, x, y, flou, etendue, token: tokenDe(auteur[i]) };
+  });
+}
+/* Ombre sans flou lue comme une bordure : épaisseur et côté(s) */
+function traitOmbre(o) {
+  if (!o.x && !o.y) return `${px(Math.abs(o.etendue))}${o.inset ? '' : ', à l\'extérieur'}`;
+  const cotes = [];
+  if (o.y) cotes.push(`${px(Math.abs(o.y))} ${(o.y > 0) === o.inset ? 'en haut' : 'en bas'}`);
+  if (o.x) cotes.push(`${px(Math.abs(o.x))} ${(o.x > 0) === o.inset ? 'à gauche' : 'à droite'}`);
+  return cotes.join(', ');
+}
+/* Bordures que le DSFR dessine avec des dégradés d'une seule couleur (linear-gradient(var(--x), var(--x))) */
+function borduresDegrade(el) {
+  const d = declaration(el, 'background-image');
+  if (!d) return [];
+  const vus = new Set(), res = [];
+  for (const m of d.v.matchAll(/linear-gradient\(\s*(?:[-\d.]+deg\s*,\s*)?var\((--[\w-]+)\)\s*,\s*var\(\1\)\s*\)/g)) {
+    if (vus.has(m[1])) continue;
+    vus.add(m[1]);
+    const v = finale(chaine(m[1], 'clair')) || '';
+    res.push({ valeur: hex(v), couleur: v, token: m[1], introuvable: !existe(m[1], el) });
+  }
+  return res;
+}
+/* Vraie image de fond (pas une icône ni un dessin interne du DSFR, comme --data-uri-svg) */
+function fondImage(el, cs) {
+  const m = /url\("?([^")]+)"?\)/.exec(cs.backgroundImage);
+  if (!m || /^data:image\/svg/.test(m[1])) return null;
+  return m[1].length > 60 ? m[1].slice(0, 60) + '…' : m[1];
 }
 /* Une ligne : libellé, valeur, et éventuellement token ou classe DSFR qui la porte. */
 function ligne(groupe, label, valeur, opts = {}) { return { groupe, label, valeur: String(valeur), ...opts }; }
@@ -742,42 +757,43 @@ function proprietes(el) {
   if (pad.some(Boolean)) out.push(ligne('Structure', 'Padding', ecrire4(pad), { zone: 'padding', ...avecToken(el, 'padding-top', ecrire4(pad)) }));
   const mar = quatre(cs, 'margin');
   if (mar.some(Boolean)) out.push(ligne('Structure', 'Marge', ecrire4(mar), { zone: 'margin', ...avecToken(el, 'margin-bottom', ecrire4(mar)) }));
-  // Apparence
-  if (!transparent(cs.backgroundColor)) out.push(ligne('Apparence', 'Fond', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
-  if (cs.backgroundImage !== 'none' && !/^url\(.data:image\/svg/.test(cs.backgroundImage)) { const bi = cs.backgroundImage.length > 80 ? cs.backgroundImage.slice(0, 80) + '…' : cs.backgroundImage; out.push(ligne('Apparence', 'Image de fond', bi, avecToken(el, 'background-image', bi))); }
-  const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(c => parseFloat(cs.getPropertyValue(`border-${c}-radius`)) || 0);
-  if (rad.some(Boolean)) out.push(ligne('Apparence', 'Rayon', ecrire4(rad)));
-  if (parseFloat(cs.opacity) < 1) out.push(ligne('Apparence', 'Opacité', Math.round(parseFloat(cs.opacity) * 100) + ' %'));
+  // Style : fond, bordures, rayon, ombres, opacité, filtre
+  if (!transparent(cs.backgroundColor)) out.push(ligne('Style', 'Fond', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
+  const bordures = [];
   const bw = quatre(cs, 'border');
-  if (bw.some(Boolean)) {
-    out.push(ligne('Bordure', 'Épaisseur', ecrire4(bw)));
-    out.push(ligne('Bordure', 'Style', cs.borderTopStyle));
-    out.push(ligne('Bordure', 'Couleur', hex(cs.borderTopColor), { couleur: cs.borderTopColor, ...avecToken(el, 'border-top-color', hex(cs.borderTopColor)) }));
-  }
-  if (cs.boxShadow !== 'none') {
-    const d = declaration(el, 'box-shadow'), auteur = d ? decouper(d.v) : [];
-    decouper(cs.boxShadow).forEach((s, i) => {
-      const t = tokenDe(auteur[i]);
-      out.push(ligne('Effets', `Ombre ${i + 1}`, s, { mention: /inset/.test(s) ? 'Intérieure' : 'Portée', ...(t ? { token: t, introuvable: !existe(t, el) } : {}) }));
-    });
-  }
-  if (cs.filter !== 'none') out.push(ligne('Effets', 'Filtre', cs.filter));
+  if (bw.some(Boolean)) bordures.push({ valeur: ecrire4(bw) + (cs.borderTopStyle !== 'solid' ? ` ${cs.borderTopStyle}` : ''), couleur: cs.borderTopColor, ...avecToken(el, 'border-top-color', hex(cs.borderTopColor)) });
+  const ombresPortees = [];
+  ombres(el, cs).forEach(o => {
+    if (transparent(o.couleur)) return;
+    const t = o.token ? { token: o.token, introuvable: !existe(o.token, el) } : {};
+    /* Le DSFR dessine la plupart de ses bordures avec des ombres sans flou : ce sont des bordures */
+    if (!o.flou) bordures.push({ valeur: traitOmbre(o), couleur: o.couleur, ...t });
+    else ombresPortees.push({ valeur: o.texte, couleur: o.couleur, ...t });
+  });
+  borduresDegrade(el).forEach(b => bordures.push(b));
+  bordures.forEach((b, i) => out.push(ligne('Style', bordures.length > 1 ? `Bordure ${i + 1}` : 'Bordure', b.valeur, { ...b, valeur: b.valeur })));
+  if (fondImage(el, cs)) out.push(ligne('Style', 'Image de fond', fondImage(el, cs)));
+  const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(c => parseFloat(cs.getPropertyValue(`border-${c}-radius`)) || 0);
+  if (rad.some(Boolean)) out.push(ligne('Style', 'Rayon', ecrire4(rad)));
+  ombresPortees.forEach((o, i) => out.push(ligne('Style', ombresPortees.length > 1 ? `Ombre ${i + 1}` : 'Ombre', o.valeur, o)));
+  if (parseFloat(cs.opacity) < 1) out.push(ligne('Style', 'Opacité', Math.round(parseFloat(cs.opacity) * 100) + ' %'));
+  if (cs.filter !== 'none') out.push(ligne('Style', 'Filtre', cs.filter));
   // Texte
   /* Texte : dès que l'élément contient du texte (le sien ou celui de ses enfants), avec la taille de l'élément lui-même */
   const aTexte = !!el.textContent.trim() || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(el.tagName);
   if (aTexte) {
     out.push(ligne('Texte', 'Police', cs.fontFamily.split(',')[0].replace(/"/g, '')));
     const taille = `${px(parseFloat(cs.fontSize))} / ${cs.lineHeight === 'normal' ? 'normal' : px(parseFloat(cs.lineHeight))}`;
-    const typo = tailleDsfr(el, cs), tok = avecToken(el, 'font-size', taille);
-    out.push(ligne('Texte', 'Taille', taille, { ...tok, classe: typo.classe || tok.classe,
-      mention: typo.equivalent ? `Taille / hauteur de ligne. Sans classe : même taille que ${typo.classe}` : typo.classe || tok.classe ? 'Taille / hauteur de ligne' : 'Taille / hauteur de ligne. Hors échelle DSFR' }));
+    /* Classe DSFR de taille si elle s'applique, puis taille / hauteur de ligne en px ; hors DSFR, la taille seule */
+    const tok = avecToken(el, 'font-size', taille);
+    out.push(ligne('Texte', 'Taille', taille, { ...tok, classe: classeTaille(el) || tok.classe }));
     out.push(ligne('Texte', 'Graisse', cs.fontWeight));
     out.push(ligne('Texte', 'Couleur', hex(cs.color), { couleur: cs.color, ...avecToken(el, 'color', hex(cs.color)) }));
     if (cs.textAlign !== 'start' && cs.textAlign !== 'left') out.push(ligne('Texte', 'Alignement', cs.textAlign));
   }
   return out;
 }
-const GROUPES = ['Structure', 'Apparence', 'Bordure', 'Effets', 'Texte'];
+const GROUPES = ['Structure', 'Style', 'Texte'];
 function fusion(listes) {
   if (listes.length === 1) return listes[0];
   const cles = [];
@@ -789,6 +805,10 @@ function fusion(listes) {
     const [groupe, label] = k.split('|');
     return pareil ? { ...xs[0], mention: '', zone: null } : { groupe, label, valeur: 'Mixte', mixte: true };
   });
+}
+/* Valeur non copiable (seuls les tokens et les classes se copient) */
+function texteValeur(texte, cls = '', avant = '') {
+  return `<span class="outil-valeur outil-valeur--fixe fr-text--sm fr-mb-0 ${cls}">${avant}<span>${esc(texte)}</span></span>`;
 }
 function boutonValeur(texte, copie, cls = '', avant = '') {
   return `<button type="button" class="outil-valeur fr-text--sm fr-mb-0 ${cls}" data-copie="${esc(copie)}" title="Copier ${esc(copie)}">${avant}<span>${esc(texte)}</span></button>`;
@@ -815,7 +835,7 @@ function rendreProprietes() {
       else {
         if (x.token) v += boutonValeur(x.token, `var(${x.token})`, 'outil-valeur--token', pastille);
         if (x.classe) v += boutonValeur(x.classe, x.classe, 'outil-valeur--token');
-        if (x.valeur) v += boutonValeur(x.valeur, x.valeur, x.token || x.classe ? 'outil-mention' : '', x.token ? '' : pastille);
+        if (x.valeur) v += texteValeur(x.valeur, x.token || x.classe ? 'outil-mention' : '', x.token ? '' : pastille);
         if (x.introuvable) v += '<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d\'origine affichée</p>';
         if (x.mention) v += `<p class="fr-text--xs fr-mb-0 outil-mention">${esc(x.mention)}</p>`;
       }
@@ -880,18 +900,18 @@ function rendreTokens() {
     const toks = d ? [...d.v.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]) : [];
     html += `<section class="outil-groupe fr-pt-2w fr-pb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-1w">${label}</h3>`;
     if (!toks.length) {
-      html += boutonValeur(hex(calc), hex(calc), '', prop.includes('color') ? `<span class="outil-pastille" style="background-color:${esc(calc)}"></span>` : '');
+      html += texteValeur(hex(calc), '', prop.includes('color') ? `<span class="outil-pastille" style="background-color:${esc(calc)}"></span>` : '');
       html += '<p class="fr-text--xs fr-mb-0 outil-mention">Valeur fixe, aucune variable liée</p>';
     }
     toks.forEach(t => {
       if (!existe(t, el)) {
-        html += boutonValeur(hex(calc), hex(calc)) + `<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d'origine affichée (${esc(t)})</p>`;
+        html += texteValeur(hex(calc)) + `<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d'origine affichée (${esc(t)})</p>`;
         return;
       }
       const cl = chaine(t, 'clair'), fc = finale(cl) || '';
       const id = `chaine-${k++}`;
       html += `<div class="fr-mb-1w">${boutonValeur(t, `var(${t})`, 'outil-valeur--token', fc && !/var\(/.test(fc) ? `<span class="outil-pastille" style="background-color:${esc(fc)}"></span>` : '')}`
-        + boutonValeur(fc, fc, 'outil-mention');
+        + texteValeur(fc, 'outil-mention');
       if (cl.length > 1) {
         const ligneCh = ch => ch.map(x => esc(x.nom)).join(' → ') + (finale(ch) ? ' → ' + esc(finale(ch)) : '');
         html += `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-arrow-down-s-line" aria-expanded="false" aria-controls="${id}" data-chaine>Afficher la chaîne d'alias</button>`
