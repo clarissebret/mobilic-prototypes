@@ -15,4 +15,6 @@ Indicateur d'étapes DSFR en tête (32 px dessous), puis le contenu, puis le gro
 | Fond | `--background-alt-grey` |
 | Padding | 32 px × 16 px sous 768 px ; 40 px × 48 px au-delà |
 
+Dans l'encadré, 32 px entre les champs et entre les groupes de champs, pour aérer le formulaire.
+
 La marge basse du DSFR sous le dernier groupe de boutons est neutralisée, pour garder 40 px de padding en bas.

@@ -38,7 +38,7 @@
 .etab__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms cubic-bezier(.23, 1, .32, 1); }
 .etab--selected .etab__body { grid-template-rows: 1fr; }
 .etab__clip { min-height: 0; overflow: hidden; }
-.etab__fields { display: flex; flex-direction: column; gap: 1.5rem; padding-top: 1.5rem; opacity: 0; transform: translateY(-.5rem);
+.etab__fields { display: flex; flex-direction: column; gap: 2rem; padding-top: 2rem; opacity: 0; transform: translateY(-.5rem);
   transition: opacity 200ms cubic-bezier(.23, 1, .32, 1), transform 250ms cubic-bezier(.23, 1, .32, 1); }
 .etab--selected .etab__fields { opacity: 1; transform: none; }
 /* Le focus DSFR (contour décalé) ne doit pas être coupé par le masque une fois ouvert */
@@ -48,7 +48,7 @@
   .etab__fields { transform: none; transition: opacity 200ms ease; }
 }
 .etab__fields .fr-input-group, .etab__fields .fr-select-group { margin-bottom: 0; }
-.etab__row { display: grid; gap: 1.5rem; }
+.etab__row { display: grid; gap: 2rem 1.5rem; }
 @media (min-width: 36em) { .etab__row { grid-template-columns: 1fr 1fr; } }
 
 /* Champ téléphone : indicatif pays + numéro */
@@ -66,15 +66,8 @@
 /* Finalisation */
 .picto { width: 5rem; height: 5rem; }
 /* Encadré webinaire */
-.webinaire { display: flex; flex-direction: column; gap: 1.5rem; padding: 2rem 1.5rem; background-color: var(--background-alt-blue-france); }
+.webinaire { padding: 2rem 1.5rem; background-color: var(--background-alt-grey); }
 @media (min-width: 48em) { .webinaire { padding: 2.5rem 3rem; } }
-.webinaire__intro { display: flex; align-items: flex-start; gap: 1.5rem; }
-.webinaire__intro > div > * { margin-bottom: 0; }
-.webinaire__intro > div { display: flex; flex-direction: column; gap: .5rem; }
-.webinaire__picto { width: 4rem; height: 4rem; flex: none; }
-.webinaire__session { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem; background-color: var(--background-default-grey); }
-.webinaire__date { display: flex; flex-direction: column; align-items: center; min-width: 4rem; padding: .5rem; border: 1px solid var(--border-default-grey); color: var(--text-title-blue-france); }
-.webinaire__date > * { margin-bottom: 0; }
-.webinaire__titre { display: flex; flex-direction: column; flex: 1; min-width: 10rem; }
-.webinaire__titre > * { margin-bottom: 0; }
-@media (max-width: 35.99em) { .webinaire__picto { display: none; } .webinaire__session .fr-btn { width: 100%; justify-content: center; } }
+.webinaire__row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.webinaire__date { display: flex; flex-direction: column; align-items: center; padding: .5rem; background-color: var(--background-contrast-grey); color: var(--text-title-blue-france); }
+.webinaire__titre { flex: 1; min-width: 8rem; }

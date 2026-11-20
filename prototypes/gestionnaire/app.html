@@ -33,10 +33,9 @@
       <h1 class="fr-h3 fr-mb-4w center">S'inscrire comme gestionnaire</h1>
       <div class="encadre">
         <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Création de compte<span class="fr-stepper__state">Étape 1 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="3"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante :</span> Inscription de l'entreprise</p></div>
-        <p class="fr-mb-3w">Cerbère est le service d'authentification proposé par les ministères chargés des transports pour sécuriser et simplifier la connexion à leurs services en ligne, dont Mobilic.</p>
-        <p class="fr-mb-0">Vous allez créer votre compte sur Cerbère, puis revenir sur Mobilic pour inscrire votre entreprise.</p>
+        <p class="fr-mb-0">Pour créer votre compte, vous allez être redirigé vers Cerbère, le service de connexion sécurisée des ministères chargés des transports. Vous reviendrez ensuite sur Mobilic pour inscrire votre entreprise.</p>
         <div class="cerbere-cta fr-mt-4w">
-          <button type="button" class="fr-btn" onclick="go('cerbere-1')">Créer un compte Cerbère</button>
+          <button type="button" class="fr-btn" onclick="go('cerbere-1')">Continuer</button>
           <a class="fr-link" href="https://identite.din.developpement-durable.gouv.fr/aide/" target="_blank" rel="noopener" title="Qu'est-ce que Cerbère ? - nouvelle fenêtre">Qu'est-ce que Cerbère ?</a>
         </div>
       </div>
@@ -144,7 +143,7 @@
       <div class="encadre" oninput="sValidate()" onchange="sValidate()">
         <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Finaliser votre inscription<span class="fr-stepper__state">Étape 3 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="3" data-fr-steps="3"></div></div>
         <div id="s-gtel-wrap"></div>
-        <fieldset class="fr-fieldset fr-mb-3w">
+        <fieldset class="fr-fieldset fr-mb-4w">
           <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Comment avez-vous connu Mobilic ?</legend>
           <div class="sources" id="f-sources"></div>
         </fieldset>
@@ -173,17 +172,12 @@
         <li><button type="button" class="fr-btn" onclick="toast('Espace gestionnaire : hors scope')">Aller dans mon espace</button></li>
       </ul>
       <div class="webinaire fr-mt-5w">
-        <div class="webinaire__intro">
-          <img class="webinaire__picto" src="{{PICTO:digital/self-training}}" alt="">
-          <div>
-            <h2 class="fr-h5">Offrez-vous une formation gratuite de 45 minutes !</h2>
-            <p><span class="fr-text--bold">Apprenez à maîtriser Mobilic</span> grâce à un accompagnement personnalisé et <span class="fr-text--bold">gagnez du temps</span> : formation à la mise en place, démonstration et réponse à toutes vos questions !</p>
-          </div>
-        </div>
-        <div class="webinaire__session">
-          <p class="webinaire__date"><span class="fr-text--xs" id="w-jour"></span><span class="fr-h4" id="w-num"></span><span class="fr-text--xs" id="w-mois"></span></p>
-          <p class="webinaire__titre"><span class="fr-text--bold">Mobilic : Formation gestionnaires</span><span class="fr-text--sm mention" id="w-heure"></span></p>
-          <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" id="w-btn" onclick="webinaire()">S'inscrire</button>
+        <h2 class="fr-h5 fr-mb-1w">Offrez-vous une formation gratuite de 45 minutes !</h2>
+        <p class="fr-mb-3w"><span class="fr-text--bold">Apprenez à maîtriser Mobilic</span> grâce à un accompagnement personnalisé et <span class="fr-text--bold">gagnez du temps</span> : formation à la mise en place, démonstration et réponse à toutes vos questions !</p>
+        <div class="webinaire__row">
+          <p class="webinaire__date fr-mb-0"><span class="fr-text--xs fr-mb-0" id="w-jour"></span><span class="fr-h4 fr-mb-0" id="w-num"></span><span class="fr-text--xs fr-mb-0" id="w-mois"></span></p>
+          <p class="fr-text--sm fr-mb-0 webinaire__titre"><span class="fr-text--bold" id="w-heure"></span> Mobilic : Formation gestionnaires</p>
+          <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm" id="w-btn" onclick="webinaire()">S'inscrire</button>
         </div>
       </div>
     </div>

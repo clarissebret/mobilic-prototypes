@@ -29,7 +29,7 @@ Code : `.etab` dans `prototypes/gestionnaire/app.css`, rendu par `renderEtabs()`
 
 ## Tokens et espacements
 
-Padding 24 px ; 16 px entre deux cartes ; 24 px entre l'en-tête et les champs, et entre les champs.
+Padding 24 px ; 16 px entre deux cartes ; 32 px entre l'en-tête et les champs, et entre les champs (inscription aérée, au-delà des 24 px habituels) ; 24 px entre le type de transport et l'activité quand ils sont côte à côte.
 
 ## Accessibilité
 

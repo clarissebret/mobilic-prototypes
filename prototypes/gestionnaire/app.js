@@ -129,7 +129,7 @@ function eValidate() {
 /* ---------- 4. Finalisation de l'inscription ---------- */
 function renderSources() {
   /* Téléphone du gestionnaire : demandé ici seulement s'il n'a été donné ni comme téléphone ni comme portable sur Cerbère */
-  if (!state.telGestionnaire && !$('s-gtel')) $('s-gtel-wrap').innerHTML = '<div class="fr-mb-3w">' + telField('s-gtel', 'Votre numéro de téléphone', true) + '</div>';
+  if (!state.telGestionnaire && !$('s-gtel')) $('s-gtel-wrap').innerHTML = '<div class="fr-mb-4w">' + telField('s-gtel', 'Votre numéro de téléphone', true) + '</div>';
   if (state.telGestionnaire) $('s-gtel-wrap').innerHTML = '';
   sValidate();
   if ($('f-sources').children.length) return;
@@ -146,7 +146,7 @@ function renderFin() {
   $('w-jour').textContent = d.toLocaleDateString('fr-FR', { weekday: 'short' });
   $('w-num').textContent = d.getDate();
   $('w-mois').textContent = d.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
-  $('w-heure').textContent = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^./, c => c.toUpperCase()) + ' · 10:00 - 10:45 · En ligne';
+  $('w-heure').textContent = '10:00';
   $('w-btn').disabled = false; $('w-btn').textContent = "S'inscrire";
 }
 function webinaire() { $('w-btn').disabled = true; $('w-btn').textContent = 'Inscription confirmée'; toast('Inscription au webinaire confirmée'); }
