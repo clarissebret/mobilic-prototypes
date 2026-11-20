@@ -28,7 +28,7 @@ function infobulle(btn, tt) {
     tt.style.left = left + 'px'; tt.style.top = (r.top - t.height - 4) + 'px';
     tt.style.setProperty('--arrow-x', (r.left + r.width / 2 - left - t.width / 2) + 'px');
   };
-  const montrer = () => { if (!liste.hidden) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
+  const montrer = () => { if (listeOuverte()) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
   const cacher = () => { tt.classList.remove('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'true'); };
   btn.addEventListener('mouseenter', montrer); btn.addEventListener('focus', montrer);
   btn.addEventListener('mouseleave', cacher); btn.addEventListener('blur', cacher); btn.addEventListener('click', cacher);
@@ -123,7 +123,10 @@ function changerFormat(w, annonce) {
 }
 new ResizeObserver(() => ajuster()).observe(vue);
 /* Le bouton bascule entre les deux formats ; une largeur personnalisée bascule selon son côté de 768 px */
-$('format-bouton').addEventListener('click', () => changerFormat(estMobile() ? FORMATS.Desktop : FORMATS.Mobile, true));
+/* Le prototype réapparaît en fondu (150 ms) quand il change de format ou se recharge : la réorganisation n'est pas brutale */
+function fonduCadre() { device.animate({ opacity: [0, 1] }, { duration: 150, easing: 'cubic-bezier(.23, 1, .32, 1)' }); }
+function basculerFormat() { changerFormat(estMobile() ? FORMATS.Desktop : FORMATS.Mobile, true); fonduCadre(); }
+$('format-bouton').addEventListener('click', basculerFormat);
 
 function placerPopover(pop, btn) {
   const r = btn.getBoundingClientRect();
@@ -186,16 +189,31 @@ function surligner(i) {
   if (actif >= 0) { recherche.setAttribute('aria-activedescendant', os[actif].id); os[actif].scrollIntoView({ block: 'nearest' }); }
   else recherche.removeAttribute('aria-activedescendant');
 }
+/* La liste grandit depuis le bouton (97 % → 100 %, fondu) en 150 ms et repart de la même façon en 120 ms */
+const listeOuverte = () => $('parcours-bouton').getAttribute('aria-expanded') === 'true';
+let animListe = null;
+function animerListe(ouvrir) {
+  if (animListe) animListe.cancel();
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Sortie : images clés inversées (pas direction: reverse, qui inverserait aussi la courbe et ferait démarrer lentement) */
+  const sens = t => ouvrir ? t : t.slice().reverse();
+  animListe = liste.animate(reduit ? { opacity: sens([0, 1]) } : { opacity: sens([0, 1]), transform: sens(['scale(.97)', 'scale(1)']) },
+    { duration: ouvrir ? 150 : 120, easing: 'cubic-bezier(.23, 1, .32, 1)', fill: ouvrir ? 'none' : 'forwards' });
+  return animListe;
+}
 function ouvrirListe() {
   ttParcours.cacher();
   recherche.value = ''; rendreListe(); liste.hidden = false;
   placerPopover(liste, $('parcours-bouton'));
   $('parcours-bouton').setAttribute('aria-expanded', 'true');
+  animerListe(true);
   recherche.focus();
 }
 function fermerListe(rendreFocus) {
-  if (liste.hidden) return;
-  liste.hidden = true; $('parcours-bouton').setAttribute('aria-expanded', 'false');
+  if (!listeOuverte()) return;
+  $('parcours-bouton').setAttribute('aria-expanded', 'false');
+  const a = animerListe(false);
+  a.finished.then(() => { if (!listeOuverte()) liste.hidden = true; a.cancel(); }, () => {});
   if (rendreFocus) $('parcours-bouton').focus();
 }
 function choisirParcours(ifaceId, commande) {
@@ -208,7 +226,7 @@ function choisirParcours(ifaceId, commande) {
   enCours = commande; libelleParcours();
   annoncer(`${recommencer ? 'Parcours recommencé' : 'Parcours'} : ${p.libelle}. Premier écran affiché.`);
 }
-$('parcours-bouton').addEventListener('click', () => liste.hidden ? ouvrirListe() : fermerListe(true));
+$('parcours-bouton').addEventListener('click', () => listeOuverte() ? fermerListe(true) : ouvrirListe());
 recherche.addEventListener('input', rendreListe);
 recherche.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown') { e.preventDefault(); surligner(actif + 1); }
@@ -217,7 +235,7 @@ recherche.addEventListener('keydown', e => {
   else if (e.key === 'Tab') fermerListe(false);
 });
 options.addEventListener('click', e => { const o = e.target.closest('[role="option"]'); if (o) choisirParcours(o.dataset.interface, o.dataset.commande); });
-document.addEventListener('mousedown', e => { if (!liste.hidden && !liste.contains(e.target) && !$('parcours-bouton').contains(e.target)) fermerListe(false); });
+document.addEventListener('mousedown', e => { if (listeOuverte() && !liste.contains(e.target) && !$('parcours-bouton').contains(e.target)) fermerListe(false); });
 
 /* ---------- Remplissage des formulaires ---------- */
 let formApp = false;
@@ -301,6 +319,7 @@ $('remplir').addEventListener('click', remplir);
 function recommencer() {
   fermerListe(false); deselectionner();
   enCours = null; libelleParcours();
+  recharge = true;
   frame.srcdoc = frame.srcdoc;
   annoncer('Prototype recommencé');
 }
@@ -515,7 +534,7 @@ function naviguer(e) {
 
 /* Échap : liste ouverte, puis sélection, puis inspecteur */
 function echap() {
-  if (!liste.hidden) { fermerListe(true); return true; }
+  if (listeOuverte()) { fermerListe(true); return true; }
   if (selection.length) { deselectionner(); annoncer('Sélection effacée'); return true; }
   if (inspection) { basculerInspection(false); return true; }
   return false;
@@ -534,6 +553,7 @@ function clavier(e, dansCadre) {
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
   else if (k === 'r') { e.preventDefault(); recommencer(); }
   else if (k === 'f') { e.preventDefault(); remplir(); }
+  else if (k === 'm') { e.preventDefault(); basculerFormat(); }
 }
 document.addEventListener('keydown', e => clavier(e, false));
 document.addEventListener('keyup', e => { if (e.key === 'Alt') majMesure(false); });
@@ -568,7 +588,8 @@ function installer() {
   const h = location.hash.match(/^#parcours=(.+)$/);
   if (h) { history.replaceState(null, '', location.pathname); const c = decodeURIComponent(h[1]); if (iface.parcours.some(p => p.commande === c)) setTimeout(() => choisirParcours(DATA.interface, c), 0); }
 }
-frame.addEventListener('load', installer);
+let recharge = false;
+frame.addEventListener('load', () => { if (recharge) { recharge = false; fonduCadre(); } installer(); });
 if (doc() && doc().readyState === 'complete') installer();
 
 /* ---------- Lecture des styles : règles, déclarations, tokens ---------- */

@@ -44,7 +44,7 @@
 .outil-raccourci { color: var(--text-disabled-grey); }
 
 /* Liste des parcours (au-dessus de la barre) */
-.outil-liste { position: fixed; z-index: 1000; width: 24rem; max-width: calc(100vw - 32px); max-height: 60vh; overflow-y: auto; padding: 8px;
+.outil-liste { transform-origin: bottom center; position: fixed; z-index: 1000; width: 24rem; max-width: calc(100vw - 32px); max-height: 60vh; overflow-y: auto; padding: 8px;
   border-radius: .25rem; background-color: var(--background-overlap-grey); box-shadow: var(--overlap-shadow); }
 .outil-liste[hidden] { display: none; }
 .outil-liste__groupe { padding: 8px 8px 4px; }

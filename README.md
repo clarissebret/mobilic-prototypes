@@ -16,7 +16,7 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- La barre sous le cadre permet de choisir un parcours, de passer du format Mobile (360 px) au format Desktop (1440 px), de remplir le formulaire affiché (F), de recommencer le prototype (R), d'ouvrir l'inspecteur (I) et de masquer la barre (@). Choisir le parcours en cours le recommence.
+- La barre sous le cadre permet de choisir un parcours, de passer du format Mobile (360 px) au format Desktop (1440 px) (M), de remplir le formulaire affiché (F), de recommencer le prototype (R), d'ouvrir l'inspecteur (I) et de masquer les outils (@). Choisir le parcours en cours le recommence.
 - Le format et sa taille s'affichent au-dessus du cadre. Le cadre prend toute la hauteur disponible ; la poignée du bord droit règle sa largeur à la main. Le cadre est réduit si la fenêtre est trop étroite.
 - L'inspecteur, à droite, donne les propriétés, le code (React ou CSS), les tokens DSFR et les images et icônes à exporter de l'élément cliqué. Alt mesure les distances entre l'élément sélectionné et l'élément survolé. Voir [composants/outil-prototypage.md](composants/outil-prototypage.md).
 - SIREN de test : `110014016`.
