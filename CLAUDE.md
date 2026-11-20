@@ -24,8 +24,9 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Le cadre des prototypes mobiles (panneau à gauche : parcours, remplissage, réinitialisation, choix du téléphone ; téléphone au centre ; aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
-- Chaque prototype a un `prototype.json` : titre, description (affichés en haut du panneau), parcours listés dans le panneau. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
+- Le cadre des prototypes (téléphone ou cadre desktop au centre, aperçu PDF) est commun : `shared/shell-mobile.html`. L'outil de prototypage qui l'entoure (barre de contrôle : parcours, format, remplissage, recommencer, inspecteur ; inspecteur à droite) est dans `outil/`, documenté dans `composants/outil-prototypage.md`. Ne pas les dupliquer dans un prototype, et ne pas modifier un prototype pour les besoins de l'outil.
+- Chaque prototype a un `prototype.json` : titre, nom court (affiché dans le sélecteur de parcours), description, parcours listés dans la barre. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
+- Les valeurs fictives de « Remplir le formulaire » se déclarent par identifiant de champ dans `prototypes/<interface>/remplissage.json` ; sans valeur déclarée, l'outil en choisit une selon le type du champ.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
 
 ## Conventions UI
@@ -33,11 +34,11 @@
 - DSFR 1.15.4 d'abord : composants et classes DSFR. Le CSS propre à Mobilic n'utilise que les tokens DSFR (`var(--…)`), jamais de couleur en dur. Styles communs à toutes les interfaces (ex. tableau Mobilic) : `shared/mobilic.css` ; styles propres à une interface : son `app.css`.
 - Tableaux : toujours la variante `mobilic-table` (voir `composants/tableau.md`).
 - Typographie : uniquement les classes DSFR (`fr-h1` à `fr-h6`, `fr-text--lead|lg|sm|xs`, `fr-text--bold`). Pas de `font-size`, `letter-spacing` ni `text-transform` personnalisés, pas de capitales.
-- Espacements : les marges entre éléments passent par les classes utilitaires DSFR (`fr-m*-*` : `1v` = 4 px, `1w` = 8 px), y compris dans le HTML généré en JS. Le CSS personnalisé sert à la mise en page (flex, grid, position) et au padding interne d'un composant Mobilic, toujours sur la grille de 4 px et documenté dans sa fiche `composants/`. Seule exception : neutraliser une marge interne du DSFR qui casse un espacement.
+- Espacements : dans une mise en page flex ou grid, l'espace entre enfants passe par `gap` sur le parent (multiple de 4 px), pas par des marges sur les enfants. Ailleurs, les marges entre éléments passent par les classes utilitaires DSFR (`fr-m*-*` : `1v` = 4 px, `1w` = 8 px), y compris dans le HTML généré en JS. Le CSS personnalisé sert à la mise en page (flex, grid, gap, position) et au padding interne d'un composant Mobilic, toujours sur la grille de 4 px et documenté dans sa fiche `composants/`. Seule exception : neutraliser une marge interne du DSFR qui casse un espacement.
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
-- Écran du téléphone rendu dans un iframe, en 3 tailles : 360 × 640, 360 × 740 (par défaut) et 412 × 915. Les règles responsives du DSFR sont donc celles du mobile. Vérifier chaque écran modifié sur les 3 tailles.
+- Écran rendu dans un iframe, au format Mobile (360 px de large, par défaut) ou Desktop (1440 px), ou à une largeur libre réglée avec la poignée ; la hauteur est celle de la fenêtre. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié en Mobile, avec une fenêtre basse et une fenêtre haute.
 - Interface contrôleur : l'accueil occupe toute la page ; à partir de 768 px (48em), la création du contrôle et le contrôle (page du contrôle, création du bulletin, relevé) s'ouvrent dans le panneau latéral par-dessus l'accueil (voir `composants/panneau-lateral.md`). En dessous, ces écrans sont des pages pleine largeur. Échap ou clic sur le fond ferme le panneau (`back()`).
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR. Ne pas utiliser les options DSFR qui dépendent de son JS (ex. `fr-btns-group--equisized`) : sur mobile, les boutons empilés doivent prendre toute la largeur.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.

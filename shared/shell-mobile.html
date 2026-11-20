@@ -8,36 +8,8 @@
 <style id="dsfr-css">{{DSFR_CSS}}</style>
 <style id="app-css">{{APP_CSS}}</style>
 <style>
-  /* Cadre du prototype (hors application) */
-  html, body { min-height: 100%; background-color: var(--background-contrast-grey); }
-  .proto { display: grid; grid-template-columns: 18rem 1fr; min-height: 100vh; }
-  .side { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 1.5rem; background-color: var(--background-default-grey); }
-  .side .flows { list-style: none; padding: 0; }
-  .side .flow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0; }
-  .side .flow .fr-btn { flex-shrink: 0; }
-  .side .mention { color: var(--text-mention-grey); }
-  .side .fill[hidden] { display: none; }
-  .stage { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; }
-  .device-box { position: relative; }
-  .device-box > .device { position: absolute; top: 0; left: 0; transform-origin: top left; }
-
-  /* Téléphone Android */
-  .device { padding: 12px; border-radius: 44px; background: #1e1e1e; box-shadow: 0 0 0 2px #3a3a3a, 0 12px 32px rgba(0,0,0,.35); position: relative; }
-  .device::before { content: ""; position: absolute; right: -4px; top: 140px; width: 4px; height: 64px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
-  .device::after { content: ""; position: absolute; right: -4px; top: 230px; width: 4px; height: 100px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
-  .screen-wrap { width: var(--w, 360px); border-radius: 32px; overflow: hidden; background-color: var(--background-default-grey); }
-  .android-status { position: relative; height: 32px; display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem 0 1.5rem;
-    background-color: var(--background-default-grey); color: #161616; font-family: Roboto, "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 500; }
-  .android-status__camera { position: absolute; left: 50%; top: 8px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1e1e1e; }
-  .android-status__icons { display: flex; gap: 4px; align-items: center; }
-  .android-status__icons [class*="fr-icon-"]::before { --icon-size: 15px; }
-  .android-nav { height: 48px; display: flex; justify-content: space-around; align-items: center; background-color: #f2f2f2; }
-  .android-nav button { width: 64px; height: 40px; border: 0; border-radius: 20px; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #3c3c3c; }
-  .android-nav button:hover { background-color: rgba(0,0,0,.06); }
-  .android-nav button[disabled] { cursor: default; background: none; }
-  .android-nav svg { width: 18px; height: 18px; }
-  #app { display: block; width: var(--w, 360px); height: var(--h, 740px); border: 0; }
-
+  /* Cadre du prototype (hors application) : voir outil/outil.css */
+  html, body { height: 100%; background-color: var(--background-contrast-grey); }
   /* Aperçu PDF */
   .pdf-overlay { display: none; position: fixed; inset: 0; z-index: 4000; overflow: auto; padding: 1.5rem; background-color: rgba(22,22,22,.8); }
   .pdf-overlay.open { display: block; }
@@ -63,54 +35,85 @@
   .pdf-table th, .pdf-table td { padding: .375rem .5rem; border: 1px solid var(--border-default-grey); text-align: left; vertical-align: top; }
   .pdf-table th { background-color: var(--background-alt-grey); }
   .pdf-foot { margin: 1rem 0 0; color: var(--text-mention-grey); }
-  @media print { .proto, .pdf-bar { display: none !important; } .pdf-overlay { position: static; padding: 0; background: none; } }
+  @media print { .outil, .pdf-bar { display: none !important; } .pdf-overlay { position: static; padding: 0; background: none; } }
 </style>
+<style id="outil-css">{{OUTIL_CSS}}</style>
 </head>
 <body>
-<div class="proto">
-  <aside class="side" aria-label="Commandes du prototype">
-    <p class="fr-text--xs fr-mb-1v mention">Prototype Mobilic</p>
-    <h1 class="fr-h5 fr-mb-1w">{{TITRE}}</h1>
-    <p class="fr-text--sm fr-mb-4w">{{DESCRIPTION}}</p>
-
-    <h2 class="fr-h6 fr-mb-2w">Parcours</h2>
-    <ul class="flows fr-mb-4w">
-{{PARCOURS}}
-    </ul>
-    <div class="fill fr-mb-1w" id="fill" hidden>
-      <button type="button" class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left" onclick="cmd('fill')">Remplir le formulaire</button>
-    </div>
-    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left fr-mb-4w" onclick="cmd('reset')">Réinitialiser</button>
-    <div class="fr-select-group">
-      <label class="fr-label" for="device-size">Téléphone</label>
-      <select class="fr-select" id="device-size" onchange="setDevice(this.value)">
-        <option value="360x640">Galaxy S5 · 360 × 640</option>
-        <option value="360x740" selected>Galaxy S8+ · 360 × 740</option>
-        <option value="412x915">Pixel 7 · 412 × 915</option>
-      </select>
-    </div>
-  </aside>
-
-  <main class="stage">
-    <div class="device-box" id="device-box">
-  <div class="device">
-    <div class="screen-wrap">
-      <div class="android-status" aria-hidden="true">
-        <span id="clock">9:41</span>
-        <span class="android-status__camera"></span>
-        <span class="android-status__icons"><span class="fr-icon-signal-wifi-fill"></span><span class="fr-icon-signal-cellular-3-fill"></span><span class="fr-icon-battery-fill"></span></span>
+<div class="outil" id="outil">
+  <main class="outil__scene">
+    <div class="outil__vue" id="vue">
+      <div class="outil-cadre">
+        <p class="outil-cadre__libelle fr-text--xs fr-mb-1w" id="format-libelle"></p>
+        <div class="device-box" id="device-box">
+          <div class="device" id="device"><iframe id="app" title="Application Mobilic : {{TITRE}}"></iframe></div>
+          <div class="outil-poignee outil-poignee--largeur" id="poignee-largeur" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largeur du cadre" aria-valuemin="280" aria-valuemax="2560"></div>
+        </div>
       </div>
-      <iframe id="app" title="Application Mobilic : {{TITRE}} (vue mobile)"></iframe>
-      <nav class="android-nav" aria-label="Barre de navigation Android">
-        <button type="button" title="Retour" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M17 4.5v15L5 12z"/></svg></button>
-        <button type="button" title="Accueil (inactif)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></button>
-        <button type="button" title="Applications récentes (inactif)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button>
-      </nav>
-    </div>
-  </div>
+      <div class="outil-calque" id="calque" aria-hidden="true"></div>
     </div>
   </main>
+
+  <aside class="outil-inspecteur" id="inspecteur" aria-labelledby="insp-titre" hidden>
+  <div class="outil-inspecteur__piste"><div class="outil-inspecteur__carte">
+    <div class="outil-inspecteur__tete fr-pl-2w fr-pr-1w fr-py-1w">
+      <h2 class="fr-text--sm fr-text--bold fr-mb-0 outil-inspecteur__titre" id="insp-titre">Inspecteur</h2>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-up-s-line outil-inspecteur__agrandir" id="insp-agrandir" aria-pressed="false">Agrandir l'inspecteur</button>
+      <button type="button" class="fr-btn--close fr-btn fr-mb-0" id="insp-fermer" title="Fermer l'inspecteur">Fermer</button>
+    </div>
+    <div class="outil-inspecteur__vide fr-p-2w" id="insp-vide">
+      <span class="outil-inspecteur__pictogramme fr-icon-cursor-line fr-mb-2w" aria-hidden="true"></span>
+      <p class="fr-text--sm fr-mb-0 outil-mention">Cliquez sur un élément du prototype<br>pour l'inspecter.</p>
+    </div>
+    <div class="outil-inspecteur__contenu" id="insp-contenu" hidden>
+      <div class="outil-element fr-px-2w fr-pt-2w fr-pb-1w" id="insp-element"></div>
+      <div class="outil-onglets-zone">
+      <ul class="fr-tabs__list outil-onglets" role="tablist" aria-label="Inspecteur">
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm fr-text--regular" role="tab" id="onglet-proprietes" aria-controls="panneau-proprietes" aria-selected="true">Propriétés</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm fr-text--regular" role="tab" id="onglet-code" aria-controls="panneau-code" aria-selected="false" tabindex="-1">Code</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm fr-text--regular" role="tab" id="onglet-tokens" aria-controls="panneau-tokens" aria-selected="false" tabindex="-1">Tokens</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm fr-text--regular" role="tab" id="onglet-assets" aria-controls="panneau-assets" aria-selected="false" tabindex="-1">Assets</button></li>
+      </ul>
+      <span class="outil-onglets__indicateur" id="onglets-indicateur" aria-hidden="true"></span>
+      </div>
+      <div class="outil-inspecteur__corps">
+        <div class="outil-panneau fr-px-2w fr-pt-1w fr-pb-2w" id="panneau-proprietes" role="tabpanel" aria-labelledby="onglet-proprietes" tabindex="0"></div>
+        <div class="outil-panneau fr-px-2w fr-pt-1w fr-pb-2w" id="panneau-code" role="tabpanel" aria-labelledby="onglet-code" tabindex="0" hidden></div>
+        <div class="outil-panneau fr-px-2w fr-pt-1w fr-pb-2w" id="panneau-tokens" role="tabpanel" aria-labelledby="onglet-tokens" tabindex="0" hidden></div>
+        <div class="outil-panneau fr-px-2w fr-pt-1w fr-pb-2w" id="panneau-assets" role="tabpanel" aria-labelledby="onglet-assets" tabindex="0" hidden></div>
+      </div>
+    </div>
+  </div></div>
+  </aside>
+
+  <div class="outil__pied" id="pied">
+    <div class="outil-barre fr-mb-2w" id="barre" role="toolbar" aria-label="Outil de prototypage">
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-play-line outil-barre__icone" id="parcours-bouton" aria-haspopup="dialog" aria-expanded="false" aria-controls="parcours-liste" aria-describedby="tt-parcours">Parcours</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-smartphone-line outil-barre__icone" id="format-bouton" aria-describedby="tt-format">Passer au format Desktop</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-magic-line outil-barre__icone" id="remplir" aria-describedby="tt-remplir">Remplir le formulaire</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-restart-line outil-barre__icone" id="recommencer" aria-describedby="tt-recommencer">Recommencer le prototype</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-cursor-line outil-barre__icone outil-inspecter" id="inspecter" aria-pressed="false" aria-describedby="tt-inspecter">Inspecter</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-close-line outil-barre__icone" id="masquer" aria-describedby="tt-masquer">Masquer les outils</button>
+    </div>
+  </div>
+
+  <div class="outil-liste" id="parcours-liste" role="dialog" aria-label="Choisir un parcours" hidden>
+    <div class="fr-input-group fr-mb-0">
+      <label class="fr-label fr-sr-only" for="parcours-recherche">Rechercher un parcours</label>
+      <input class="fr-input" id="parcours-recherche" type="text" role="combobox" aria-expanded="true" aria-controls="parcours-options" aria-autocomplete="list" autocomplete="off" placeholder="Rechercher un parcours">
+    </div>
+    <div class="fr-mt-1w" id="parcours-options" role="listbox" aria-label="Parcours"></div>
+    <p class="fr-text--sm fr-mt-2w fr-mb-1w outil-liste__vide" id="parcours-vide" role="status" hidden></p>
+  </div>
 </div>
+
+<span class="fr-tooltip fr-placement" id="tt-parcours" role="tooltip" aria-hidden="true">Choisir le parcours</span>
+<span class="fr-tooltip fr-placement" id="tt-format" role="tooltip" aria-hidden="true">Changer le format d'écran<span class="outil-raccourci fr-ml-1w">M</span></span>
+<span class="fr-tooltip fr-placement" id="tt-remplir" role="tooltip" aria-hidden="true">Remplir le formulaire<span class="outil-raccourci fr-ml-1w">F</span></span>
+<span class="fr-tooltip fr-placement" id="tt-recommencer" role="tooltip" aria-hidden="true">Recommencer<span class="outil-raccourci fr-ml-1w">R</span></span>
+<span class="fr-tooltip fr-placement" id="tt-inspecter" role="tooltip" aria-hidden="true">Inspecter<span class="outil-raccourci fr-ml-1w">I</span></span>
+<span class="fr-tooltip fr-placement" id="tt-masquer" role="tooltip" aria-hidden="true">Masquer les outils<span class="outil-raccourci fr-ml-1w">@</span></span>
+<p class="fr-sr-only" id="outil-annonce" role="status" aria-live="polite"></p>
 
 <div class="pdf-overlay" id="pdf" role="dialog" aria-modal="true" aria-label="Aperçu du bulletin de contrôle PDF">
   <div class="pdf-bar">
@@ -127,41 +130,17 @@
 
 <script>
   const frame = document.getElementById('app');
-  const css = document.getElementById('dsfr-css').textContent + document.getElementById('app-css').textContent;
-  frame.srcdoc = '<!DOCTYPE html><html lang="fr" data-fr-scheme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>'
-    + css + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
+  const dsfrCss = document.getElementById('dsfr-css').textContent, appCss = document.getElementById('app-css').textContent;
+  frame.srcdoc = '<!DOCTYPE html><html lang="fr" data-fr-scheme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style id="dsfr">'
+    + dsfrCss + '</style><style id="mobilic">' + appCss + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
   function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name }, '*'); }
   const pdf = document.getElementById('pdf');
-  function back() {
-    if (pdf.classList.contains('open')) return pdf.classList.remove('open');
-    cmd('back');
-  }
   window.addEventListener('message', e => {
     const m = e.data || {};
     if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }
-    if (m.type === 'screen') {
-      document.getElementById('fill').hidden = !m.form;
-    }
   });
-  const device = document.querySelector('.device'), box = document.getElementById('device-box');
-  let size = [360, 740];
-  function fit() {
-    const w = device.offsetWidth, h = device.offsetHeight;
-    const avail = window.innerHeight - box.getBoundingClientRect().top - window.scrollY - 24;
-    const k = Math.min(1, avail / h);
-    device.style.transform = `scale(${k})`;
-    box.style.width = w * k + 'px'; box.style.height = h * k + 'px';
-  }
-  function setDevice(v) {
-    size = v.split('x').map(Number);
-    document.documentElement.style.setProperty('--w', size[0] + 'px');
-    document.documentElement.style.setProperty('--h', size[1] + 'px');
-    fit();
-  }
-  window.addEventListener('resize', fit);
-  setDevice(document.getElementById('device-size').value);
-  const tick = () => { const d = new Date(); document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
-  tick(); setInterval(tick, 30000);
 </script>
+<script type="application/json" id="outil-data">{{OUTIL_DATA}}</script>
+<script>{{OUTIL_JS}}</script>
 </body>
 </html>

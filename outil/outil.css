@@ -1,0 +1,151 @@
+/* Outil de prototypage : barre de contrôle et inspecteur.
+   Composant propre à l'outil, hors DSFR, documenté dans composants/outil-prototypage.md.
+   Uniquement des tokens DSFR ; valeurs de padding sur la grille de 4 px. */
+
+/* ---------- Mise en page : scène (libellé, cadre) et inspecteur en haut, barre en bas sur toute la largeur ---------- */
+/* La place de la barre (48 px + 16 px sous elle) est réservée par le padding bas ; la barre est posée dessus en absolu */
+.outil { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; padding-bottom: 64px; overflow: hidden; }
+.outil--sans-barre { padding-bottom: 0; }
+.outil__scene { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+/* Le cadre est placé en JS (marge gauche) pour rester centré sur la fenêtre, donc sur la barre, même inspecteur ouvert */
+.outil__vue { position: relative; flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-start; justify-content: flex-start; padding: 16px; overflow: hidden; }
+.outil__pied { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
+.outil__pied .outil-barre { pointer-events: auto; }
+.outil__pied[hidden] { display: none; }
+/* Barre masquée (@) : la place est libérée (ou réservée) d'un coup au début, puis la barre descend hors de l'écran
+   en s'effaçant par-dessus le cadre, et remonte de la même façon dans la place réservée */
+.outil__pied { transition: transform 200ms cubic-bezier(.23, 1, .32, 1), opacity 200ms cubic-bezier(.23, 1, .32, 1); }
+.outil__pied--sortie { transform: translateY(100%); opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .outil__pied { transition: opacity 200ms ease; } .outil__pied--sortie { transform: none; } }
+.outil-cadre { display: flex; flex-direction: column; }
+.outil-cadre__libelle { color: var(--text-mention-grey); white-space: nowrap; }
+
+/* Cadre du prototype : rectangle blanc à la taille du format, réduit à l'affichage si besoin */
+.device-box { position: relative; }
+.device { position: absolute; top: 0; left: 0; overflow: hidden; border-radius: .75rem; transform-origin: top left; background-color: var(--background-default-grey); }
+#app { display: block; width: var(--w, 360px); height: var(--h, 740px); border: 0; }
+.outil--glisse #app { pointer-events: none; }
+
+/* Poignée de redimensionnement : bord droit (largeur) */
+.outil-poignee { position: absolute; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: none; touch-action: none; }
+.outil-poignee::before { content: ""; border-radius: 2px; background-color: var(--border-default-grey); }
+.outil-poignee:hover::before, .outil-poignee:active::before, .outil--glisse .outil-poignee::before { background-color: var(--border-plain-grey); }
+/* Pas de poignée quand l'inspecteur est ouvert */
+.outil--inspecteur .outil-poignee { display: none; }
+.outil-poignee--largeur { top: 50%; left: 100%; width: 16px; height: 48px; transform: translateY(-50%); cursor: ew-resize; }
+.outil-poignee--largeur::before { width: 4px; height: 32px; }
+
+/* ---------- Barre de contrôle : boutons à icône seule ---------- */
+.outil-barre { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: .25rem; background-color: var(--background-default-grey); }
+.outil-mention, .outil-liste__vide { color: var(--text-mention-grey); }
+.outil-barre .fr-btn[aria-disabled="true"] { color: var(--text-disabled-grey); cursor: not-allowed; }
+.outil-barre .fr-btn[aria-expanded="true"], .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
+/* Raccourci clavier dans une info-bulle, en texte plus clair */
+.outil-raccourci { color: var(--text-disabled-grey); }
+
+/* Liste des parcours (au-dessus de la barre) */
+.outil-liste { transform-origin: bottom center; position: fixed; z-index: 1000; width: 24rem; max-width: calc(100vw - 32px); max-height: 60vh; overflow-y: auto; padding: 8px;
+  border-radius: .25rem; background-color: var(--background-overlap-grey); box-shadow: var(--overlap-shadow); }
+.outil-liste[hidden] { display: none; }
+.outil-liste__groupe { padding: 8px 8px 4px; }
+.outil-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px; border-radius: .25rem; cursor: pointer; }
+.outil-option:hover, .outil-option--active { background-color: var(--background-overlap-grey-hover); }
+.outil-option[aria-selected="true"] { color: var(--text-action-high-blue-france); }
+.outil-option:not([aria-selected="true"]) .fr-icon-check-line { visibility: hidden; }
+
+/* ---------- Calque d'inspection (au-dessus du cadre) ---------- */
+.outil-calque { position: absolute; inset: 0; pointer-events: none; }
+.outil-calque__cadre { position: absolute; overflow: hidden; }
+.outil-contour { position: absolute; outline: 1px solid var(--border-plain-blue-france); }
+.outil-contour--selection { outline-width: 2px; }
+.outil-etiquette { position: absolute; padding: 0 4px; white-space: nowrap; background-color: var(--background-action-high-blue-france); color: var(--text-inverted-blue-france); }
+.outil-mesure { position: absolute; background-color: var(--background-flat-red-marianne); }
+.outil-mesure--guide { background-color: transparent; outline: 1px dashed var(--background-flat-red-marianne); }
+.outil-mesure__valeur { position: absolute; padding: 0 4px; border-radius: 2px; white-space: nowrap; transform: translate(-50%, -50%);
+  background-color: var(--background-flat-red-marianne); color: var(--text-inverted-red-marianne); }
+.outil-contour--mesure { outline-color: var(--background-flat-red-marianne); }
+.outil-zone { position: absolute; opacity: .7; background-color: var(--background-contrast-yellow-tournesol); outline: 1px dashed var(--border-plain-yellow-tournesol); }
+
+/* ---------- Inspecteur ---------- */
+.outil-inspecteur { width: 0; min-height: 0; overflow: hidden; transition: width 300ms cubic-bezier(.32, .72, 0, 1); }
+.outil--inspecteur .outil-inspecteur { width: 424px; }
+.outil-inspecteur[hidden] { display: none; }
+/* Piste de largeur fixe : en élargissant la colonne, la carte entre depuis la droite. Haut aligné sur le cadre (16 + 20 + 8 px), bas sur celui de la vue (16 px) */
+.outil-inspecteur__piste { width: 424px; height: 100%; padding: 44px 16px 16px 0; }
+.outil-inspecteur__carte { display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: .25rem; background-color: var(--background-default-grey); }
+@media (prefers-reduced-motion: reduce) { .outil-inspecteur { transition: none; } }
+.outil-inspecteur__tete { display: flex; align-items: center; gap: 8px; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+.outil-inspecteur__titre { flex: 1; min-width: 0; }
+.outil-inspecteur__contenu { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.outil-inspecteur__contenu[hidden], .outil-inspecteur__vide[hidden] { display: none; }
+/* État vide : pictogramme et consigne centrés dans la carte */
+.outil-inspecteur__vide { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; }
+.outil-inspecteur__pictogramme { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%;
+  background-color: var(--background-contrast-grey); color: var(--text-mention-grey); }
+.outil-groupe__tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.outil-element__titre { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.outil-element__nom { font-family: monospace; overflow-wrap: anywhere; }
+.outil-inspecteur__agrandir { display: none; }
+/* Onglets DSFR sans le conteneur .fr-tabs (piloté sans le JS du DSFR) : neutralise les marges et la puce de liste */
+.outil-onglets { --ul-type: none; --ul-start: 0; --li-bottom: 0; order: 0; margin: 0; padding: 0 4px; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+/* Onglets à la manière de la navigation principale DSFR : texte simple, onglet actif en bleu souligné de 2 px, sans fond ni bordure */
+.outil-onglets .fr-tabs__tab[role="tab"] { --idle: transparent; --hover: var(--background-default-grey-hover); --active: var(--background-default-grey-active);
+  min-height: 2.5rem; margin: 0; padding: 8px 12px; background-color: transparent; background-image: none; box-shadow: none; color: var(--text-default-grey); }
+.outil-onglets .fr-tabs__tab[role="tab"][aria-selected="true"] { color: var(--text-active-blue-france); }
+/* Soulignement de l'onglet actif : un seul trait qui glisse d'un onglet à l'autre (largeur 1 px mise à l'échelle) */
+.outil-onglets-zone { position: relative; }
+.outil-onglets__indicateur { position: absolute; left: 0; bottom: 0; width: 1px; height: 2px; transform-origin: left; background-color: var(--border-active-blue-france);
+  transition: transform 200ms cubic-bezier(.77, 0, .175, 1); }
+.outil-onglets__indicateur--fixe { transition: none; }
+@media (prefers-reduced-motion: reduce) { .outil-onglets__indicateur { transition: none; } }
+/* Tokens : pas d'espace en plus au-dessus du premier groupe (comme Assets) */
+.outil-panneau > .outil-groupe:first-child { padding-top: 0; }
+.outil-inspecteur__corps { flex: 1; min-height: 0; overflow-y: auto; }
+.outil-panneau[hidden] { display: none; }
+
+.outil-prop { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 0 8px; align-items: baseline; }
+.outil-prop__valeurs { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.outil-valeur { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 0 4px; border: 0; border-radius: .25rem; background: none; color: inherit;
+  font-family: monospace; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
+.outil-valeur:hover { background-color: var(--background-default-grey-hover); }
+.outil-valeur--fixe { cursor: auto; }
+.outil-valeur--fixe:hover { background-color: transparent; }
+.outil-valeur--token { color: var(--text-action-high-blue-france); }
+/* Schéma d'alignement des enfants (3 × 3) : la ou les positions occupées en bleu */
+.outil-alignement { display: grid; grid-template-columns: repeat(3, 8px); gap: 4px; padding: 4px; border-radius: .25rem; box-shadow: inset 0 0 0 1px var(--border-default-grey); }
+.outil-alignement span { width: 8px; height: 8px; border-radius: 2px; background-color: var(--border-default-grey); }
+.outil-alignement .outil-alignement__actif { background-color: var(--background-action-high-blue-france); }
+.outil-pastille { flex-shrink: 0; width: 12px; height: 12px; border-radius: 2px; box-shadow: inset 0 0 0 1px var(--border-default-grey); }
+.outil-chaine { padding-left: 4px; font-family: monospace; overflow-wrap: anywhere; }
+
+.outil-code { margin: 0; padding: 12px; overflow-x: auto; white-space: pre; font-family: monospace;
+  background-color: var(--background-alt-grey); box-shadow: inset 0 0 0 1px var(--border-default-grey); }
+.outil-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+
+.outil-apercu { display: flex; align-items: center; justify-content: center; min-height: 6rem; padding: 8px; overflow: auto;
+  background-color: var(--background-alt-grey); box-shadow: inset 0 0 0 1px var(--border-default-grey); }
+.outil-apercu img { max-width: 100%; }
+.outil-asset { display: flex; align-items: center; gap: 8px; }
+.outil-asset__vignette { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; background-color: var(--background-alt-grey); }
+.outil-asset__vignette img { max-width: 24px; max-height: 24px; }
+/* Case à cocher centrée sur la ligne de 32 px (vignette) : le DSFR l'aligne sur une première ligne de 24 px */
+.outil-fichiers .fr-checkbox-group .fr-label::before { top: 4px; }
+.outil-asset__nom { font-family: monospace; overflow-wrap: anywhere; }
+
+/* ---------- Petits écrans : barre en zones de 44 px, inspecteur en volet inférieur ---------- */
+@media (max-width: 575.98px) {
+  .outil { grid-template-columns: minmax(0, 1fr); }
+  .outil-barre .fr-btn--sm.outil-barre__icone { max-width: 44px; max-height: 44px; min-height: 44px; padding-left: 14px; padding-right: 14px; }
+  /* Icône de 16 px centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
+  .outil-barre .fr-btn--sm.outil-barre__icone::before { margin-right: 14px; }
+  .outil-poignee { display: none; }
+  .outil--inspecteur .outil__scene { padding-bottom: 50vh; }
+  .outil-inspecteur, .outil--inspecteur .outil-inspecteur { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; width: auto; height: 50vh;
+    box-shadow: var(--overlap-shadow); transform: translateY(100%); transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil--inspecteur .outil-inspecteur { transform: none; }
+  .outil-inspecteur__piste { width: auto; padding: 0; }
+  .outil-inspecteur__carte { border-radius: 0; }
+  .outil--inspecteur .outil-inspecteur--agrandi { top: 0; height: auto; }
+  .outil-inspecteur__agrandir { display: inline-flex; }
+  .outil-inspecteur .fr-btn { min-height: 44px; }
+}

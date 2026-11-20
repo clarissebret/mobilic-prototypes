@@ -1,0 +1,32 @@
+{
+  "valeurs": {
+    "f-nom": "Vincent",
+    "f-prenom": "Arthur",
+    "f-jour": "12",
+    "f-mois": "02",
+    "f-annee": "1992",
+    "f-nat": "France",
+    "f-siren": "110014016",
+    "f-immat": "AB-123-CD",
+    "page": "page-non",
+    "b-dept": "ILLE-ET-VILAINE",
+    "b-commune": "PAIMPONT",
+    "b-lieu": "BROCÉLIANDE",
+    "b-siren": "110014016",
+    "b-immat": "AB-123-CD",
+    "b-pays": "FRANCE",
+    "b-prov": "Rennes",
+    "b-dest": "Paris",
+    "b-type": "tt-int",
+    "b-march": "Colis",
+    "b-lic": "2026/53/0001234",
+    "b-poids": "PTAC inférieur ou égal à 3,5 tonnes",
+    "b-immo": "im-non",
+    "b-agent": "45602COX",
+    "b-obs": "Conducteur coopératif.",
+    "send-ent": "contact@entreprise.fr"
+  },
+  "apres": {
+    "f-siren": "#siren-group .fr-search-bar .fr-btn"
+  }
+}
