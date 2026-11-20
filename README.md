@@ -11,6 +11,7 @@ Un prototype par interface de Mobilic : contrôleur, gestionnaire, salarié. Cha
 | Interface | Dossier | Flux | Spec |
 |---|---|---|---|
 | Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [SPECS.md](prototypes/controleur/SPECS.md) |
+| Gestionnaire (web) | `prototypes/gestionnaire` | Inscription | [SPECS.md](prototypes/gestionnaire/SPECS.md) |
 
 Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dépôt.
 
@@ -31,8 +32,10 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   app.html             écrans de l'application (rendus dans le cadre du téléphone, 360 px)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
-  infractions.js       relevé des infractions et composant « Accordéon d'infraction »
-  prototype.json       titre, nom court, description, parcours de la barre de contrôle
+  infractions.js       (contrôleur) relevé des infractions et composant « Accordéon d'infraction »
+  *.html               fragments inclus dans app.html par {{FILE:nom.html}} (ex. en-têtes)
+  prototype.json       titre, nom court, description, parcours de la barre de contrôle,
+                       scripts à assembler et appel de démarrage (scripts, init)
   remplissage.json     données fictives de « Remplir le formulaire », par identifiant de champ
 composants/            documentation des composants Mobilic hors DSFR
 shared/mobilic.css     styles Mobilic communs à toutes les interfaces

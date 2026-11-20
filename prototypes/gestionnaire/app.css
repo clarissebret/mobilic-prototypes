@@ -1,0 +1,39 @@
+/* Styles propres à l'interface gestionnaire, uniquement à partir des tokens DSFR */
+.screen { display: none; }
+.screen.active { display: block; }
+.mention { color: var(--text-mention-grey); }
+.required { color: var(--text-default-error); }
+.center { text-align: center; }
+.toast { position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 3000; padding: .75rem 1rem;
+  background-color: var(--background-action-high-grey); color: var(--text-inverted-grey); opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+/* Colonne de lecture sur grand écran */
+.page-col { max-width: 48rem; margin: 0 auto; }
+
+/* Choix du métier : tuiles empilées sur mobile, côte à côte au-delà */
+.metiers { display: grid; gap: 1rem; max-width: 40rem; margin: 0 auto; }
+@media (min-width: 36em) { .metiers { grid-template-columns: 1fr 1fr; } }
+
+/* Pages Cerbère simulées (hors Mobilic) */
+.cerbere.active { min-height: 100vh; display: flex; flex-direction: column; background-color: var(--background-alt-blue-france); }
+.cerbere__header { padding: 1rem; }
+.cerbere__body { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding: 0 1rem 2.5rem; }
+.cerbere__card { width: 100%; max-width: 30rem; padding: 1.5rem; background-color: var(--background-default-grey); }
+
+/* Établissements (composant Mobilic « Carte d'établissement ») */
+.etabs { display: flex; flex-direction: column; gap: 1rem; }
+.etab { padding: 1rem; border: 1px solid var(--border-default-grey); }
+.etab--selected { border-color: var(--border-active-blue-france); box-shadow: inset 0 0 0 1px var(--border-active-blue-france); }
+.etab__fields { display: flex; flex-direction: column; gap: 1.5rem; padding-top: 1.5rem; }
+.etab__fields[hidden] { display: none; }
+.etab__fields > * { margin-bottom: 0; }
+.etab__row { display: grid; gap: 1.5rem; }
+@media (min-width: 36em) { .etab__row { grid-template-columns: 1fr 1fr; } }
+
+/* Finalisation */
+.picto { width: 5rem; height: 5rem; }
+.webinaire { padding: 1.5rem; background-color: var(--background-alt-grey); }
+.webinaire__row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.webinaire__date { display: flex; flex-direction: column; align-items: center; padding: .5rem; background-color: var(--background-default-grey); color: var(--text-title-blue-france); }
+.webinaire__titre { flex: 1; min-width: 8rem; }

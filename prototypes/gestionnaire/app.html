@@ -1,0 +1,151 @@
+<!-- ===== APP (rendu dans l'iframe) ===== -->
+<div id="toast" class="toast fr-text--sm fr-mb-0" role="status" aria-live="polite"></div>
+
+<!-- 1. CHOIX DU METIER (Mobilic) -->
+<section class="screen" id="screen-metier">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <h1 class="fr-h3 fr-mb-4w center">Quel est votre métier ?</h1>
+    <div class="metiers">
+      <div class="fr-tile fr-tile--sm fr-enlarge-link">
+        <div class="fr-tile__body"><div class="fr-tile__content">
+          <h2 class="fr-tile__title"><a href="#" onclick="toast('Parcours salarié : hors scope');return false">Travailleur mobile</a></h2>
+          <p class="fr-tile__detail">Je suis salarié ou indépendant et je renseigne mon temps de travail</p>
+        </div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:map/backpack}}" alt=""></div></div>
+      </div>
+      <div class="fr-tile fr-tile--sm fr-enlarge-link">
+        <div class="fr-tile__body"><div class="fr-tile__content">
+          <h2 class="fr-tile__title"><a href="#" onclick="go('cerbere-1');return false">Gestionnaire</a></h2>
+          <p class="fr-tile__detail">Je gère le temps de travail des salariés de mon entreprise</p>
+        </div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:buildings/companie}}" alt=""></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2a. CERBERE : E-MAIL ET SIREN (page simulée, hors Mobilic) -->
+<section class="screen cerbere" id="screen-cerbere-1">
+  {{FILE:header-cerbere.html}}
+  <div class="cerbere__body">
+    <div class="cerbere__card">
+      <h1 class="fr-h5 fr-mb-3w">Création d'un compte professionnel</h1>
+      <div id="c1-form" oninput="c1Validate()">
+        <div class="fr-input-group" id="c1-email-group">
+          <label class="fr-label" for="c1-email">E-mail<span class="fr-hint-text">Format attendu : nom@domaine.fr</span></label>
+          <input class="fr-input" id="c1-email" type="email" autocomplete="email" required>
+          <p class="fr-error-text" id="c1-email-error" style="display:none">Saisissez une adresse e-mail valide, au format nom@domaine.fr</p>
+        </div>
+        <div class="fr-input-group" id="c1-siren-group">
+          <label class="fr-label" for="c1-siren">SIREN<span class="fr-hint-text">9 chiffres</span></label>
+          <input class="fr-input" id="c1-siren" inputmode="numeric" maxlength="11" required>
+          <p class="fr-error-text" id="c1-siren-error" style="display:none">Saisissez un numéro SIREN de 9 chiffres, par exemple 123 456 789.</p>
+        </div>
+        <ul class="fr-btns-group fr-mt-2w">
+          <li><button type="button" class="fr-btn" onclick="c1Submit()">Valider</button></li>
+          <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('metier')">Annuler</button></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fr-text--xs fr-mb-0 mention">Page d'authentification du ministère, simulée pour le prototype.</p>
+  </div>
+</section>
+
+<!-- 2b. CERBERE : COMPTE PROFESSIONNEL (page simulée, hors Mobilic) -->
+<section class="screen cerbere" id="screen-cerbere-2">
+  {{FILE:header-cerbere.html}}
+  <div class="cerbere__body">
+    <div class="cerbere__card">
+      <h1 class="fr-h5 fr-mb-3w">Création d'un compte professionnel</h1>
+      <div id="c2-form" oninput="c2Validate()" onchange="c2Validate()">
+        <p class="fr-text--sm fr-text--bold fr-mb-0">SIREN</p>
+        <p class="fr-mb-3w" id="c2-siren"></p>
+        <fieldset class="fr-fieldset">
+          <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Civilité <span class="required">*</span></legend>
+          <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="civ-m" name="civilite" value="Monsieur"><label class="fr-label" for="civ-m">Monsieur</label></div></div>
+          <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="civ-f" name="civilite" value="Madame"><label class="fr-label" for="civ-f">Madame</label></div></div>
+          <div class="fr-fieldset__element fr-fieldset__element--inline"><div class="fr-radio-group"><input type="radio" id="civ-a" name="civilite" value="Autre"><label class="fr-label" for="civ-a">Autre</label></div></div>
+        </fieldset>
+        <div class="fr-input-group"><label class="fr-label" for="c2-prenom">Prénom</label><input class="fr-input" id="c2-prenom" autocomplete="given-name" required></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-nom">Nom</label><input class="fr-input" id="c2-nom" autocomplete="family-name" required></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-email">E-mail</label><input class="fr-input" id="c2-email" disabled></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-adresse">Adresse</label><input class="fr-input" id="c2-adresse" autocomplete="street-address"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-cp">Code postal</label><input class="fr-input" id="c2-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-ville">Ville</label><input class="fr-input" id="c2-ville" autocomplete="address-level2"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-pays">Pays</label><input class="fr-input" id="c2-pays" autocomplete="country-name"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-tel">Téléphone</label><input class="fr-input" id="c2-tel" type="tel" autocomplete="tel"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-mobile">Téléphone portable</label><input class="fr-input" id="c2-mobile" type="tel" autocomplete="tel"></div>
+        <div class="fr-input-group"><label class="fr-label" for="c2-mdp">Mot de passe</label><input class="fr-input" id="c2-mdp" type="password" autocomplete="new-password" required></div>
+        <div class="fr-messages-group fr-mb-3w" aria-live="polite">
+          <p class="fr-message fr-mb-1v">Votre mot de passe doit contenir :</p>
+          <p class="fr-message fr-message--info" data-regle="longueur">12 caractères minimum</p>
+          <p class="fr-message fr-message--info" data-regle="maj">1 majuscule minimum</p>
+          <p class="fr-message fr-message--info" data-regle="min">1 minuscule minimum</p>
+          <p class="fr-message fr-message--info" data-regle="chiffre">1 chiffre minimum</p>
+          <p class="fr-message fr-message--info" data-regle="special">1 caractère spécial minimum</p>
+        </div>
+        <div class="fr-input-group" id="c2-mdp2-group"><label class="fr-label" for="c2-mdp2">Confirmation du mot de passe</label><input class="fr-input" id="c2-mdp2" type="password" autocomplete="new-password" required>
+          <p class="fr-error-text" id="c2-mdp2-error" style="display:none">Les deux mots de passe ne sont pas identiques.</p></div>
+        <ul class="fr-btns-group fr-mt-2w">
+          <li><button type="button" class="fr-btn" id="c2-submit" disabled onclick="c2Submit()">Valider</button></li>
+          <li><button type="button" class="fr-btn fr-btn--secondary" onclick="go('cerbere-1')">Annuler</button></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fr-text--xs fr-mb-0 mention">Page d'authentification du ministère, simulée pour le prototype.</p>
+  </div>
+</section>
+
+<!-- 3. ETABLISSEMENTS (Mobilic) -->
+<section class="screen" id="screen-etab">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <div class="page-col">
+      <h1 class="fr-h3 fr-mb-3w">Création de votre compte Mobilic</h1>
+      <div class="fr-stepper"><h2 class="fr-stepper__title">Vos établissements<span class="fr-stepper__state">Étape 1 sur 2</span></h2><div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="2"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante :</span> Finalisation de l'inscription</p></div>
+      <p class="fr-text--bold fr-mb-0" id="e-ent"></p>
+      <p class="fr-text--sm fr-mb-3w mention">SIREN <span id="e-siren"></span></p>
+      <p class="fr-mb-1w" id="e-intro"></p>
+      <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
+      <div id="etabs" class="etabs" oninput="eValidate()" onchange="eValidate()"></div>
+      <ul class="fr-btns-group fr-mt-5w">
+        <li><button type="button" class="fr-btn" id="e-submit" disabled onclick="go('fin')">Continuer</button></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4. INSCRIPTION FINALISEE (Mobilic) -->
+<section class="screen" id="screen-fin">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <div class="page-col">
+      <div class="fr-stepper"><h2 class="fr-stepper__title">Finalisation de l'inscription<span class="fr-stepper__state">Étape 2 sur 2</span></h2><div class="fr-stepper__steps" data-fr-current-step="2" data-fr-steps="2"></div></div>
+      <div class="center fr-mb-4w">
+        <img class="picto" src="{{PICTO:system/success}}" alt="">
+        <h1 class="fr-h3 fr-mt-2w fr-mb-1w">Votre compte est créé</h1>
+        <p class="fr-mb-0">Un e-mail de vérification a été envoyé à <span class="fr-text--bold" id="f-email"></span>. Cliquez sur le lien qu'il contient pour activer votre compte.</p>
+      </div>
+      <fieldset class="fr-fieldset" id="f-source">
+        <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Comment avez-vous connu Mobilic ?<span class="fr-hint-text">Plusieurs réponses possibles</span></legend>
+        <div id="f-sources"></div>
+      </fieldset>
+      <fieldset class="fr-fieldset">
+        <div class="fr-fieldset__element"><div class="fr-checkbox-group"><input type="checkbox" id="f-newsletter"><label class="fr-label" for="f-newsletter">Je souhaite recevoir la lettre d'information de Mobilic pour être informé des nouveautés</label></div></div>
+      </fieldset>
+      <ul class="fr-btns-group fr-mt-2w">
+        <li><button type="button" class="fr-btn" onclick="toast('Espace gestionnaire : hors scope')">Accéder à mon espace</button></li>
+      </ul>
+      <div class="webinaire fr-mt-5w">
+        <h2 class="fr-h5 fr-mb-1w">Offrez-vous une formation gratuite de 45 minutes</h2>
+        <p class="fr-mb-3w">Apprenez à utiliser Mobilic grâce à un accompagnement personnalisé : mise en place, administration et réponses à vos questions.</p>
+        <div class="webinaire__row">
+          <p class="webinaire__date fr-mb-0"><span class="fr-text--xs fr-mb-0" id="w-jour"></span><span class="fr-h4 fr-mb-0" id="w-num"></span><span class="fr-text--xs fr-mb-0" id="w-mois"></span></p>
+          <p class="fr-text--sm fr-mb-0 webinaire__titre"><span class="fr-text--bold" id="w-heure"></span> Mobilic : formation gestionnaires</p>
+          <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" id="w-btn" onclick="webinaire()">Je m'inscris</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

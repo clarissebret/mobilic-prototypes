@@ -1,0 +1,12 @@
+{
+  "titre": "Interface gestionnaire",
+  "nom": "Gestionnaire",
+  "description": "Application web des gestionnaires d'entreprise : inscription, gestion des salariés et des temps de travail.",
+  "parcours": [
+    {
+      "libelle": "Inscription",
+      "commande": "flow-inscription"
+    }
+  ],
+  "init": "go('metier');"
+}

@@ -1,0 +1,19 @@
+{
+  "valeurs": {
+    "c1-email": "camille.martin@example.fr",
+    "c1-siren": "110014016",
+    "civilite": "civ-f",
+    "c2-prenom": "Camille",
+    "c2-nom": "Martin",
+    "c2-adresse": "24 boulevard de l’Exemple",
+    "c2-cp": "75007",
+    "c2-ville": "Paris",
+    "c2-pays": "France",
+    "c2-mdp": "Exemple-Mobilic-2026",
+    "c2-mdp2": "Exemple-Mobilic-2026",
+    "et0-nom": "Dupont Paris",
+    "et0-nb": "12",
+    "et1-nom": "Dupont Lyon",
+    "et1-nb": "5"
+  }
+}

@@ -6,6 +6,10 @@ const PROTOTYPES = {
     titre: 'Interface contrôleur',
     description: "Application mobile des agents de contrôle. Flux disponibles : contrôle LIC papier / feuille de route (création du contrôle, relevé des infractions, bulletin de contrôle, secteur TRS).",
   },
+  gestionnaire: {
+    titre: 'Interface gestionnaire',
+    description: "Application web des gestionnaires d'entreprise. Flux disponible : inscription (choix du métier, compte professionnel, établissements, finalisation).",
+  },
 };
 
 const items = readdirSync('dist', { withFileTypes: true })

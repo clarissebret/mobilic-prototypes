@@ -102,6 +102,10 @@ def modal(m):
   </div></div></div>
 </div>'''
 
+def picto(m):
+    return 'data:image/svg+xml;base64,' + base64.b64encode(open(DIST + 'artwork/pictograms/' + m.group(1) + '.svg', 'rb').read()).decode()
+app = re.sub(r'\{\{FILE:([a-z.-]+)\}\}', lambda m: open(B + m.group(1)).read(), app)
+app = re.sub(r'\{\{PICTO:([a-z/-]+)\}\}', picto, app)
 app = (app.replace('{{LOGO}}', logo).replace('{{NATS}}', NATS)
        .replace('{{DATE:f}}', date_group('f')).replace('{{DATE:b}}', date_group('b')))
 for n in (1, 2, 3):
@@ -119,11 +123,12 @@ def star(m):
 app = re.sub(r'<label class="fr-label" for="([^"]+)">(.*?)</label>', star, app, flags=re.S)
 assert '{{' not in app, re.findall(r'\{\{[^}]*\}\}', app)
 
+APP_JS = ''.join(open(B + f).read() + '\n' for f in CONF.get('scripts', ['app.js'])) + CONF.get('init', '') + '\n'
 out = (SHELL
        .replace('{{OUTIL_CSS}}', OUTIL_CSS).replace('{{OUTIL_DATA}}', OUTIL_DATA)
        .replace('{{OUTIL_JS}}', open(os.path.join(ROOT, 'outil/outil.js')).read())
        .replace('{{DSFR_CSS}}', css).replace('{{APP_CSS}}', app_css)
-       .replace('{{APP_HTML}}', app).replace('{{APP_JS}}', open(B + 'app.js').read() + '\n' + open(B + 'infractions.js').read() + "\nrenderHistory(); go('home');\n"))
+       .replace('{{APP_HTML}}', app).replace('{{APP_JS}}', APP_JS))
 import shutil
 os.makedirs(os.path.join(ROOT, 'dist', PROTO), exist_ok=True)
 shutil.copytree(os.path.join(DIST, 'fonts'), os.path.join(ROOT, 'dist', 'fonts'), dirs_exist_ok=True)
