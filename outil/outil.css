@@ -89,7 +89,15 @@
 /* Onglets à la manière de la navigation principale DSFR : texte simple, onglet actif en bleu souligné de 2 px, sans fond ni bordure */
 .outil-onglets .fr-tabs__tab[role="tab"] { --idle: transparent; --hover: var(--background-default-grey-hover); --active: var(--background-default-grey-active);
   min-height: 2.5rem; margin: 0; padding: 8px 12px; background-color: transparent; background-image: none; box-shadow: none; color: var(--text-default-grey); }
-.outil-onglets .fr-tabs__tab[role="tab"][aria-selected="true"] { color: var(--text-active-blue-france); box-shadow: inset 0 -2px 0 0 var(--border-active-blue-france); }
+.outil-onglets .fr-tabs__tab[role="tab"][aria-selected="true"] { color: var(--text-active-blue-france); }
+/* Soulignement de l'onglet actif : un seul trait qui glisse d'un onglet à l'autre (largeur 1 px mise à l'échelle) */
+.outil-onglets-zone { position: relative; }
+.outil-onglets__indicateur { position: absolute; left: 0; bottom: 0; width: 1px; height: 2px; transform-origin: left; background-color: var(--border-active-blue-france);
+  transition: transform 200ms cubic-bezier(.77, 0, .175, 1); }
+.outil-onglets__indicateur--fixe { transition: none; }
+@media (prefers-reduced-motion: reduce) { .outil-onglets__indicateur { transition: none; } }
+/* Tokens : pas d'espace en plus au-dessus du premier groupe (comme Assets) */
+.outil-panneau > .outil-groupe:first-child { padding-top: 0; }
 .outil-inspecteur__corps { flex: 1; min-height: 0; overflow-y: auto; }
 .outil-panneau[hidden] { display: none; }
 

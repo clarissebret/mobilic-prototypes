@@ -1068,8 +1068,10 @@ let onglet = 'proprietes';
 function rafraichir() {
   if (inspecteur.hidden) return;
   const els = selection.filter(x => x.isConnected);
+  const premier = $('insp-contenu').hidden;
   $('insp-vide').hidden = els.length > 0; $('insp-contenu').hidden = !els.length;
   if (!els.length) return;
+  if (premier) placerIndicateur(false);
   ({ proprietes: rendreProprietes, code: rendreCode, tokens: rendreTokens, assets: rendreAssets })[onglet]();
 }
 function ouvrirInspecteur() {
@@ -1083,10 +1085,19 @@ function fermerInspecteur() {
   ajuster();
   apresTransition(() => { if (!outil.classList.contains('outil--inspecteur')) inspecteur.hidden = true; });
 }
+/* Place le soulignement sous l'onglet actif ; il glisse au clic, sans animation au clavier ou au premier affichage */
+function placerIndicateur(animer) {
+  const o = onglets.find(x => x.getAttribute('aria-selected') === 'true'), ind = $('onglets-indicateur');
+  if (!o || !o.offsetWidth) return;
+  ind.classList.toggle('outil-onglets__indicateur--fixe', !animer);
+  ind.style.transform = `translateX(${o.offsetLeft}px) scaleX(${o.offsetWidth})`;
+}
 function choisirOnglet(o, focus) {
+  placerIndicateur(false);
   onglet = o.id.replace('onglet-', '');
   onglets.forEach(x => { const on = x === o; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; });
   if (focus) o.focus();
+  void $('onglets-indicateur').offsetWidth; placerIndicateur(!focus);
   rafraichir();
 }
 onglets.forEach((o, i) => {
