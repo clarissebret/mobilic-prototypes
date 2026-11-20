@@ -3,8 +3,8 @@
    Uniquement des tokens DSFR ; valeurs de padding sur la grille de 4 px. */
 
 /* ---------- Mise en page : scène (libellé, cadre) et inspecteur en haut, barre en bas sur toute la largeur ---------- */
-/* La place de la barre (48 px + 8 px sous elle) est réservée par le padding bas ; la barre est posée dessus en absolu */
-.outil { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; padding-bottom: 56px; overflow: hidden; }
+/* La place de la barre (48 px + 16 px sous elle) est réservée par le padding bas ; la barre est posée dessus en absolu */
+.outil { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; padding-bottom: 64px; overflow: hidden; }
 .outil--sans-barre { padding-bottom: 0; }
 .outil__scene { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 /* Le cadre est placé en JS (marge gauche) pour rester centré sur la fenêtre, donc sur la barre, même inspecteur ouvert */
