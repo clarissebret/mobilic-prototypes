@@ -1,6 +1,6 @@
 {
   "titre": "Interface contrôleur",
-  "description": "Application mobile des agents de contrôle (contrôle en bord de route ou en entreprise).",
+  "description": "Application des agents de contrôle, sur mobile et sur ordinateur (contrôle en bord de route ou en entreprise).",
   "parcours": [
     {
       "libelle": "Contrôle LIC papier / feuille de route",

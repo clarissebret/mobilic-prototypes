@@ -5,8 +5,10 @@ html, body { background-color: var(--background-default-grey); }
 .mention { color: var(--text-mention-grey); }
 .placeholder { padding: 3rem 1.5rem; text-align: center; color: var(--text-mention-grey); }
 
-/* Choix "Nouveau contrôle" */
-.choice { display: flex; align-items: center; gap: .75rem; width: 100%; padding: 1rem; text-align: left;
+/* Choix "Nouveau contrôle" : empilés sur mobile, sur une ligne sur grand écran */
+.choices { display: grid; gap: .75rem; }
+@media (min-width: 48em) { .choices { grid-template-columns: repeat(3, 1fr); } }
+.choice { display: flex; align-items: center; gap: .75rem; width: 100%; height: 100%; padding: 1rem; text-align: left;
   background-color: var(--background-default-grey); color: var(--text-default-grey);
   border: 1px solid var(--border-default-grey); cursor: pointer; }
 .choice:hover { background-color: var(--background-default-grey-hover); }
@@ -105,3 +107,23 @@ html, body { background-color: var(--background-default-grey); }
 .has-sticky { padding-bottom: 6.5rem; }
 .screen:not(.active) .sticky-actions, [hidden] .sticky-actions { display: none; }
 body:has(.screen.active > .sticky-actions) .toast, body:has(.screen.active #tab-1:not([hidden]) .sticky-actions) .toast { bottom: 5.5rem; }
+
+/* Panneau latéral du contrôle (grand écran) : par-dessus l'accueil, entrée glissée depuis la droite */
+:root { --panel-width: min(100%, 50rem); --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); }
+.panel-backdrop { display: none; }
+@media (min-width: 48em) {
+  body.has-panel { overflow: hidden; }
+  body.has-panel #screen-home { display: block; }
+  body.has-panel .panel-backdrop { display: block; position: fixed; inset: 0; z-index: 999; background-color: hsla(0, 0%, 9%, .64); }
+  .screen--panel.active { position: fixed; top: 0; right: 0; bottom: 0; z-index: 1000; width: var(--panel-width); overflow-y: auto;
+    background-color: var(--background-default-grey); box-shadow: var(--lifted-shadow); }
+  .screen--panel .sticky-actions { left: auto; width: var(--panel-width); }
+  body.has-panel .toast { left: auto; width: calc(var(--panel-width) - 2rem); }
+  body.panel-entering .screen--panel.active { animation: panel-in 400ms var(--ease-drawer); }
+  body.panel-entering .panel-backdrop { animation: backdrop-in 400ms var(--ease-drawer); }
+}
+@keyframes panel-in { from { transform: translateX(100%); } }
+@keyframes backdrop-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  body.panel-entering .screen--panel.active { animation: backdrop-in 200ms ease; }
+}

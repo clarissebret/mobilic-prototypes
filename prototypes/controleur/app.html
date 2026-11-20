@@ -1,5 +1,6 @@
 <!-- ===== APP (rendu dans l'iframe 360 px) ===== -->
 <div id="toast" class="toast fr-text--sm fr-mb-0" role="status" aria-live="polite"></div>
+<div class="panel-backdrop" aria-hidden="true" onclick="back()"></div>
 
 <!-- ACCUEIL -->
 <section class="screen" id="screen-home">
@@ -21,9 +22,11 @@
   <div class="fr-container fr-pb-5w">
     <p class="fr-h4 fr-mt-5w fr-mb-4w" style="text-align:center">Bonjour, Martin</p>
     <h2 class="fr-h5 fr-mb-2w">Nouveau contrôle</h2>
-    <button type="button" class="choice fr-mb-3v" onclick="toast('Flux hors scope')"><span class="fr-icon-qr-code-line choice__lead" aria-hidden="true"></span><span>QR Code Mobilic présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
-    <button type="button" class="choice fr-mb-3v" onclick="go('form')"><span class="fr-icon-edit-box-fill choice__lead" aria-hidden="true"></span><span>LIC papier / feuille de route présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
-    <button type="button" class="choice fr-mb-3v" onclick="toast('Flux hors scope')"><span class="fr-icon-notification-3-fill choice__lead" aria-hidden="true"></span><span>Pas de LIC à bord</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <div class="choices">
+    <button type="button" class="choice" onclick="toast('Flux hors scope')"><span class="fr-icon-qr-code-line choice__lead" aria-hidden="true"></span><span>QR Code Mobilic présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <button type="button" class="choice" onclick="go('form')"><span class="fr-icon-edit-box-fill choice__lead" aria-hidden="true"></span><span>LIC papier / feuille de route présenté</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    <button type="button" class="choice" onclick="toast('Flux hors scope')"><span class="fr-icon-notification-3-fill choice__lead" aria-hidden="true"></span><span>Pas de LIC à bord</span><span class="fr-icon-arrow-right-s-line choice__chev" aria-hidden="true"></span></button>
+    </div>
     <p class="fr-mt-2w fr-mb-0"><a class="fr-link fr-link--sm fr-icon-arrow-right-line fr-link--icon-right" href="#" onclick="toast('Hors scope');return false">Un horaire de service est présenté ?</a></p>
     <p class="fr-mt-4w fr-mb-2w">Vérifier si une entreprise est inscrite sur Mobilic :</p>
     <button type="button" class="fr-btn fr-btn--secondary fr-icon-search-line fr-btn--icon-left" onclick="toast('Hors scope')">Rechercher une entreprise</button>
@@ -41,7 +44,7 @@
 </section>
 
 <!-- FORMULAIRE DE CREATION -->
-<section class="screen" id="screen-form">
+<section class="screen screen--panel" id="screen-form">
   <div class="fr-container fr-pt-2w fr-pb-5w">
     <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="go('home');return false">Fermer</a>
     <h1 class="fr-h3 fr-mt-3w fr-mb-1w">Nouveau contrôle « LIC papier / feuille de route présenté »</h1>
@@ -97,7 +100,7 @@
 </section>
 
 <!-- PAGE DU CONTROLE -->
-<section class="screen" id="screen-control">
+<section class="screen screen--panel" id="screen-control">
   <div class="ctrl-head fr-container fr-pt-2w fr-pb-3w">
     <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="requestClose();return false">Fermer</a>
     <div class="ctrl-head__row fr-mt-3w">
@@ -150,7 +153,7 @@
 </section>
 
 <!-- EDITION DU BDC -->
-<section class="screen" id="screen-bdc">
+<section class="screen screen--panel" id="screen-bdc">
   <div class="fr-container fr-pt-2w fr-pb-5w" id="bdc-form" oninput="bdcValidate()" onchange="bdcValidate()">
 
     <div class="bdc-step" id="bdc-step-1">
@@ -236,7 +239,7 @@
 </section>
 
 <!-- INFRACTIONS RETENUES (édition) -->
-<section class="screen" id="screen-infractions">
+<section class="screen screen--panel" id="screen-infractions">
   <div class="fr-container fr-pt-2w has-sticky">
     <a class="fr-link fr-icon-arrow-left-line fr-link--icon-left" href="#" onclick="cancelInfractions();return false">Retour étape 3/3</a>
     <h1 class="fr-h3 fr-mt-3w fr-mb-1w">Infractions retenues</h1>

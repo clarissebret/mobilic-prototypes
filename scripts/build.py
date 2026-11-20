@@ -39,7 +39,7 @@ ICONS = {
     'send-plane-line': 'send-plane-line', 'printer-line': 'printer-line', 'close-line': 'close-line',
     'signal-wifi-fill': 'signal-wifi-fill', 'signal-cellular-3-fill': 'signal-cellular-3-fill', 'battery-fill': 'battery-fill',
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
-    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
+    'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line', 'settings-5-line': 'settings-5-line',
 }
 rules = []
 for cls, remix in ICONS.items():
@@ -51,7 +51,7 @@ css += '\n:root{--chevron:url(' + datauri(glob.glob(f'{REMIX}*/arrow-down-s-line
 # 3. App pieces
 from html import escape
 CONF = json.load(open(B + 'prototype.json'))
-SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
+SHELL = (open(os.path.join(ROOT, 'shared/shell.html')).read()
   .replace('{{TITRE}}', escape(CONF['titre'])).replace('{{DESCRIPTION}}', escape(CONF['description']))
   .replace('{{PARCOURS}}', '\n'.join(
     f'      <li class="flow fr-mb-2w"><span class="fr-text--sm fr-mb-0">{escape(p["libelle"])}</span>'
@@ -59,7 +59,7 @@ SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
     f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours'])))
 app_css = open(os.path.join(ROOT, 'shared/mobilic.css')).read() + '\n' + open(B + 'app.css').read()
 for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):
-    if f'--{tok}:' not in css and tok not in ('icon-size',):
+    if f'--{tok}:' not in css and f'--{tok}:' not in app_css + SHELL and tok not in ('icon-size',):   # tokens DSFR ou variables déclarées par Mobilic
         raise SystemExit(f'Token DSFR inconnu : --{tok}')
 
 app = open(B + 'app.html').read()
