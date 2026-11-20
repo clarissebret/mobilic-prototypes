@@ -28,3 +28,4 @@ Conteneur pleine largeur fixé en bas de l'écran, contenant 1 ou 2 boutons DSFR
 
 - Le contenu de la page reçoit `.has-sticky` (marge basse de 104 px) pour que le dernier élément ne soit pas masqué.
 - Les messages temporaires (toasts) s'affichent au-dessus de la barre.
+- Dans le [panneau latéral](panneau-lateral.md), la barre prend la largeur du panneau.

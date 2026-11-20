@@ -69,7 +69,7 @@ OUTIL_DATA = json.dumps({'interface': PROTO, 'interfaces': INTERFACES, 'rempliss
 OUTIL_CSS = open(os.path.join(ROOT, 'outil/outil.css')).read()
 app_css = open(os.path.join(ROOT, 'shared/mobilic.css')).read() + '\n' + open(B + 'app.css').read()
 for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL + OUTIL_CSS):
-    if f'--{tok}:' not in css and tok not in ('icon-size',):
+    if f'--{tok}:' not in css and f'--{tok}:' not in app_css + SHELL + OUTIL_CSS and tok not in ('icon-size',):   # tokens DSFR ou variables déclarées par Mobilic
         raise SystemExit(f'Token DSFR inconnu : --{tok}')
 
 app = open(B + 'app.html').read()

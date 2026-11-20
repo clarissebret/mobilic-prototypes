@@ -39,6 +39,7 @@
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
 - Écran rendu dans un iframe, au format Mobile (360 px de large, par défaut) ou Desktop (1440 px), ou à une largeur libre réglée avec la poignée ; la hauteur est celle de la fenêtre. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié en Mobile, avec une fenêtre basse et une fenêtre haute.
+- Interface contrôleur : l'accueil occupe toute la page ; à partir de 768 px (48em), la création du contrôle et le contrôle (page du contrôle, création du bulletin, relevé) s'ouvrent dans le panneau latéral par-dessus l'accueil (voir `composants/panneau-lateral.md`). En dessous, ces écrans sont des pages pleine largeur. Échap ou clic sur le fond ferme le panneau (`back()`).
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR. Ne pas utiliser les options DSFR qui dépendent de son JS (ex. `fr-btns-group--equisized`) : sur mobile, les boutons empilés doivent prendre toute la largeur.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.
 
