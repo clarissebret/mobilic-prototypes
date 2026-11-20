@@ -589,11 +589,10 @@ function specificite(sel) {
   return a * 10000 + b * 100 + c;
 }
 const decouper = sel => sel.split(/,(?![^(]*\))/).map(x => x.trim());
-const mediaOk = {};
 function correspondances(el, avecEtats) {
   const W = win();
   return regles().filter(({ r, media }) => {
-    if (media && !(mediaOk[media] ??= W.matchMedia(media).matches)) return false;
+    if (media && !W.matchMedia(media).matches) return false;
     return decouper(r.selectorText).some(s => { try { return el.matches(avecEtats ? s.replace(/:(hover|active|focus-visible|focus-within|focus)\b/g, '') || '*' : s); } catch (e) { return false; } });
   }).map(x => {
     const sp = Math.max(...decouper(x.r.selectorText).map(s => { try { return el.matches(s) ? specificite(s) : -1; } catch (e) { return -1; } }));
@@ -610,11 +609,14 @@ const RACCOURCIS = {
   width: [], height: [], gap: [], 'row-gap': ['gap'], 'column-gap': ['gap'], opacity: [], filter: [], 'outline-color': ['outline']
 };
 const HERITEES = ['color', 'font-size', 'font-weight', 'line-height', 'font-family', 'text-align'];
-const cacheCorr = new WeakMap();
+/* Règles qui s'appliquent à un élément, mises en cache pour une largeur de cadre donnée (les @media changent avec elle) */
+let cacheCorr = new WeakMap(), largeurCorr = 0;
 /* Déclaration gagnante d'une propriété : style en ligne, !important, spécificité puis ordre ; héritage pour le texte. */
 function declaration(el, prop, profondeur = 0) {
   const noms = [prop].concat(RACCOURCIS[prop] || []);
   const lire = st => { for (const n of noms) { const v = st.getPropertyValue(n); if (v) return { v: v.trim(), imp: st.getPropertyPriority(n) === 'important', p: n }; } return null; };
+  const lc = doc().documentElement.clientWidth;
+  if (lc !== largeurCorr) { cacheCorr = new WeakMap(); largeurCorr = lc; }
   if (!cacheCorr.has(el)) cacheCorr.set(el, correspondances(el, false));
   let best = null;
   for (const x of cacheCorr.get(el)) {
@@ -672,7 +674,7 @@ function classeTaille(el, profondeur = 0) {
   }
   return null;
 }
-const UTILITAIRE = /^\.fr-(m|p)[trblxy]?-n?\d+[vw]?$|^\.fr-text--(xs|sm|lg|lead|bold|regular|heavy)$|^\.fr-h[1-6]$/;
+const UTILITAIRE = /^\.fr-(m|p)[trblxy]?-(?:(?:sm|md|lg|xl)-)?n?\d+[vw]?$|^\.fr-text--(xs|sm|lg|lead|bold|regular|heavy)$|^\.fr-h[1-6]$/;
 
 /* ---------- Propriétés ---------- */
 const transparent = v => !v || v === 'rgba(0, 0, 0, 0)' || v === 'transparent';
@@ -735,28 +737,110 @@ function avecToken(el, prop, valeur) {
   if (!d) return { valeur };
   const t = tokenDe(d.v);
   if (t) return { valeur, token: t, introuvable: !existe(t, el) };
-  if (d.source === 'dsfr' && UTILITAIRE.test(d.selecteur)) return { valeur, classe: d.selecteur.slice(1) };
-  return { valeur };
+  const c = classeUtilitaire(el, d);
+  return c ? { valeur, classe: c } : { valeur };
+}
+/* Classe utilitaire DSFR qui porte une déclaration ; le DSFR regroupe ses sélecteurs (.fr-mb-3v,.fr-my-3v) */
+function classeUtilitaire(el, d) {
+  if (!d || d.source !== 'dsfr') return null;
+  const s = decouper(d.selecteur).find(x => UTILITAIRE.test(x) && (() => { try { return el.matches(x); } catch (e) { return false; } })());
+  return s ? s.slice(1) : null;
+}
+/* Unités : le DSFR travaille en rem (1 rem = 16 px). Le px reste pour les traits fins et les mesures du rendu. */
+const rem = v => `${Math.round(v / 16 * 1000) / 1000} rem`;
+const rem4 = v => v.every(x => x === v[0]) ? rem(v[0]) : v.map(x => Math.round(x / 16 * 1000) / 1000).join(' · ') + ' rem';
+const remDe = v => /^-?[\d.]+px$/.test(v) ? rem(parseFloat(v)) : v;
+/* Échelle d'espacement du DSFR : multiples de 1v (0,25 rem), jusqu'à 32v (8 rem) */
+const horsEchelle = v => v.some(x => Math.abs(x) > 128 || Math.abs(x / 4 - Math.round(x / 4)) > 0.01);
+const HORS_ECHELLE = 'Hors échelle DSFR';
+/* Classes utilitaires DSFR (fr-p-*, fr-mb-*…) qui portent un padding ou une marge */
+function classesEspacement(el, prop) {
+  const noms = new Set();
+  ['top', 'right', 'bottom', 'left'].forEach(c => { const n = classeUtilitaire(el, declaration(el, `${prop}-${c}`)); if (n && /^fr-[mp]/.test(n)) noms.add(n); });
+  return [...noms].map(n => ({ texte: n, actif: true, copiable: true }));
+}
+/* Schéma 3 × 3 de l'alignement des enfants, comme dans Figma */
+function schemaAlignement(principal, secondaire, colonne) {
+  const pos = v => /^(flex-)?start$|^normal$|^left$|baseline/.test(v) ? [0] : /center/.test(v) ? [1] : /^(flex-)?end$|^right$/.test(v) ? [2] : [0, 1, 2];
+  const pm = pos(principal), ps = pos(secondaire === 'normal' ? 'stretch' : secondaire);
+  let cases = '';
+  for (let rangee = 0; rangee < 3; rangee++) for (let col = 0; col < 3; col++) {
+    const [m, c] = colonne ? [rangee, col] : [col, rangee];
+    cases += `<span${pm.includes(m) && ps.includes(c) ? ' class="outil-alignement__actif"' : ''}></span>`;
+  }
+  return `<span class="outil-alignement fr-mb-1v" aria-hidden="true">${cases}</span>`;
+}
+/* Paliers du DSFR : xs < 576 px ≤ sm < 768 px ≤ md < 992 px ≤ lg < 1248 px ≤ xl */
+const PALIERS = [['xs', 0], ['sm', 576], ['md', 768], ['lg', 992], ['xl', 1248]];
+const rangPalier = n => PALIERS.findIndex(x => x[0] === n);
+function palier() { const w = doc().documentElement.clientWidth; return PALIERS.filter(x => w >= x[1]).pop()[0]; }
+function responsive(el) {
+  const out = [], actuel = rangPalier(palier());
+  const familles = new Map();
+  for (const c of el.classList) {
+    const m = /^(fr-[a-z-]+?)-(sm|md|lg|xl)(?:-[\w-]+)?$/.exec(c);
+    if (m && !familles.has(m[1])) familles.set(m[1], [...el.classList].filter(x => x === m[1] || x.startsWith(m[1] + '-')));
+  }
+  familles.forEach((membres, base) => {
+    const avec = membres.map(c => { const m = new RegExp(`^${base}-(sm|md|lg|xl)(?:-|$)`).exec(c); return { c, rang: rangPalier(m ? m[1] : 'xs') }; }).sort((a, b) => a.rang - b.rang);
+    const actif = avec.filter(x => x.rang <= actuel).pop();
+    out.push(ligne('Responsive', base, membres.join(' '), { items: avec.map(x => ({ texte: `${x.c}`, actif: x === actif, copiable: true })) }));
+  });
+  /* Règles propres à Mobilic qui dépendent de la largeur */
+  const medias = new Set();
+  regles().filter(x => x.src === 'mobilic' && x.media).forEach(x => { if (decouper(x.r.selectorText).some(s => { try { return el.matches(s); } catch (e) { return false; } })) medias.add(x.media); });
+  if (medias.size) out.push(ligne('Responsive', 'Règles Mobilic', [...medias].join(' '), { items: [...medias].map(m => ({ texte: `@media ${m}`, actif: win().matchMedia(m).matches })) }));
+  if (out.length) { const p = palier(), seuil = PALIERS.find(x => x[0] === p)[1]; out.unshift(ligne('Responsive', 'Palier actif', seuil ? `${p} · ${seuil} px et plus` : `${p} · moins de 576 px`)); }
+  return out;
 }
 function proprietes(el) {
   const W = win(), cs = W.getComputedStyle(el), r = el.getBoundingClientRect();
   const out = [];
-  const p = el.parentElement, pr = p ? p.getBoundingClientRect() : { left: 0, top: 0 };
-  // Structure
-  const lm = largeurMode(el, cs, 'width'), hm = largeurMode(el, cs, 'height');
-  out.push(ligne('Structure', 'Largeur', lm === 'Fixe' ? px(r.width) : lm, { mention: lm === 'Fixe' ? 'Fixe' : `Mesurée : ${px(r.width)}` }));
-  out.push(ligne('Structure', 'Hauteur', hm === 'Fixe' ? px(r.height) : hm, { mention: hm === 'Fixe' ? 'Fixe' : `Mesurée : ${px(r.height)}` }));
-  out.push(ligne('Structure', 'Position', `X ${Math.round((r.left - pr.left) * 10) / 10} · Y ${Math.round((r.top - pr.top) * 10) / 10}`, { mention: p ? `Par rapport au parent : ${nom(p)}` : '' }));
-  if (/flex|grid/.test(cs.display)) {
-    const col = /grid/.test(cs.display) ? 'Grille' : /column/.test(cs.flexDirection) ? 'Pile verticale' : 'Ligne horizontale';
-    out.push(ligne('Structure', 'Mise en page', col, { mention: `display: ${cs.display}${/flex/.test(cs.display) ? '; flex-direction: ' + cs.flexDirection : ''}` }));
-    const g = parseFloat(cs.rowGap) || parseFloat(cs.columnGap) || 0;
-    if (g) out.push(ligne('Structure', 'Espacement', cs.rowGap === cs.columnGap || /column/.test(cs.flexDirection) ? px(parseFloat(cs.rowGap) || g) : px(parseFloat(cs.columnGap) || g), { zone: 'gap' }));
+  const p = el.parentElement, pcs = p ? W.getComputedStyle(p) : null;
+  // Mise en page : comment l'élément organise ses enfants
+  const flex = /flex/.test(cs.display), grille = /grid/.test(cs.display);
+  if (flex || grille) {
+    const colonne = flex && /column/.test(cs.flexDirection);
+    const nbCol = grille ? cs.gridTemplateColumns.split(/\s+(?![^(]*\))/).filter(Boolean).length : 0;
+    out.push(ligne('Mise en page', 'Type', grille ? `Grille, ${nbCol} colonne${nbCol > 1 ? 's' : ''}` : colonne ? 'Flex, en colonne' : 'Flex, en ligne'));
+    if (flex && cs.flexWrap !== 'nowrap') out.push(ligne('Mise en page', 'Retour à la ligne', 'Oui'));
+    const [j, a] = grille ? [cs.justifyItems, cs.alignItems] : [cs.justifyContent, cs.alignItems];
+    const lj = grille ? 'justify-items' : 'justify-content';
+    out.push(ligne('Mise en page', 'Alignement', `${j} ${a}`, { schema: schemaAlignement(j, a, colonne), valeurs: [`${lj}: ${j}`, `align-items: ${a}`] }));
+    const gaps = grille ? [parseFloat(cs.rowGap) || 0, parseFloat(cs.columnGap) || 0] : [(colonne ? parseFloat(cs.rowGap) : parseFloat(cs.columnGap)) || 0];
+    if (gaps.some(Boolean)) out.push(ligne('Mise en page', 'Espace entre enfants', grille && gaps[0] !== gaps[1] ? `${rem(gaps[0])} · ${rem(gaps[1])}` : rem(gaps.find(Boolean)), { zone: 'gap', badge: horsEchelle(gaps) ? HORS_ECHELLE : '' }));
   }
-  const pad = quatre(cs, 'padding');
-  if (pad.some(Boolean)) out.push(ligne('Structure', 'Padding', ecrire4(pad), { zone: 'padding', ...avecToken(el, 'padding-top', ecrire4(pad)) }));
-  const mar = quatre(cs, 'margin');
-  if (mar.some(Boolean)) out.push(ligne('Structure', 'Marge', ecrire4(mar), { zone: 'margin', ...avecToken(el, 'margin-bottom', ecrire4(mar)) }));
+  // Dimensions : comportement, contraintes, comportement dans un flex ou une grille
+  const lm = largeurMode(el, cs, 'width'), hm = largeurMode(el, cs, 'height');
+  out.push(ligne('Dimensions', 'Largeur', `${lm} · ${px(r.width)}`));
+  out.push(ligne('Dimensions', 'Hauteur', `${hm} · ${px(r.height)}`));
+  [['min-width', 'Largeur min'], ['max-width', 'Largeur max'], ['min-height', 'Hauteur min'], ['max-height', 'Hauteur max']].forEach(([prop, label]) => {
+    const v = cs.getPropertyValue(prop);
+    if (!/^(auto|none|0px)$/.test(v)) out.push(ligne('Dimensions', label, remDe(v)));
+  });
+  if (pcs && /flex/.test(pcs.display)) {
+    if (cs.flexGrow !== '0' || cs.flexShrink !== '1' || cs.flexBasis !== 'auto') out.push(ligne('Dimensions', 'Flex', `flex: ${cs.flexGrow} ${cs.flexShrink} ${remDe(cs.flexBasis)}`));
+    if (cs.alignSelf !== 'auto') out.push(ligne('Dimensions', 'Alignement propre', `align-self: ${cs.alignSelf}`));
+  }
+  if (pcs && /grid/.test(pcs.display)) {
+    if (cs.gridColumnStart !== 'auto' || cs.gridColumnEnd !== 'auto') out.push(ligne('Dimensions', 'Colonnes', `grid-column: ${cs.gridColumnStart} / ${cs.gridColumnEnd}`));
+    if (cs.gridRowStart !== 'auto' || cs.gridRowEnd !== 'auto') out.push(ligne('Dimensions', 'Rangées', `grid-row: ${cs.gridRowStart} / ${cs.gridRowEnd}`));
+  }
+  // Espacements : classe DSFR d'abord, puis la valeur en rem
+  ['padding', 'margin'].forEach(prop => {
+    const v = quatre(cs, prop);
+    if (!v.some(Boolean)) return;
+    const cl = classesEspacement(el, prop), tok = avecToken(el, prop === 'padding' ? 'padding-top' : 'margin-bottom', rem4(v));
+    out.push(ligne('Espacements', prop === 'padding' ? 'Padding' : 'Marge', rem4(v), { zone: prop, token: tok.token, introuvable: tok.introuvable, items: cl, badge: !cl.length && horsEchelle(v) ? HORS_ECHELLE : '' }));
+  });
+  responsive(el).forEach(x => out.push(x));
+  // Position : seulement si l'élément sort du flux normal
+  if (/absolute|fixed|sticky/.test(cs.position)) {
+    out.push(ligne('Position', 'Type', cs.position));
+    const dec = [['top', 'haut'], ['right', 'droite'], ['bottom', 'bas'], ['left', 'gauche']].filter(([pp]) => cs.getPropertyValue(pp) !== 'auto').map(([pp, l]) => `${l} ${remDe(cs.getPropertyValue(pp))}`);
+    if (dec.length) out.push(ligne('Position', 'Décalages', dec.join(' · ')));
+    if (cs.zIndex !== 'auto') out.push(ligne('Position', 'Plan (z-index)', cs.zIndex));
+  }
   // Style : fond, bordures, rayon, ombres, opacité, filtre
   if (!transparent(cs.backgroundColor)) out.push(ligne('Style', 'Fond', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
   const bordures = [];
@@ -774,26 +858,25 @@ function proprietes(el) {
   bordures.forEach((b, i) => out.push(ligne('Style', bordures.length > 1 ? `Bordure ${i + 1}` : 'Bordure', b.valeur, { ...b, valeur: b.valeur })));
   if (fondImage(el, cs)) out.push(ligne('Style', 'Image de fond', fondImage(el, cs)));
   const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(c => parseFloat(cs.getPropertyValue(`border-${c}-radius`)) || 0);
-  if (rad.some(Boolean)) out.push(ligne('Style', 'Rayon', ecrire4(rad)));
+  if (rad.some(Boolean)) out.push(ligne('Style', 'Rayon', rem4(rad)));
   ombresPortees.forEach((o, i) => out.push(ligne('Style', ombresPortees.length > 1 ? `Ombre ${i + 1}` : 'Ombre', o.valeur, o)));
   if (parseFloat(cs.opacity) < 1) out.push(ligne('Style', 'Opacité', Math.round(parseFloat(cs.opacity) * 100) + ' %'));
   if (cs.filter !== 'none') out.push(ligne('Style', 'Filtre', cs.filter));
-  // Texte
-  /* Texte : dès que l'élément contient du texte (le sien ou celui de ses enfants), avec la taille de l'élément lui-même */
+  // Texte : dès que l'élément contient du texte (le sien ou celui de ses enfants)
   const aTexte = !!el.textContent.trim() || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(el.tagName);
   if (aTexte) {
     out.push(ligne('Texte', 'Police', cs.fontFamily.split(',')[0].replace(/"/g, '')));
-    const taille = `${px(parseFloat(cs.fontSize))} / ${cs.lineHeight === 'normal' ? 'normal' : px(parseFloat(cs.lineHeight))}`;
-    /* Classe DSFR de taille si elle s'applique, puis taille / hauteur de ligne en px ; hors DSFR, la taille seule */
-    const tok = avecToken(el, 'font-size', taille);
-    out.push(ligne('Texte', 'Taille', taille, { ...tok, classe: classeTaille(el) || tok.classe }));
+    /* Classe DSFR de taille si elle s'applique, puis la valeur en rem ; hors DSFR, la valeur seule */
+    const tok = avecToken(el, 'font-size', rem(parseFloat(cs.fontSize)));
+    out.push(ligne('Texte', 'Taille', rem(parseFloat(cs.fontSize)), { ...tok, classe: classeTaille(el) || tok.classe }));
+    out.push(ligne('Texte', 'Hauteur de ligne', cs.lineHeight === 'normal' ? 'normal' : rem(parseFloat(cs.lineHeight))));
     out.push(ligne('Texte', 'Graisse', cs.fontWeight));
     out.push(ligne('Texte', 'Couleur', hex(cs.color), { couleur: cs.color, ...avecToken(el, 'color', hex(cs.color)) }));
     if (cs.textAlign !== 'start' && cs.textAlign !== 'left') out.push(ligne('Texte', 'Alignement', cs.textAlign));
   }
   return out;
 }
-const GROUPES = ['Structure', 'Style', 'Texte'];
+const GROUPES = ['Mise en page', 'Dimensions', 'Espacements', 'Responsive', 'Position', 'Style', 'Texte'];
 function fusion(listes) {
   if (listes.length === 1) return listes[0];
   const cles = [];
@@ -835,9 +918,13 @@ function rendreProprietes() {
       else {
         if (x.token) v += boutonValeur(x.token, `var(${x.token})`, 'outil-valeur--token', pastille);
         if (x.classe) v += boutonValeur(x.classe, x.classe, 'outil-valeur--token');
-        if (x.valeur) v += texteValeur(x.valeur, x.token || x.classe ? 'outil-mention' : '', x.token ? '' : pastille);
+        /* Liste de classes ou de règles : celle qui s'applique en bleu, les autres en gris */
+        (x.items || []).forEach(it => { v += it.copiable ? boutonValeur(it.texte, it.texte, it.actif ? 'outil-valeur--token' : 'outil-mention') : texteValeur(it.texte, it.actif ? 'outil-valeur--token' : 'outil-mention'); });
+        if (x.schema) v += x.schema;
+        if (x.valeurs) x.valeurs.forEach(t => { v += texteValeur(t); });
+        else if (x.valeur && !(x.items && x.items.length && !x.zone)) v += texteValeur(x.valeur, x.token || x.classe || (x.items && x.items.length) ? 'outil-mention' : '', x.token ? '' : pastille);
         if (x.introuvable) v += '<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d\'origine affichée</p>';
-        if (x.mention) v += `<p class="fr-text--xs fr-mb-0 outil-mention">${esc(x.mention)}</p>`;
+        if (x.badge) v += `<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mt-1v">${esc(x.badge)}</span>`;
       }
       html += `<div class="outil-prop fr-mb-1w"${x.zone ? ` data-zone="${x.zone}"` : ''}><p class="fr-text--sm fr-mb-0">${esc(x.label)}</p><div class="outil-prop__valeurs">${v}</div></div>`;
     });

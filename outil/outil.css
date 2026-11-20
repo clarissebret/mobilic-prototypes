@@ -110,6 +110,10 @@
 .outil-valeur--fixe { cursor: auto; }
 .outil-valeur--fixe:hover { background-color: transparent; }
 .outil-valeur--token { color: var(--text-action-high-blue-france); }
+/* Schéma d'alignement des enfants (3 × 3) : la ou les positions occupées en bleu */
+.outil-alignement { display: grid; grid-template-columns: repeat(3, 8px); gap: 4px; padding: 4px; border-radius: .25rem; box-shadow: inset 0 0 0 1px var(--border-default-grey); }
+.outil-alignement span { width: 8px; height: 8px; border-radius: 2px; background-color: var(--border-default-grey); }
+.outil-alignement .outil-alignement__actif { background-color: var(--background-action-high-blue-france); }
 .outil-pastille { flex-shrink: 0; width: 12px; height: 12px; border-radius: 2px; box-shadow: inset 0 0 0 1px var(--border-default-grey); }
 .outil-chaine { padding-left: 4px; font-family: monospace; overflow-wrap: anywhere; }
 
