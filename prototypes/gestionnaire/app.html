@@ -16,10 +16,28 @@
       </div>
       <div class="fr-tile fr-tile--sm fr-enlarge-link">
         <div class="fr-tile__body"><div class="fr-tile__content">
-          <h2 class="fr-tile__title"><a href="#" onclick="go('cerbere-1');return false">Gestionnaire</a></h2>
+          <h2 class="fr-tile__title"><a href="#" onclick="go('compte');return false">Gestionnaire</a></h2>
           <p class="fr-tile__detail">Je gère le temps de travail des salariés de mon entreprise</p>
         </div></div>
         <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:buildings/companie}}" alt=""></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 1b. ETAPE 1 : CREATION DE COMPTE (Mobilic) -->
+<section class="screen" id="screen-compte">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <div class="page-col">
+      <h1 class="fr-h3 fr-mb-4w center">S'inscrire comme gestionnaire</h1>
+      <div class="encadre">
+        <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Création de compte<span class="fr-stepper__state">Étape 1 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="3"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante :</span> Inscription de l'entreprise</p></div>
+        <p class="fr-mb-3w">Cerbère est le service d'authentification proposé par les ministères chargés des transports pour sécuriser et simplifier la connexion à leurs services en ligne, dont Mobilic.</p>
+        <p class="fr-mb-0">Vous allez créer votre compte sur Cerbère, puis revenir sur Mobilic pour inscrire votre entreprise.</p>
+        <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--right fr-mt-4w">
+          <li><button type="button" class="fr-btn" onclick="go('cerbere-1')">Créer un compte Cerbère</button></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -44,7 +62,7 @@
         </div>
         <ul class="fr-btns-group fr-btns-group--icon-left fr-mt-2w">
           <li><button type="button" class="fr-btn fr-icon-check-line" onclick="c1Submit()">Valider</button></li>
-          <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" onclick="go('metier')">Annuler</button></li>
+          <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" onclick="go('compte')">Annuler</button></li>
         </ul>
       </div>
     </div>
@@ -101,13 +119,9 @@
   {{FILE:header.html}}
   <div class="fr-container fr-pt-5w fr-pb-5w">
     <div class="page-col">
-      <div class="fr-alert fr-alert--success fr-mb-4w">
-        <h2 class="fr-alert__title">Votre compte Mobilic a bien été créé</h2>
-        <p>Il ne reste plus qu'à renseigner les détails de votre entreprise.</p>
-      </div>
-      <h1 class="fr-h3 fr-mb-4w center">Création de compte sur Mobilic</h1>
+      <h1 class="fr-h3 fr-mb-4w center">S'inscrire comme gestionnaire</h1>
       <div class="encadre">
-        <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Renseigner les détails de l'entreprise<span class="fr-stepper__state">Étape 1 sur 2</span></h2><div class="fr-stepper__steps" data-fr-current-step="1" data-fr-steps="2"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante :</span> Finaliser votre inscription</p></div>
+        <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Inscription de l'entreprise<span class="fr-stepper__state">Étape 2 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="2" data-fr-steps="3"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante :</span> Finaliser votre inscription</p></div>
         <p class="fr-mb-1w" id="e-intro"></p>
         <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
         <div id="etabs" class="etabs" oninput="eValidate()" onchange="eValidate()"></div>
@@ -124,9 +138,9 @@
   {{FILE:header.html}}
   <div class="fr-container fr-pt-5w fr-pb-5w">
     <div class="page-col">
-      <h1 class="fr-h3 fr-mb-4w center">Création de compte sur Mobilic</h1>
+      <h1 class="fr-h3 fr-mb-4w center">S'inscrire comme gestionnaire</h1>
       <div class="encadre" oninput="sValidate()" onchange="sValidate()">
-        <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Finaliser votre inscription<span class="fr-stepper__state">Étape 2 sur 2</span></h2><div class="fr-stepper__steps" data-fr-current-step="2" data-fr-steps="2"></div></div>
+        <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Finaliser votre inscription<span class="fr-stepper__state">Étape 3 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="3" data-fr-steps="3"></div></div>
         <div id="s-gtel-wrap"></div>
         <fieldset class="fr-fieldset fr-mb-3w">
           <legend class="fr-fieldset__legend fr-fieldset__legend--regular">Comment avez-vous connu Mobilic ?</legend>

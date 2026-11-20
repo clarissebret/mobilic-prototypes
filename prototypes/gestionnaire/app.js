@@ -27,11 +27,12 @@ function go(name) {
   current = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + name));
   window.scrollTo(0, 0);
-  parent.postMessage({ type: 'screen', name, form: name !== 'metier' && name !== 'fin' }, '*');
+  parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'fin'].includes(name) }, '*');
 }
 /* Retour Android / Échap. Le compte est créé à la sortie de Cerbère : pas de retour vers Cerbère depuis Mobilic. */
 function back() {
-  if (current === 'cerbere-1') return go('metier');
+  if (current === 'compte') return go('metier');
+  if (current === 'cerbere-1') return go('compte');
   if (current === 'cerbere-2') return go('cerbere-1');
   if (current === 'source') return go('etab');
   if (current === 'fin') return go('source');
