@@ -141,7 +141,7 @@ function renderTab() {
   const el = $('tab-1');
   if (rel.editing) {
     el.innerHTML = `<div class="fr-container fr-pt-3w has-sticky">
-        <p>Sélectionnez des infractions que vous souhaitez verbaliser à partir ${isTRS() ? 'de la feuille de route présentée' : 'du livret individuel de contrôle présenté'} :</p>
+        <p>Sélectionnez les infractions que vous souhaitez verbaliser à partir ${isTRS() ? 'de la feuille de route présentée' : 'du livret individuel de contrôle présenté'} :</p>
         <div id="tab-inf-list">${rel.draft.map(i => infractionHTML(i, true, 't')).join('')}</div>
         <button type="button" class="fr-btn fr-btn--tertiary fr-icon-add-line fr-btn--icon-left fr-mt-3v" onclick="openAddInf()">Ajouter une autre infraction</button>
       </div>
