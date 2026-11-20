@@ -312,16 +312,38 @@ function basculerBarre() {
   if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
   fermerListe(false);
   document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
-  outil.classList.toggle('outil--sans-barre', masquer);
-  ajuster();
   if (masquer) {
+    /* La place est libérée d'un coup (le prototype se réorganise une fois), mais un masque cache la nouvelle hauteur
+       et se retire au rythme de la barre : le bord bas du cadre et de l'inspecteur suit la barre qui descend */
+    const delta = pied.offsetHeight;
+    outil.classList.add('outil--sans-barre'); ajuster();
+    revelerBas(delta, true);
     pied.classList.add('outil__pied--sortie');
     finTransition(pied, () => { if (pied.classList.contains('outil__pied--sortie')) pied.hidden = true; });
   } else {
+    /* Le bord bas remonte avec la barre grâce au masque ; la place n'est réservée qu'à la fin */
     pied.hidden = false; void pied.offsetWidth;
+    const delta = pied.offsetHeight;
     pied.classList.remove('outil__pied--sortie');
+    revelerBas(delta, false).then(() => { if (!pied.classList.contains('outil__pied--sortie')) { outil.classList.remove('outil--sans-barre'); ajuster(); } annulerMasques(); });
   }
   annoncer(masquer ? 'Barre masquée. Appuyez sur @ pour l\'afficher.' : 'Barre affichée');
+}
+let masques = [];
+function annulerMasques() { masques.forEach(a => a.cancel()); masques = []; }
+/* Masque (clip-path) sur le bas du cadre et de la carte de l'inspecteur, synchronisé avec la barre (200 ms, même courbe) */
+function revelerBas(delta, ouvrir) {
+  annulerMasques();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+  const cibles = [[device, delta / echelle, '12px']];
+  const carte = inspecteur.querySelector('.outil-inspecteur__carte');
+  if (!inspecteur.hidden && innerWidth >= 576) cibles.push([carte, delta, '4px']);
+  masques = cibles.map(([el, d, r]) => {
+    const cache = `inset(0 0 ${d}px 0 round 0 0 ${r} ${r})`, plein = `inset(0 0 0px 0 round 0 0 ${r} ${r})`;
+    return el.animate({ clipPath: ouvrir ? [cache, plein] : [plein, cache] }, { duration: 200, easing: 'cubic-bezier(.23, 1, .32, 1)', fill: 'forwards' });
+  });
+  if (ouvrir) masques.forEach(a => a.finished.then(() => a.cancel(), () => {}));
+  return Promise.all(masques.map(a => a.finished)).catch(() => {});
 }
 $('masquer').addEventListener('click', basculerBarre);
 window.addEventListener('message', e => {
