@@ -26,6 +26,8 @@
 .outil-poignee { position: absolute; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: none; touch-action: none; }
 .outil-poignee::before { content: ""; border-radius: 2px; background-color: var(--border-default-grey); }
 .outil-poignee:hover::before, .outil-poignee:active::before, .outil--glisse .outil-poignee::before { background-color: var(--border-plain-grey); }
+/* Pas de poignée quand l'inspecteur est ouvert */
+.outil--inspecteur .outil-poignee { display: none; }
 .outil-poignee--largeur { top: 50%; left: 100%; width: 16px; height: 48px; transform: translateY(-50%); cursor: ew-resize; }
 .outil-poignee--largeur::before { width: 4px; height: 32px; }
 

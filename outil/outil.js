@@ -67,14 +67,20 @@ let echelle = 1, hauteur = 740, glisse = false;
 const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
 const estMobile = () => format.w < 768;
 /* Espace disponible pour le cadre ; la poignée garde 16 px de chaque côté.
-   Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés. */
+   Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés.
+   Calculé pour l'état final de l'inspecteur (ouvert ou fermé), pas pour sa largeur en cours d'animation :
+   le cadre prend sa taille une seule fois au début, puis l'inspecteur glisse sans faire réorganiser le prototype à chaque image. */
 function dispo() {
   const cs = getComputedStyle(vue), lib = $('format-libelle'), r = vue.getBoundingClientRect();
-  const g = r.left + parseFloat(cs.paddingLeft), d = r.right - parseFloat(cs.paddingRight), c = innerWidth / 2;
+  const large = innerWidth >= 576;
+  const L = large && outil.classList.contains('outil--inspecteur') ? 424 : 0;
+  const enCours = large && !inspecteur.hidden ? inspecteur.getBoundingClientRect().width : 0;
+  const g = r.left + parseFloat(cs.paddingLeft), d = r.right - parseFloat(cs.paddingRight) + enCours - L, c = innerWidth / 2;
   const centre = 2 * Math.min(c - g, d - c) - 32, ok = estMobile() && centre >= 280;
   return {
     w: ok ? centre : d - g - 32,
     contenu: d - g,
+    inspecteur: L,
     milieu: (ok ? c : (g + d) / 2) - g,
     h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom)
   };
@@ -91,7 +97,7 @@ function ajuster() {
   } else {
     /* Desktop : même réduction et même bord gauche qu'inspecteur fermé ; l'inspecteur rogne seulement la droite du cadre,
        comme une fenêtre de navigateur rétrécie (la largeur du prototype diminue, son contenu se réorganise) */
-    const L = outil.classList.contains('outil--inspecteur') && innerWidth >= 576 ? 424 : 0;
+    const L = a.inspecteur;
     if (!glisse) echelle = clamp(0.1, (a.contenu - 32 + L) / format.w, 1);
     gauche = (a.contenu + L) / 2 - format.w * echelle / 2;
     largeur = Math.max(LIMITES.wMin, Math.min(format.w, Math.floor((a.contenu - 16 - gauche) / echelle)));
@@ -1046,11 +1052,12 @@ function rafraichir() {
 function ouvrirInspecteur() {
   if (inspecteur.hidden) { inspecteur.hidden = false; void inspecteur.offsetWidth; }
   outil.classList.add('outil--inspecteur');
-  rafraichir();
+  ajuster(); rafraichir();
 }
 function fermerInspecteur() {
   if (inspecteur.hidden) return;
   outil.classList.remove('outil--inspecteur');
+  ajuster();
   apresTransition(() => { if (!outil.classList.contains('outil--inspecteur')) inspecteur.hidden = true; });
 }
 function choisirOnglet(o, focus) {
