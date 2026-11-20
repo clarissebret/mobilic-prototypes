@@ -6,7 +6,7 @@ Code : `.webinaire` dans `prototypes/gestionnaire/app.css`.
 
 ## Anatomie
 
-Titre `fr-h5`, texte, puis une ligne : la date (jour abrégé, numéro en `fr-h4`, mois et année, texte `--text-title-blue-france`), l'heure en gras suivie du titre de la session en `fr-text--sm`, et le bouton tertiaire sans bordure SM « S'inscrire ». La ligne passe à la ligne si la place manque.
+Titre `fr-h5`, texte, puis la session dans un cadre (contour 1 px `--border-default-grey`, sans fond) : la date en colonne centrée (jour abrégé, numéro en `fr-h3` `--text-title-blue-france`, mois et année en `fr-text--xs`), l'heure en gras suivie du titre de la session, et le bouton tertiaire sans bordure « S'inscrire » à droite. La ligne passe à la ligne si la place manque.
 
 ## États
 
@@ -20,7 +20,7 @@ Titre `fr-h5`, texte, puis une ligne : la date (jour abrégé, numéro en `fr-h4
 | Élément | Valeur |
 |---|---|
 | Fond de l'encart | `--background-alt-grey` |
-| Fond de la date | `--background-contrast-grey`, padding 8 px |
 | Padding de l'encart | 32 × 24 px sous 768 px ; 40 × 48 px au-delà |
+| Padding du cadre de la session | 24 × 32 px |
 
-8 px entre le titre et le texte, 24 px entre le texte et la ligne, 16 px entre les éléments de la ligne.
+16 px entre le titre et le texte, 40 px entre le texte et la session ; dans la session, 40 px entre la date, le titre et le bouton (24 px quand ils passent à la ligne), 12 px entre l'heure et le titre.

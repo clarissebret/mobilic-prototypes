@@ -93,7 +93,7 @@ Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. 
 
 - **FIN-01** Titre : « Votre inscription est terminée ». Texte : « Un e-mail de vérification de votre compte vous a été envoyé à l'adresse [e-mail]. Cliquez sur le lien qu'il contient pour activer votre compte. »
 - **FIN-02** « Aller dans mon espace » ouvre l'espace gestionnaire.
-- **FIN-03** Encart « Offrez-vous une formation gratuite de 45 minutes ! » : « Apprenez à maîtriser Mobilic grâce à un accompagnement personnalisé et gagnez du temps : formation à la mise en place, démonstration et réponse à toutes vos questions ! », puis la prochaine session : date, heure, « Mobilic : Formation gestionnaires » et « S'inscrire ». Après inscription, il devient « Inscription confirmée », inactif.
+- **FIN-03** Encart « Offrez-vous une formation gratuite de 45 minutes ! » : « Apprenez à maîtriser Mobilic grâce à un accompagnement personnalisé et gagnez du temps : formation à la mise en place, démonstration et réponse à toutes vos questions ! », puis la prochaine session : date, heure, « Mobilic - Formation gestionnaires » et « S'inscrire ». Après inscription, il devient « Inscription confirmée », inactif.
 
 ## Navigation
 

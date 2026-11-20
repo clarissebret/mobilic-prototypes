@@ -143,9 +143,9 @@ function renderFin() {
   $('f-email').textContent = state.email || '';
   /* Prochain webinaire fictif : le jeudi qui suit, à 10 h */
   const d = new Date(); d.setDate(d.getDate() + ((4 - d.getDay() + 7) % 7 || 7));
-  $('w-jour').textContent = d.toLocaleDateString('fr-FR', { weekday: 'short' });
+  $('w-jour').textContent = d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
   $('w-num').textContent = d.getDate();
-  $('w-mois').textContent = d.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+  $('w-mois').textContent = d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '') + ' ' + d.getFullYear();
   $('w-heure').textContent = '10:00';
   $('w-btn').disabled = false; $('w-btn').textContent = "S'inscrire";
 }

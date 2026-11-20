@@ -68,6 +68,7 @@
 /* Encadré webinaire */
 .webinaire { padding: 2rem 1.5rem; background-color: var(--background-alt-grey); }
 @media (min-width: 48em) { .webinaire { padding: 2.5rem 3rem; } }
-.webinaire__row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-.webinaire__date { display: flex; flex-direction: column; align-items: center; padding: .5rem; background-color: var(--background-contrast-grey); color: var(--text-title-blue-france); }
-.webinaire__titre { flex: 1; min-width: 8rem; }
+.webinaire__row { display: flex; align-items: center; gap: 1.5rem 2.5rem; flex-wrap: wrap; padding: 1.5rem 2rem; border: 1px solid var(--border-default-grey); }
+.webinaire__date { display: flex; flex-direction: column; align-items: center; }
+.webinaire__jour { color: var(--text-title-blue-france); }
+.webinaire__titre { display: flex; gap: .75rem; flex: 1; min-width: 12rem; }
