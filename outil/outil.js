@@ -388,7 +388,7 @@ function nom(el) {
   const c = [...el.classList].find(x => !/^fr-(m|p)[trblxy]?-|^fr-text|^fr-h\d|^fr-mb|^fr-mt/.test(x));
   return c || el.tagName.toLowerCase();
 }
-const px = v => `${Math.round(v * 10) / 10} px`;
+const px = v => `${Math.round(v * 10) / 10}px`;
 const dims = el => { const r = el.getBoundingClientRect(); return `${Math.round(r.width * 10) / 10} × ${Math.round(r.height * 10) / 10}`; };
 
 function rectCadre() {
@@ -679,19 +679,27 @@ const UTILITAIRE = /^\.fr-(m|p)[trblxy]?-(?:(?:sm|md|lg|xl)-)?n?\d+[vw]?$|^\.fr-
 /* ---------- Propriétés ---------- */
 const transparent = v => !v || v === 'rgba(0, 0, 0, 0)' || v === 'transparent';
 const quatre = (cs, p) => ['top', 'right', 'bottom', 'left'].map(s => parseFloat(cs.getPropertyValue(`${p}-${s}${p === 'border' ? '-width' : ''}`)) || 0);
-const ecrire4 = v => v.every(x => x === v[0]) ? px(v[0]) : v.map(x => Math.round(x * 10) / 10).join(' · ') + ' px';
+/* Raccourci CSS sur 4 côtés (1, 2, 3 ou 4 valeurs), comme dans le code : 0 sans unité */
+function raccourci(v, f) {
+  const t = v.map(x => (Math.abs(x) < 0.01 ? '0' : f(x)));
+  if (t.every(x => x === t[0])) return t[0];
+  if (t[0] === t[2] && t[1] === t[3]) return `${t[0]} ${t[1]}`;
+  if (t[1] === t[3]) return `${t[0]} ${t[1]} ${t[2]}`;
+  return t.join(' ');
+}
+const ecrire4 = v => raccourci(v, px);
 function largeurMode(el, cs, axe) {
   const d = declaration(el, axe);
-  if (d && !/^(auto|fit-content|max-content|min-content)$/.test(d.v)) return /%$/.test(d.v) && d.v === '100%' ? 'Remplit le parent' : 'Fixe';
+  if (d && !/^(auto|fit-content|max-content|min-content)$/.test(d.v)) return /%$/.test(d.v) && d.v === '100%' ? 'fill' : 'fixed';
   const pcs = el.parentElement ? win().getComputedStyle(el.parentElement) : null;
   const flexP = pcs && /flex/.test(pcs.display), ligne = flexP && !/column/.test(pcs.flexDirection);
   if (axe === 'width') {
-    if (/^inline|table-cell/.test(cs.display) || /absolute|fixed/.test(cs.position) || cs.float !== 'none') return 'Adaptée au contenu';
-    if (flexP) return ligne ? (parseFloat(cs.flexGrow) > 0 ? 'Remplit le parent' : 'Adaptée au contenu') : (/stretch|normal/.test(cs.alignSelf === 'auto' ? pcs.alignItems : cs.alignSelf) ? 'Remplit le parent' : 'Adaptée au contenu');
-    return 'Remplit le parent';
+    if (/^inline|table-cell/.test(cs.display) || /absolute|fixed/.test(cs.position) || cs.float !== 'none') return 'hug';
+    if (flexP) return ligne ? (parseFloat(cs.flexGrow) > 0 ? 'fill' : 'hug') : (/stretch|normal/.test(cs.alignSelf === 'auto' ? pcs.alignItems : cs.alignSelf) ? 'fill' : 'hug');
+    return 'fill';
   }
-  if (flexP && ((ligne && /stretch|normal/.test(cs.alignSelf === 'auto' ? pcs.alignItems : cs.alignSelf)) || (!ligne && parseFloat(cs.flexGrow) > 0))) return 'Remplit le parent';
-  return 'Adaptée au contenu';
+  if (flexP && ((ligne && /stretch|normal/.test(cs.alignSelf === 'auto' ? pcs.alignItems : cs.alignSelf)) || (!ligne && parseFloat(cs.flexGrow) > 0))) return 'fill';
+  return 'hug';
 }
 /* Ombres calculées, avec le token de couleur écrit par l'auteur */
 function ombres(el, cs) {
@@ -705,10 +713,10 @@ function ombres(el, cs) {
 }
 /* Ombre sans flou lue comme une bordure : épaisseur et côté(s) */
 function traitOmbre(o) {
-  if (!o.x && !o.y) return `${px(Math.abs(o.etendue))}${o.inset ? '' : ', à l\'extérieur'}`;
+  if (!o.x && !o.y) return `${px(Math.abs(o.etendue))}${o.inset ? '' : ' outside'}`;
   const cotes = [];
-  if (o.y) cotes.push(`${px(Math.abs(o.y))} ${(o.y > 0) === o.inset ? 'en haut' : 'en bas'}`);
-  if (o.x) cotes.push(`${px(Math.abs(o.x))} ${(o.x > 0) === o.inset ? 'à gauche' : 'à droite'}`);
+  if (o.y) cotes.push(`${px(Math.abs(o.y))} ${(o.y > 0) === o.inset ? 'top' : 'bottom'}`);
+  if (o.x) cotes.push(`${px(Math.abs(o.x))} ${(o.x > 0) === o.inset ? 'left' : 'right'}`);
   return cotes.join(', ');
 }
 /* Bordures que le DSFR dessine avec des dégradés d'une seule couleur (linear-gradient(var(--x), var(--x))) */
@@ -747,17 +755,30 @@ function classeUtilitaire(el, d) {
   return s ? s.slice(1) : null;
 }
 /* Unités : le DSFR travaille en rem (1 rem = 16 px). Le px reste pour les traits fins et les mesures du rendu. */
-const rem = v => `${Math.round(v / 16 * 1000) / 1000} rem`;
-const rem4 = v => v.every(x => x === v[0]) ? rem(v[0]) : v.map(x => Math.round(x / 16 * 1000) / 1000).join(' · ') + ' rem';
+const rem = v => `${Math.round(v / 16 * 1000) / 1000}rem`;
+const rem4 = v => raccourci(v, rem);
 const remDe = v => /^-?[\d.]+px$/.test(v) ? rem(parseFloat(v)) : v;
 /* Échelle d'espacement du DSFR : multiples de 1v (0,25 rem), jusqu'à 32v (8 rem) */
 const horsEchelle = v => v.some(x => Math.abs(x) > 128 || Math.abs(x / 4 - Math.round(x / 4)) > 0.01);
-const HORS_ECHELLE = 'Hors échelle DSFR';
+const HORS_ECHELLE = 'Off DSFR scale', VERS_GAP = 'Use gap on parent';
 /* Classes utilitaires DSFR (fr-p-*, fr-mb-*…) qui portent un padding ou une marge */
 function classesEspacement(el, prop) {
   const noms = new Set();
   ['top', 'right', 'bottom', 'left'].forEach(c => { const n = classeUtilitaire(el, declaration(el, `${prop}-${c}`)); if (n && /^fr-[mp]/.test(n)) noms.add(n); });
   return [...noms].map(n => ({ texte: n, actif: true, copiable: true }));
+}
+/* Marge qui espace des enfants de flex ou de grille : l'espace devrait être un gap sur le parent.
+   Les marges de texte que le DSFR pose lui-même (--text-spacing, --title-spacing) ne comptent pas. */
+function margeEntreFreres(el, cs, pcs) {
+  if (!pcs || !/flex|grid/.test(pcs.display)) return false;
+  const freres = [...el.parentElement.children].filter(x => x !== el && x.getClientRects().length);
+  if (!freres.length) return false;
+  const col = /grid/.test(pcs.display) || /column/.test(pcs.flexDirection);
+  return (col ? ['top', 'bottom'] : ['left', 'right']).some(c => {
+    if (!parseFloat(cs.getPropertyValue(`margin-${c}`))) return false;
+    const d = declaration(el, `margin-${c}`);
+    return d && (d.source !== 'dsfr' || classeUtilitaire(el, d));
+  });
 }
 /* Schéma 3 × 3 de l'alignement des enfants, comme dans Figma */
 function schemaAlignement(principal, secondaire, colonne) {
@@ -789,8 +810,8 @@ function responsive(el) {
   /* Règles propres à Mobilic qui dépendent de la largeur */
   const medias = new Set();
   regles().filter(x => x.src === 'mobilic' && x.media).forEach(x => { if (decouper(x.r.selectorText).some(s => { try { return el.matches(s); } catch (e) { return false; } })) medias.add(x.media); });
-  if (medias.size) out.push(ligne('Responsive', 'Règles Mobilic', [...medias].join(' '), { items: [...medias].map(m => ({ texte: `@media ${m}`, actif: win().matchMedia(m).matches })) }));
-  if (out.length) { const p = palier(), seuil = PALIERS.find(x => x[0] === p)[1]; out.unshift(ligne('Responsive', 'Palier actif', seuil ? `${p} · ${seuil} px et plus` : `${p} · moins de 576 px`)); }
+  if (medias.size) out.push(ligne('Responsive', 'Mobilic @media', [...medias].join(' '), { items: [...medias].map(m => ({ texte: `@media ${m}`, actif: win().matchMedia(m).matches })) }));
+  if (out.length) { const p = palier(), seuil = PALIERS.find(x => x[0] === p)[1]; out.unshift(ligne('Responsive', 'breakpoint', seuil ? `${p} · ≥ ${seuil}px` : `${p} · < 576px`)); }
   return out;
 }
 function proprietes(el) {
@@ -802,50 +823,52 @@ function proprietes(el) {
   if (flex || grille) {
     const colonne = flex && /column/.test(cs.flexDirection);
     const nbCol = grille ? cs.gridTemplateColumns.split(/\s+(?![^(]*\))/).filter(Boolean).length : 0;
-    out.push(ligne('Mise en page', 'Type', grille ? `Grille, ${nbCol} colonne${nbCol > 1 ? 's' : ''}` : colonne ? 'Flex, en colonne' : 'Flex, en ligne'));
-    if (flex && cs.flexWrap !== 'nowrap') out.push(ligne('Mise en page', 'Retour à la ligne', 'Oui'));
+    out.push(ligne('Mise en page', 'display', cs.display));
+    if (flex) out.push(ligne('Mise en page', 'flex-direction', cs.flexDirection));
+    if (grille) out.push(ligne('Mise en page', 'grid-template-columns', cs.gridTemplateColumns.split(/\s+(?![^(]*\))/).filter(Boolean).map(remDe).join(' ') + ` (${nbCol})`));
+    if (flex && cs.flexWrap !== 'nowrap') out.push(ligne('Mise en page', 'flex-wrap', cs.flexWrap));
     const [j, a] = grille ? [cs.justifyItems, cs.alignItems] : [cs.justifyContent, cs.alignItems];
     const lj = grille ? 'justify-items' : 'justify-content';
-    out.push(ligne('Mise en page', 'Alignement', `${j} ${a}`, { schema: schemaAlignement(j, a, colonne), valeurs: [`${lj}: ${j}`, `align-items: ${a}`] }));
+    out.push(ligne('Mise en page', 'alignment', `${j} ${a}`, { schema: schemaAlignement(j, a, colonne), valeurs: [`${lj}: ${j}`, `align-items: ${a}`] }));
     const gaps = grille ? [parseFloat(cs.rowGap) || 0, parseFloat(cs.columnGap) || 0] : [(colonne ? parseFloat(cs.rowGap) : parseFloat(cs.columnGap)) || 0];
-    if (gaps.some(Boolean)) out.push(ligne('Mise en page', 'Espace entre enfants', grille && gaps[0] !== gaps[1] ? `${rem(gaps[0])} · ${rem(gaps[1])}` : rem(gaps.find(Boolean)), { zone: 'gap', badge: horsEchelle(gaps) ? HORS_ECHELLE : '' }));
+    if (gaps.some(Boolean)) out.push(ligne('Mise en page', 'gap', grille && gaps[0] !== gaps[1] ? `${rem(gaps[0])} ${rem(gaps[1])}` : rem(gaps.find(Boolean)), { zone: 'gap', badge: horsEchelle(gaps) ? HORS_ECHELLE : '' }));
   }
   // Dimensions : comportement, contraintes, comportement dans un flex ou une grille
   const lm = largeurMode(el, cs, 'width'), hm = largeurMode(el, cs, 'height');
-  out.push(ligne('Dimensions', 'Largeur', `${lm} · ${px(r.width)}`));
-  out.push(ligne('Dimensions', 'Hauteur', `${hm} · ${px(r.height)}`));
-  [['min-width', 'Largeur min'], ['max-width', 'Largeur max'], ['min-height', 'Hauteur min'], ['max-height', 'Hauteur max']].forEach(([prop, label]) => {
+  out.push(ligne('Dimensions', 'width', `${lm} · ${px(r.width)}`));
+  out.push(ligne('Dimensions', 'height', `${hm} · ${px(r.height)}`));
+  [['min-width', 'min-width'], ['max-width', 'max-width'], ['min-height', 'min-height'], ['max-height', 'max-height']].forEach(([prop, label]) => {
     const v = cs.getPropertyValue(prop);
     if (!/^(auto|none|0px)$/.test(v)) out.push(ligne('Dimensions', label, remDe(v)));
   });
   if (pcs && /flex/.test(pcs.display)) {
-    if (cs.flexGrow !== '0' || cs.flexShrink !== '1' || cs.flexBasis !== 'auto') out.push(ligne('Dimensions', 'Flex', `flex: ${cs.flexGrow} ${cs.flexShrink} ${remDe(cs.flexBasis)}`));
-    if (cs.alignSelf !== 'auto') out.push(ligne('Dimensions', 'Alignement propre', `align-self: ${cs.alignSelf}`));
+    if (cs.flexGrow !== '0' || cs.flexShrink !== '1' || cs.flexBasis !== 'auto') out.push(ligne('Dimensions', 'flex', `${cs.flexGrow} ${cs.flexShrink} ${remDe(cs.flexBasis)}`));
+    if (cs.alignSelf !== 'auto') out.push(ligne('Dimensions', 'align-self', cs.alignSelf));
   }
   if (pcs && /grid/.test(pcs.display)) {
-    if (cs.gridColumnStart !== 'auto' || cs.gridColumnEnd !== 'auto') out.push(ligne('Dimensions', 'Colonnes', `grid-column: ${cs.gridColumnStart} / ${cs.gridColumnEnd}`));
-    if (cs.gridRowStart !== 'auto' || cs.gridRowEnd !== 'auto') out.push(ligne('Dimensions', 'Rangées', `grid-row: ${cs.gridRowStart} / ${cs.gridRowEnd}`));
+    if (cs.gridColumnStart !== 'auto' || cs.gridColumnEnd !== 'auto') out.push(ligne('Dimensions', 'grid-column', `${cs.gridColumnStart} / ${cs.gridColumnEnd}`));
+    if (cs.gridRowStart !== 'auto' || cs.gridRowEnd !== 'auto') out.push(ligne('Dimensions', 'grid-row', `${cs.gridRowStart} / ${cs.gridRowEnd}`));
   }
   // Espacements : classe DSFR d'abord, puis la valeur en rem
   ['padding', 'margin'].forEach(prop => {
     const v = quatre(cs, prop);
     if (!v.some(Boolean)) return;
     const cl = classesEspacement(el, prop), tok = avecToken(el, prop === 'padding' ? 'padding-top' : 'margin-bottom', rem4(v));
-    out.push(ligne('Espacements', prop === 'padding' ? 'Padding' : 'Marge', rem4(v), { zone: prop, token: tok.token, introuvable: tok.introuvable, items: cl, badge: !cl.length && horsEchelle(v) ? HORS_ECHELLE : '' }));
+    out.push(ligne('Espacements', prop, rem4(v), { zone: prop, token: tok.token, introuvable: tok.introuvable, items: cl,
+      badge: !cl.length && horsEchelle(v) ? HORS_ECHELLE : prop === 'margin' && margeEntreFreres(el, cs, pcs) ? VERS_GAP : '' }));
   });
   responsive(el).forEach(x => out.push(x));
   // Position : seulement si l'élément sort du flux normal
   if (/absolute|fixed|sticky/.test(cs.position)) {
-    out.push(ligne('Position', 'Type', cs.position));
-    const dec = [['top', 'haut'], ['right', 'droite'], ['bottom', 'bas'], ['left', 'gauche']].filter(([pp]) => cs.getPropertyValue(pp) !== 'auto').map(([pp, l]) => `${l} ${remDe(cs.getPropertyValue(pp))}`);
-    if (dec.length) out.push(ligne('Position', 'Décalages', dec.join(' · ')));
-    if (cs.zIndex !== 'auto') out.push(ligne('Position', 'Plan (z-index)', cs.zIndex));
+    out.push(ligne('Position', 'position', cs.position));
+    ['top', 'right', 'bottom', 'left'].forEach(pp => { if (cs.getPropertyValue(pp) !== 'auto') out.push(ligne('Position', pp, remDe(cs.getPropertyValue(pp)))); });
+    if (cs.zIndex !== 'auto') out.push(ligne('Position', 'z-index', cs.zIndex));
   }
   // Style : fond, bordures, rayon, ombres, opacité, filtre
-  if (!transparent(cs.backgroundColor)) out.push(ligne('Style', 'Fond', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
+  if (!transparent(cs.backgroundColor)) out.push(ligne('Style', 'background-color', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
   const bordures = [];
   const bw = quatre(cs, 'border');
-  if (bw.some(Boolean)) bordures.push({ valeur: ecrire4(bw) + (cs.borderTopStyle !== 'solid' ? ` ${cs.borderTopStyle}` : ''), couleur: cs.borderTopColor, ...avecToken(el, 'border-top-color', hex(cs.borderTopColor)) });
+  if (bw.some(Boolean)) bordures.push({ valeur: ecrire4(bw) + ` ${cs.borderTopStyle}`, couleur: cs.borderTopColor, ...avecToken(el, 'border-top-color', hex(cs.borderTopColor)) });
   const ombresPortees = [];
   ombres(el, cs).forEach(o => {
     if (transparent(o.couleur)) return;
@@ -855,24 +878,24 @@ function proprietes(el) {
     else ombresPortees.push({ valeur: o.texte, couleur: o.couleur, ...t });
   });
   borduresDegrade(el).forEach(b => bordures.push(b));
-  bordures.forEach((b, i) => out.push(ligne('Style', bordures.length > 1 ? `Bordure ${i + 1}` : 'Bordure', b.valeur, { ...b, valeur: b.valeur })));
-  if (fondImage(el, cs)) out.push(ligne('Style', 'Image de fond', fondImage(el, cs)));
+  bordures.forEach((b, i) => out.push(ligne('Style', bordures.length > 1 ? `border ${i + 1}` : 'border', b.valeur, { ...b, valeur: b.valeur })));
+  if (fondImage(el, cs)) out.push(ligne('Style', 'background-image', fondImage(el, cs)));
   const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(c => parseFloat(cs.getPropertyValue(`border-${c}-radius`)) || 0);
-  if (rad.some(Boolean)) out.push(ligne('Style', 'Rayon', rem4(rad)));
-  ombresPortees.forEach((o, i) => out.push(ligne('Style', ombresPortees.length > 1 ? `Ombre ${i + 1}` : 'Ombre', o.valeur, o)));
-  if (parseFloat(cs.opacity) < 1) out.push(ligne('Style', 'Opacité', Math.round(parseFloat(cs.opacity) * 100) + ' %'));
-  if (cs.filter !== 'none') out.push(ligne('Style', 'Filtre', cs.filter));
+  if (rad.some(Boolean)) out.push(ligne('Style', 'border-radius', rem4(rad)));
+  ombresPortees.forEach((o, i) => out.push(ligne('Style', ombresPortees.length > 1 ? `box-shadow ${i + 1}` : 'box-shadow', o.valeur, o)));
+  if (parseFloat(cs.opacity) < 1) out.push(ligne('Style', 'opacity', cs.opacity));
+  if (cs.filter !== 'none') out.push(ligne('Style', 'filter', cs.filter));
   // Texte : dès que l'élément contient du texte (le sien ou celui de ses enfants)
   const aTexte = !!el.textContent.trim() || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(el.tagName);
   if (aTexte) {
-    out.push(ligne('Texte', 'Police', cs.fontFamily.split(',')[0].replace(/"/g, '')));
+    out.push(ligne('Texte', 'font-family', cs.fontFamily.split(',')[0].replace(/"/g, '')));
     /* Classe DSFR de taille si elle s'applique, puis la valeur en rem ; hors DSFR, la valeur seule */
     const tok = avecToken(el, 'font-size', rem(parseFloat(cs.fontSize)));
-    out.push(ligne('Texte', 'Taille', rem(parseFloat(cs.fontSize)), { ...tok, classe: classeTaille(el) || tok.classe }));
-    out.push(ligne('Texte', 'Hauteur de ligne', cs.lineHeight === 'normal' ? 'normal' : rem(parseFloat(cs.lineHeight))));
-    out.push(ligne('Texte', 'Graisse', cs.fontWeight));
-    out.push(ligne('Texte', 'Couleur', hex(cs.color), { couleur: cs.color, ...avecToken(el, 'color', hex(cs.color)) }));
-    if (cs.textAlign !== 'start' && cs.textAlign !== 'left') out.push(ligne('Texte', 'Alignement', cs.textAlign));
+    out.push(ligne('Texte', 'font-size', rem(parseFloat(cs.fontSize)), { ...tok, classe: classeTaille(el) || tok.classe }));
+    out.push(ligne('Texte', 'line-height', cs.lineHeight === 'normal' ? 'normal' : rem(parseFloat(cs.lineHeight))));
+    out.push(ligne('Texte', 'font-weight', cs.fontWeight));
+    out.push(ligne('Texte', 'color', hex(cs.color), { couleur: cs.color, ...avecToken(el, 'color', hex(cs.color)) }));
+    if (cs.textAlign !== 'start' && cs.textAlign !== 'left') out.push(ligne('Texte', 'text-align', cs.textAlign));
   }
   return out;
 }
@@ -886,7 +909,7 @@ function fusion(listes) {
     const sig = x => x ? `${x.token || ''}|${x.valeur}` : '∅';
     const pareil = xs.every(x => sig(x) === sig(xs[0]));
     const [groupe, label] = k.split('|');
-    return pareil ? { ...xs[0], mention: '', zone: null } : { groupe, label, valeur: 'Mixte', mixte: true };
+    return pareil ? { ...xs[0], mention: '', zone: null } : { groupe, label, valeur: 'mixed', mixte: true };
   });
 }
 /* Valeur non copiable (seuls les tokens et les classes se copient) */
@@ -914,7 +937,7 @@ function rendreProprietes() {
     ls.forEach(x => {
       const pastille = x.couleur ? `<span class="outil-pastille" style="background-color:${esc(x.couleur)}"></span>` : '';
       let v = '';
-      if (x.mixte) v = `<span class="fr-text--sm fr-mb-0 outil-mention">Mixte</span>`;
+      if (x.mixte) v = `<span class="fr-text--sm fr-mb-0 outil-mention">mixed</span>`;
       else {
         if (x.token) v += boutonValeur(x.token, `var(${x.token})`, 'outil-valeur--token', pastille);
         if (x.classe) v += boutonValeur(x.classe, x.classe, 'outil-valeur--token');
@@ -926,7 +949,7 @@ function rendreProprietes() {
         if (x.introuvable) v += '<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d\'origine affichée</p>';
         if (x.badge) v += `<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mt-1v">${esc(x.badge)}</span>`;
       }
-      html += `<div class="outil-prop fr-mb-1w"${x.zone ? ` data-zone="${x.zone}"` : ''}><p class="fr-text--sm fr-mb-0">${esc(x.label)}</p><div class="outil-prop__valeurs">${v}</div></div>`;
+      html += `<div class="outil-prop fr-mb-1w"${x.zone ? ` data-zone="${x.zone}"` : ''}><p class="fr-text--sm fr-mb-0 outil-prop__nom">${esc(x.label)}</p><div class="outil-prop__valeurs">${v}</div></div>`;
     });
     html += '</section>';
   });
@@ -973,7 +996,7 @@ function secours(texte) { const t = document.createElement('textarea'); t.value 
 inspecteur.addEventListener('click', e => { const b = e.target.closest('[data-copie]'); if (b) copier(b.dataset.copie, b); });
 
 /* ---------- Tokens ---------- */
-const PROPS_TOKENS = [['background-color', 'Fond'], ['color', 'Texte'], ['border-top-color', 'Bordure'], ['box-shadow', 'Ombre'], ['background-image', 'Image de fond'], ['outline-color', 'Contour']];
+const PROPS_TOKENS = [['background-color', 'background-color'], ['color', 'color'], ['border-top-color', 'border-color'], ['box-shadow', 'box-shadow'], ['background-image', 'background-image'], ['outline-color', 'outline-color']];
 function rendreTokens() {
   const el = selection.find(x => x.isConnected);
   if (!el) { $('panneau-tokens').innerHTML = '<p class="fr-text--sm fr-mb-0">Sélectionnez un élément pour voir ses tokens</p>'; return; }
