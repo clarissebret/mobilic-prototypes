@@ -10,26 +10,6 @@
 <style>
   /* Cadre du prototype (hors application) : voir outil/outil.css */
   html, body { height: 100%; background-color: var(--background-contrast-grey); }
-  .device-box { position: relative; }
-  .device-box > .device { position: absolute; top: 0; left: 0; transform-origin: top left; }
-
-  /* Téléphone Android */
-  .device { padding: 12px; border-radius: 44px; background: #1e1e1e; box-shadow: 0 0 0 2px #3a3a3a, 0 12px 32px rgba(0,0,0,.35); position: relative; }
-  .device::before { content: ""; position: absolute; right: -4px; top: 140px; width: 4px; height: 64px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
-  .device::after { content: ""; position: absolute; right: -4px; top: 230px; width: 4px; height: 100px; border-radius: 0 3px 3px 0; background: #2b2b2b; }
-  .screen-wrap { width: var(--w, 360px); border-radius: 32px; overflow: hidden; background-color: var(--background-default-grey); }
-  .android-status { position: relative; height: 32px; display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem 0 1.5rem;
-    background-color: var(--background-default-grey); color: #161616; font-family: Roboto, "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 500; }
-  .android-status__camera { position: absolute; left: 50%; top: 8px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1e1e1e; }
-  .android-status__icons { display: flex; gap: 4px; align-items: center; }
-  .android-status__icons [class*="fr-icon-"]::before { --icon-size: 15px; }
-  .android-nav { height: 48px; display: flex; justify-content: space-around; align-items: center; background-color: #f2f2f2; }
-  .android-nav button { width: 64px; height: 40px; border: 0; border-radius: 20px; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #3c3c3c; }
-  .android-nav button:hover { background-color: rgba(0,0,0,.06); }
-  .android-nav button[disabled] { cursor: default; background: none; }
-  .android-nav svg { width: 18px; height: 18px; }
-  #app { display: block; width: var(--w, 360px); height: var(--h, 740px); border: 0; }
-
   /* Aperçu PDF */
   .pdf-overlay { display: none; position: fixed; inset: 0; z-index: 4000; overflow: auto; padding: 1.5rem; background-color: rgba(22,22,22,.8); }
   .pdf-overlay.open { display: block; }
@@ -62,52 +42,23 @@
 <body>
 <div class="outil" id="outil">
   <main class="outil__scene">
-    <div class="outil__vue fr-p-3w" id="vue">
-      <div class="device-box" id="device-box">
-        <div class="device" id="device">
-          <div class="screen-wrap">
-            <div class="android-status" aria-hidden="true">
-              <span id="clock">9:41</span>
-              <span class="android-status__camera"></span>
-              <span class="android-status__icons"><span class="fr-icon-signal-wifi-fill"></span><span class="fr-icon-signal-cellular-3-fill"></span><span class="fr-icon-battery-fill"></span></span>
-            </div>
-            <iframe id="app" title="Application Mobilic : {{TITRE}}"></iframe>
-            <nav class="android-nav" aria-label="Barre de navigation Android">
-              <button type="button" title="Retour" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M17 4.5v15L5 12z"/></svg></button>
-              <button type="button" title="Accueil (inactif)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></button>
-              <button type="button" title="Applications récentes (inactif)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button>
-            </nav>
-          </div>
+    <div class="outil__vue" id="vue">
+      <div class="outil-cadre">
+        <p class="outil-cadre__libelle fr-text--xs fr-mb-1w" id="format-libelle"></p>
+        <div class="device-box" id="device-box">
+          <div class="device" id="device"><iframe id="app" title="Application Mobilic : {{TITRE}}"></iframe></div>
+          <div class="outil-poignee outil-poignee--largeur" id="poignee-largeur" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largeur du cadre" aria-valuemin="280" aria-valuemax="2560"></div>
+          <button type="button" class="outil-poignee outil-poignee--coin" id="poignee-coin" aria-label="Redimensionner le cadre : flèches pour la largeur et la hauteur"></button>
         </div>
       </div>
       <div class="outil-calque" id="calque" aria-hidden="true"></div>
     </div>
 
-    <div class="outil-barre fr-mb-3w" id="barre" role="toolbar" aria-label="Outil de prototypage" aria-describedby="barre-aide">
-      <p class="outil-barre__mention fr-text--xs fr-mb-0" id="barre-aide">Outil de prototypage</p>
-      <div class="outil-barre__groupe">
-        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-right fr-icon-arrow-down-s-line outil-parcours__bouton" id="parcours-bouton" aria-haspopup="dialog" aria-expanded="false" aria-controls="parcours-liste" aria-describedby="tt-parcours"><span class="outil-parcours__libelle" id="parcours-libelle"></span></button>
-      </div>
-      <div class="outil-barre__groupe">
-        <fieldset class="fr-segmented fr-segmented--sm fr-segmented--no-legend" id="format">
-          <legend class="fr-segmented__legend">Format d'écran</legend>
-          <div class="fr-segmented__elements">
-            <div class="fr-segmented__element"><input value="mobile" type="radio" id="format-mobile" name="format"><label class="fr-label" for="format-mobile">Mobile</label></div>
-            <div class="fr-segmented__element"><input value="desktop" type="radio" id="format-desktop" name="format"><label class="fr-label" for="format-desktop">Desktop</label></div>
-          </div>
-        </fieldset>
-        <label class="fr-sr-only" for="telephone">Téléphone</label>
-        <select class="fr-select outil-barre__telephone" id="telephone">
-          <option value="360x640">Galaxy S5 · 360 × 640</option>
-          <option value="360x740">Galaxy S8+ · 360 × 740</option>
-          <option value="412x915">Pixel 7 · 412 × 915</option>
-        </select>
-        <p class="outil-barre__zoom fr-text--xs fr-mb-0" id="zoom" hidden></p>
-      </div>
-      <div class="outil-barre__groupe">
-        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-magic-line outil-barre__icone" id="remplir" aria-describedby="tt-remplir">Remplir le formulaire</button>
-        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-cursor-line outil-barre__icone outil-inspecter" id="inspecter" aria-pressed="false" aria-describedby="tt-inspecter">Inspecter</button>
-      </div>
+    <div class="outil-barre fr-my-2w" id="barre" role="toolbar" aria-label="Outil de prototypage">
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-road-map-line outil-barre__icone" id="parcours-bouton" aria-haspopup="dialog" aria-expanded="false" aria-controls="parcours-liste" aria-describedby="tt-parcours">Parcours</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-smartphone-line outil-barre__icone" id="format-bouton" aria-haspopup="menu" aria-expanded="false" aria-controls="format-liste" aria-describedby="tt-format">Format d'écran</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-magic-line outil-barre__icone" id="remplir" aria-describedby="tt-remplir">Remplir le formulaire</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-cursor-line outil-barre__icone outil-inspecter" id="inspecter" aria-pressed="false" aria-describedby="tt-inspecter">Inspecter</button>
     </div>
 
     <div class="outil-liste" id="parcours-liste" role="dialog" aria-label="Choisir un parcours" hidden>
@@ -118,9 +69,11 @@
       <div class="fr-mt-1w" id="parcours-options" role="listbox" aria-label="Parcours"></div>
       <p class="fr-text--sm fr-mt-2w fr-mb-1w outil-liste__vide" id="parcours-vide" role="status" hidden></p>
     </div>
+    <div class="outil-liste" id="format-liste" role="menu" aria-label="Format d'écran" hidden></div>
   </main>
 
   <aside class="outil-inspecteur" id="inspecteur" aria-labelledby="insp-nom" hidden>
+  <div class="outil-inspecteur__piste"><div class="outil-inspecteur__carte">
     <div class="outil-inspecteur__tete fr-px-2w fr-pt-2w">
       <div class="outil-inspecteur__titre">
         <h2 class="fr-h6 fr-mb-0" id="insp-nom"></h2>
@@ -141,10 +94,12 @@
       <div class="outil-panneau fr-p-2w" id="panneau-tokens" role="tabpanel" aria-labelledby="onglet-tokens" tabindex="0" hidden></div>
       <div class="outil-panneau fr-p-2w" id="panneau-assets" role="tabpanel" aria-labelledby="onglet-assets" tabindex="0" hidden></div>
     </div>
+  </div></div>
   </aside>
 </div>
 
 <span class="fr-tooltip fr-placement" id="tt-parcours" role="tooltip" aria-hidden="true">Changer de parcours (P)</span>
+<span class="fr-tooltip fr-placement" id="tt-format" role="tooltip" aria-hidden="true">Format d'écran (F)</span>
 <span class="fr-tooltip fr-placement" id="tt-remplir" role="tooltip" aria-hidden="true">Remplir le formulaire (R)</span>
 <span class="fr-tooltip fr-placement" id="tt-inspecter" role="tooltip" aria-hidden="true">Inspecter (I)</span>
 <p class="fr-sr-only" id="outil-annonce" role="status" aria-live="polite"></p>
@@ -169,16 +124,10 @@
     + dsfrCss + '</style><style id="mobilic">' + appCss + '</style></head><body>' + document.getElementById('app-tpl').innerHTML + '</body></html>';
   function cmd(name) { frame.contentWindow.postMessage({ type: 'cmd', name }, '*'); }
   const pdf = document.getElementById('pdf');
-  function back() {
-    if (pdf.classList.contains('open')) return pdf.classList.remove('open');
-    cmd('back');
-  }
   window.addEventListener('message', e => {
     const m = e.data || {};
     if (m.type === 'pdf') { document.getElementById('pdf-pages').innerHTML = m.html; pdf.classList.add('open'); }
   });
-  const tick = () => { const d = new Date(); document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
-  tick(); setInterval(tick, 30000);
 </script>
 <script type="application/json" id="outil-data">{{OUTIL_DATA}}</script>
 <script>{{OUTIL_JS}}</script>

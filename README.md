@@ -16,9 +16,9 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- La barre « Outil de prototypage », sous le téléphone, permet de choisir un parcours (P), de passer en format Mobile (Galaxy S5, Galaxy S8+, Pixel 7) ou Desktop (1440 px), de remplir le formulaire affiché (R) et d'inspecter un élément (I). Choisir le parcours en cours le recommence. Le cadre est réduit si la fenêtre est trop petite.
+- La barre de 4 boutons sous le cadre permet de choisir un parcours (P), un format (F : Mobile 360 × 640, 360 × 740, 412 × 915 ou Desktop 1440 × 800), de remplir le formulaire affiché (R) et d'inspecter un élément (I). Choisir le parcours en cours le recommence.
+- Le format et sa taille s'affichent au-dessus du cadre. Les poignées du bord droit et du coin bas droit redimensionnent le cadre à la main. Le cadre est réduit si la fenêtre est trop petite.
 - L'inspecteur, à droite, donne les propriétés, le code (React ou CSS), les tokens DSFR et les images et icônes à exporter de l'élément sélectionné. Voir [composants/outil-prototypage.md](composants/outil-prototypage.md).
-- La barre Android du bas est active : le bouton Retour revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 
 ## Structure

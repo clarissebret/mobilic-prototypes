@@ -7,7 +7,7 @@ const DATA = JSON.parse(document.getElementById('outil-data').textContent);
 const $ = id => document.getElementById(id);
 const frame = $('app'), device = $('device'), box = $('device-box'), vue = $('vue'), calque = $('calque'), outil = $('outil');
 const barre = $('barre'), liste = $('parcours-liste'), recherche = $('parcours-recherche'), options = $('parcours-options');
-const inspecteur = $('inspecteur');
+const inspecteur = $('inspecteur'), menuFormat = $('format-liste');
 const doc = () => frame.contentDocument, win = () => frame.contentWindow;
 const clamp = (min, v, max) => Math.max(min, Math.min(v, max));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -28,13 +28,14 @@ function infobulle(btn, tt) {
     tt.style.left = left + 'px'; tt.style.top = (r.top - t.height - 4) + 'px';
     tt.style.setProperty('--arrow-x', (r.left + r.width / 2 - left - t.width / 2) + 'px');
   };
-  const montrer = () => { if (!liste.hidden) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
+  const montrer = () => { if (!liste.hidden || !menuFormat.hidden) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
   const cacher = () => { tt.classList.remove('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'true'); };
   btn.addEventListener('mouseenter', montrer); btn.addEventListener('focus', montrer);
   btn.addEventListener('mouseleave', cacher); btn.addEventListener('blur', cacher); btn.addEventListener('click', cacher);
   return { montrer, cacher, placer };
 }
 const ttParcours = infobulle($('parcours-bouton'), $('tt-parcours'));
+const ttFormat = infobulle($('format-bouton'), $('tt-format'));
 const ttRemplir = infobulle($('remplir'), $('tt-remplir'));
 infobulle($('inspecter'), $('tt-inspecter'));
 
@@ -54,42 +55,103 @@ barre.addEventListener('keydown', e => {
 });
 barre.addEventListener('focusin', e => { const i = controles().indexOf(e.target); if (i >= 0) activer(i); });
 
-/* ---------- Format d'écran ---------- */
-const DESKTOP = 1440;
-let format = local.lire('format', { mode: 'mobile', telephone: '360x740' });
-if (!['360x640', '360x740', '412x915'].includes(format.telephone)) format.telephone = '360x740';
-let echelle = 1;
-function appliquerFormat() {
-  $('format-' + format.mode).checked = true;
-  $('telephone').value = format.telephone;
-  $('telephone').hidden = format.mode !== 'mobile';
-  device.classList.toggle('device--desktop', format.mode === 'desktop');
-  local.ecrire('format', format);
-  ajuster(); activer(controles().indexOf(document.activeElement) >= 0 ? controles().indexOf(document.activeElement) : 0);
+/* ---------- Format d'écran : préréglages, libellé, poignées ---------- */
+const FORMATS = [['Mobile', 360, 640], ['Mobile', 360, 740], ['Mobile', 412, 915], ['Desktop', 1440, 800]];
+const LIMITES = { wMin: 280, wMax: 2560, hMin: 320, hMax: 1600 };
+let format = local.lire('format', null);
+if (!format || !(format.w > 0 && format.h > 0)) format = { w: 360, h: 740 };
+let echelle = 1, glisse = false;
+const nomFormat = (w, h) => { const f = FORMATS.find(x => x[1] === w && x[2] === h); return f ? f[0] : 'Personnalisé'; };
+function dispo() {
+  const cs = getComputedStyle(vue), lib = $('format-libelle');
+  return {
+    w: vue.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 32,
+    h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom) - 16
+  };
 }
 function ajuster() {
-  const cs = getComputedStyle(vue), root = document.documentElement.style;
-  const aw = vue.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  const ah = vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  let k;
-  if (format.mode === 'mobile') {
-    const [w, h] = format.telephone.split('x').map(Number);
-    root.setProperty('--w', w + 'px'); root.setProperty('--h', h + 'px');
-    k = Math.min(1, aw / device.offsetWidth, ah / device.offsetHeight);
-  } else {
-    k = Math.min(1, aw / DESKTOP);
-    root.setProperty('--w', DESKTOP + 'px'); root.setProperty('--h', Math.max(200, Math.floor(ah / k)) + 'px');
-  }
-  device.style.transform = `scale(${k})`;
-  box.style.width = device.offsetWidth * k + 'px'; box.style.height = device.offsetHeight * k + 'px';
-  echelle = k;
-  const z = $('zoom'); z.hidden = k >= 0.995;
-  z.innerHTML = `<span class="fr-sr-only">Affichage réduit à </span>${Math.round(k * 100)} %`;
+  const root = document.documentElement.style, a = dispo();
+  root.setProperty('--w', format.w + 'px'); root.setProperty('--h', format.h + 'px');
+  if (!glisse) echelle = Math.max(0.1, Math.min(1, a.w / format.w, a.h / format.h));
+  device.style.transform = `scale(${echelle})`;
+  box.style.width = format.w * echelle + 'px'; box.style.height = format.h * echelle + 'px';
+  $('format-libelle').textContent = `${nomFormat(format.w, format.h)} ${format.w} × ${format.h}` + (echelle < 0.995 ? ` · ${Math.round(echelle * 100)} %` : '');
+  const pl = $('poignee-largeur');
+  pl.setAttribute('aria-valuenow', format.w); pl.setAttribute('aria-valuetext', `${format.w} pixels`);
+  $('format-bouton').classList.toggle('fr-icon-smartphone-line', format.w < 768);
+  $('format-bouton').classList.toggle('fr-icon-computer-line', format.w >= 768);
   dessiner();
 }
-$('format').addEventListener('change', e => { format.mode = e.target.value; appliquerFormat(); annoncer(e.target.value === 'mobile' ? 'Format mobile' : 'Format desktop, 1440 px'); });
-$('telephone').addEventListener('change', e => { format.telephone = e.target.value; appliquerFormat(); });
-new ResizeObserver(ajuster).observe(vue);
+function changerFormat(w, h, annonce) {
+  format = { w: Math.round(clamp(LIMITES.wMin, w, LIMITES.wMax)), h: Math.round(clamp(LIMITES.hMin, h, LIMITES.hMax)) };
+  local.ecrire('format', format);
+  ajuster();
+  if (annonce) annoncer(`${nomFormat(format.w, format.h)} ${format.w} × ${format.h}`);
+}
+new ResizeObserver(() => ajuster()).observe(vue);
+
+/* Menu des formats */
+let formatActif = 0;
+function rendreFormats() {
+  const items = FORMATS.map(([n, w, h]) => ({ n, w, h }));
+  if (nomFormat(format.w, format.h) === 'Personnalisé') items.push({ n: 'Personnalisé', w: format.w, h: format.h, perso: true });
+  menuFormat.innerHTML = items.map((f, i) => {
+    const sel = f.w === format.w && f.h === format.h;
+    return `<button type="button" class="outil-option outil-option--bouton fr-text--sm fr-mb-0" role="menuitemradio" aria-checked="${sel}" tabindex="-1" data-w="${f.w}" data-h="${f.h}" id="fo-${i}">`
+      + `<span>${f.n} · ${f.w} × ${f.h}</span><span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span></button>`;
+  }).join('');
+  formatActif = Math.max(0, items.findIndex(f => f.w === format.w && f.h === format.h));
+}
+function focusFormat(i) { const b = [...menuFormat.children]; formatActif = (i + b.length) % b.length; b[formatActif].focus(); }
+function ouvrirFormats() {
+  fermerListe(false); ttFormat.cacher();
+  rendreFormats(); menuFormat.hidden = false; placerPopover(menuFormat, $('format-bouton'));
+  $('format-bouton').setAttribute('aria-expanded', 'true');
+  focusFormat(formatActif);
+}
+function fermerFormats(rendreFocus) {
+  if (menuFormat.hidden) return;
+  menuFormat.hidden = true; $('format-bouton').setAttribute('aria-expanded', 'false');
+  if (rendreFocus) $('format-bouton').focus();
+}
+function placerPopover(pop, btn) {
+  const r = btn.getBoundingClientRect();
+  pop.style.left = clamp(16, r.left + r.width / 2 - pop.offsetWidth / 2, innerWidth - pop.offsetWidth - 16) + 'px';
+  pop.style.bottom = (innerHeight - r.top + 8) + 'px';
+}
+$('format-bouton').addEventListener('click', () => menuFormat.hidden ? ouvrirFormats() : fermerFormats(true));
+menuFormat.addEventListener('click', e => { const b = e.target.closest('[data-w]'); if (!b) return; fermerFormats(true); changerFormat(Number(b.dataset.w), Number(b.dataset.h), true); });
+menuFormat.addEventListener('keydown', e => {
+  const j = { ArrowDown: formatActif + 1, ArrowUp: formatActif - 1, Home: 0, End: menuFormat.children.length - 1 }[e.key];
+  if (j !== undefined) { e.preventDefault(); focusFormat(j); }
+  else if (e.key === 'Tab') fermerFormats(false);
+});
+document.addEventListener('mousedown', e => { if (!menuFormat.hidden && !menuFormat.contains(e.target) && !$('format-bouton').contains(e.target)) fermerFormats(false); });
+
+/* Poignées : le cadre reste centré, la largeur grandit donc de deux fois le déplacement pour suivre le pointeur */
+function poignee(el, hauteur) {
+  el.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    try { el.setPointerCapture(e.pointerId); } catch (err) { /* capture indisponible : écoute sur la fenêtre */ }
+    const x0 = e.clientX, y0 = e.clientY, w0 = format.w, h0 = format.h, a = dispo();
+    glisse = true; outil.classList.add('outil--glisse');
+    const max = { w: a.w / echelle, h: a.h / echelle };
+    const bouger = ev => changerFormat(Math.min(max.w, w0 + 2 * (ev.clientX - x0) / echelle), hauteur ? Math.min(max.h, h0 + (ev.clientY - y0) / echelle) : h0);
+    const finir = () => {
+      window.removeEventListener('pointermove', bouger); window.removeEventListener('pointerup', finir); window.removeEventListener('pointercancel', finir);
+      glisse = false; outil.classList.remove('outil--glisse'); ajuster(); annoncer(`${nomFormat(format.w, format.h)} ${format.w} × ${format.h}`);
+    };
+    window.addEventListener('pointermove', bouger); window.addEventListener('pointerup', finir); window.addEventListener('pointercancel', finir);
+  });
+  el.addEventListener('keydown', e => {
+    const pas = e.shiftKey ? 40 : 8;
+    const d = { ArrowRight: [pas, 0], ArrowLeft: [-pas, 0], ArrowDown: hauteur ? [0, pas] : null, ArrowUp: hauteur ? [0, -pas] : null }[e.key];
+    if (!d) return;
+    e.preventDefault(); e.stopPropagation(); changerFormat(format.w + d[0], format.h + d[1], true);
+  });
+}
+poignee($('poignee-largeur'), false);
+poignee($('poignee-coin'), true);
 
 /* ---------- Parcours ---------- */
 const iface = DATA.interfaces.find(i => i.id === DATA.interface);
@@ -97,7 +159,9 @@ let enCours = null; // l'app repart de l'accueil à chaque chargement
 let actif = -1;
 function libelleParcours() {
   const p = iface.parcours.find(x => x.commande === enCours);
-  $('parcours-libelle').textContent = `${iface.nom} · ${p ? p.libelle : 'Choisir un parcours'}`;
+  const t = `${iface.nom} · ${p ? p.libelle : 'Choisir un parcours'}`;
+  $('parcours-bouton').textContent = `Parcours : ${t}`;
+  $('tt-parcours').textContent = `${t} (P)`;
 }
 function rendreListe() {
   const q = norm(recherche.value.trim());
@@ -127,11 +191,9 @@ function surligner(i) {
   else recherche.removeAttribute('aria-activedescendant');
 }
 function ouvrirListe() {
-  ttParcours.cacher();
+  ttParcours.cacher(); fermerFormats(false);
   recherche.value = ''; rendreListe(); liste.hidden = false;
-  const r = $('parcours-bouton').getBoundingClientRect();
-  liste.style.left = clamp(16, r.left, innerWidth - liste.offsetWidth - 16) + 'px';
-  liste.style.bottom = (innerHeight - r.top + 4) + 'px';
+  placerPopover(liste, $('parcours-bouton'));
   $('parcours-bouton').setAttribute('aria-expanded', 'true');
   recherche.focus();
 }
@@ -324,7 +386,8 @@ function selectionner(el, ajout) {
 function deselectionner() {
   const ouvert = !inspecteur.hidden;
   selection = []; zone = null;
-  inspecteur.hidden = true; outil.classList.remove('outil--inspecteur');
+  outil.classList.remove('outil--inspecteur');
+  if (ouvert) apresTransition(() => { if (!outil.classList.contains('outil--inspecteur')) inspecteur.hidden = true; });
   if (ouvert) annoncer('Inspecteur fermé');
   dessiner();
 }
@@ -356,6 +419,7 @@ function naviguer(e) {
 /* Échap : liste ouverte, puis sélection, puis mode inspection */
 function echap() {
   if (!liste.hidden) { fermerListe(true); return true; }
+  if (!menuFormat.hidden) { fermerFormats(true); return true; }
   if (selection.length) { deselectionner(); return true; }
   if (inspection) { basculerInspection(false); return true; }
   return false;
@@ -370,6 +434,7 @@ function clavier(e, dansCadre) {
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
   else if (k === 'r') { e.preventDefault(); remplir(); }
   else if (k === 'p') { e.preventDefault(); ouvrirListe(); }
+  else if (k === 'f') { e.preventDefault(); ouvrirFormats(); }
 }
 document.addEventListener('keydown', e => clavier(e, false));
 
@@ -385,7 +450,7 @@ function installer() {
   d.addEventListener('mousemove', e => { if (inspection && survol !== e.target) { survol = e.target; dessiner(); } }, true);
   d.addEventListener('mouseleave', () => { if (inspection) { survol = null; dessiner(); } });
   d.addEventListener('keydown', e => clavier(e, true), true);
-  d.addEventListener('mousedown', () => fermerListe(false));
+  d.addEventListener('mousedown', () => { fermerListe(false); fermerFormats(false); });
   win().addEventListener('scroll', () => dessiner(), true);
   win().addEventListener('resize', () => dessiner());
   let attente = 0;
@@ -903,7 +968,8 @@ function rafraichir() {
   ({ proprietes: rendreProprietes, code: rendreCode, tokens: rendreTokens, assets: rendreAssets })[onglet]();
 }
 function ouvrirInspecteur() {
-  inspecteur.hidden = false; outil.classList.add('outil--inspecteur');
+  if (inspecteur.hidden) { inspecteur.hidden = false; void inspecteur.offsetWidth; }
+  outil.classList.add('outil--inspecteur');
   rafraichir();
 }
 function choisirOnglet(o, focus) {
@@ -921,8 +987,17 @@ onglets.forEach((o, i) => {
   });
 });
 
+/* Attend la fin de la glissière de l'inspecteur (ou tout de suite sans animation) */
+function apresTransition(fn) {
+  const d = parseFloat(getComputedStyle(inspecteur).transitionDuration) || 0;
+  if (!d) return fn();
+  let fait = false;
+  const fin = () => { if (fait) return; fait = true; inspecteur.removeEventListener('transitionend', fin); fn(); };
+  inspecteur.addEventListener('transitionend', fin); setTimeout(fin, d * 1000 + 100);
+}
+
 /* ---------- Démarrage ---------- */
 libelleParcours();
-appliquerFormat();
+ajuster();
 activer(0);
 })();

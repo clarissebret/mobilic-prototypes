@@ -38,7 +38,7 @@
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
-- Écran du téléphone rendu dans un iframe, en 3 tailles : 360 × 640, 360 × 740 (par défaut) et 412 × 915. Les règles responsives du DSFR sont donc celles du mobile. Vérifier chaque écran modifié sur les 3 tailles.
+- Écran rendu dans un iframe, aux formats Mobile 360 × 640, 360 × 740 (par défaut) et 412 × 915, ou Desktop 1440 × 800, ou à une taille libre réglée avec les poignées. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié sur les 3 formats mobiles.
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR. Ne pas utiliser les options DSFR qui dépendent de son JS (ex. `fr-btns-group--equisized`) : sur mobile, les boutons empilés doivent prendre toute la largeur.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.
 
