@@ -7,10 +7,10 @@ Code : `outil/outil.css` et `outil/outil.js`, injectés par `scripts/build.py` d
 ## Anatomie
 
 - **Libellé du format** : au-dessus du cadre, aligné à gauche : nom du format et dimensions, puis le taux de réduction s'il y en a un (ex. « Mobile 360 × 740 · 85 % », « Personnalisé 505 × 652 »).
-- **Cadre** : rectangle blanc aux angles arrondis (12 px), sans contour de téléphone, centré, de la hauteur de la vue (même haut et même bas que l'inspecteur), réduit à l'affichage s'il ne tient pas en largeur. Seul son contenu défile.
+- **Cadre** : rectangle blanc aux angles arrondis (12 px), sans contour de téléphone, centré sur la fenêtre comme la barre, même inspecteur ouvert (s'il ne reste pas 280 px centrés à côté de l'inspecteur, il se centre dans l'espace libre), de la hauteur de la vue (même haut et même bas que l'inspecteur), réduit à l'affichage s'il ne tient pas en largeur. Seul son contenu défile.
 - **Poignée** : sur le bord droit, pour la largeur.
-- **Barre de contrôle** : 6 boutons à icône seule, en bas et centrée sur toute la fenêtre : elle ne bouge pas quand l'inspecteur s'ouvre, seul le cadre se décale. Parcours, Format d'écran, Remplissage automatique, Réinitialisation, Inspecteur, Masquer la barre.
-- **Inspecteur** : carte de 408 px à droite du cadre, alignée sur son haut et son bas, à 16 px du bord ; seule la zone de la poignée (16 px) la sépare du cadre. Elle entre en glissant depuis la droite pendant que le cadre se décale vers la gauche (300 ms, `cubic-bezier(.32, .72, 0, 1)`, sans animation si l'utilisateur réduit les animations), et ressort de la même façon. Le cadre ne passe jamais dessous. Barre d'en-tête « Inspecteur » avec « Fermer » ; sans sélection, au centre de la carte, une icône de curseur (`fr-icon-cursor-line`, dans un disque de 48 px `--background-contrast-grey`) au-dessus de la consigne « Cliquez sur un élément du prototype pour l'inspecter. » sur deux lignes ; avec une sélection, onglets Propriétés, Code, Tokens, Assets.
+- **Barre de contrôle** : 6 boutons à icône seule, en bas et centrée sur toute la fenêtre : elle ne bouge pas quand l'inspecteur s'ouvre, seul le cadre se décale. Parcours, Format d'écran, Remplir le formulaire, Recommencer, Inspecteur, Masquer la barre.
+- **Inspecteur** : carte de 408 px à droite, alignée sur le haut et le bas du cadre, à 16 px du bord. Elle entre en glissant depuis la droite (300 ms, `cubic-bezier(.32, .72, 0, 1)`, sans animation si l'utilisateur réduit les animations), et ressort de la même façon. Le cadre ne passe jamais dessous. Barre d'en-tête « Inspecteur » avec « Fermer » ; sans sélection, au centre de la carte, une icône de curseur (`fr-icon-cursor-line`, dans un disque de 48 px `--background-contrast-grey`) au-dessus de la consigne « Cliquez sur un élément du prototype pour l'inspecter. » sur deux lignes ; avec une sélection, onglets Propriétés, Code, Tokens, Assets.
 - **Calque d'inspection** : contour et étiquette (nom et dimensions) au-dessus du cadre ; mesures en rouge avec Alt.
 
 ## Barre de contrôle
@@ -19,16 +19,16 @@ Code : `outil/outil.css` et `outil/outil.js`, injectés par `scripts/build.py` d
 |---|---|---|
 | Parcours (`fr-icon-play-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Parcours ». Son nom accessible donne « Interface · Parcours » (« Choisir un parcours » au chargement). Ouvre une liste avec recherche, groupée par interface, parcours en cours coché. Choisir un parcours affiche son premier écran ; choisir le parcours en cours le recommence et efface les saisies. Un parcours d'une autre interface ouvre sa page. Aucun résultat : « Aucun parcours ne correspond à votre recherche ». |
 | Format d'écran (`fr-icon-smartphone-line` sous 768 px de large, `fr-icon-computer-line` au-delà) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Format d'écran ». Bascule entre Mobile (360 px, par défaut) et Desktop (1440 px) ; une largeur personnalisée passe en Desktop sous 768 px, en Mobile au-delà. La largeur est mémorisée dans le navigateur. Changer de format ne recharge pas le prototype : l'écran et les saisies sont conservés. |
-| Remplissage automatique (`fr-icon-magic-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Remplissage automatique ». Désactivé (`aria-disabled`) sans formulaire à l'écran, info-bulle « Aucun formulaire sur cet écran ». Remplit uniquement les champs vides visibles de l'écran (ou de la modale ouverte), sans envoyer. |
-| Réinitialisation (`fr-icon-refresh-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Réinitialisation R ». Recharge le prototype : retour à l'accueil, saisies effacées, sélection effacée. |
+| Remplir le formulaire (`fr-icon-magic-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Remplir le formulaire », y compris quand il est désactivé (`aria-disabled`, sans formulaire à l'écran). Remplit uniquement les champs vides visibles de l'écran (ou de la modale ouverte), sans envoyer. |
+| Recommencer (`fr-icon-restart-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Recommencer R ». Recharge le prototype : retour à l'accueil, saisies effacées, sélection effacée. |
 | Inspecteur (`fr-icon-cursor-line`) | Bouton tertiaire sans bordure SM, icône seule, `aria-pressed` | Info-bulle « Inspecteur I ». Ouvre l'inspecteur et active le mode inspection ; pressé de nouveau (ou « Fermer »), referme l'inspecteur et quitte le mode. Pressé : fond `--background-action-low-blue-france` (comme Parcours quand sa liste est ouverte). |
-| Masquer la barre (`fr-icon-eye-off-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Masquer la barre @ ». Le cadre et l'inspecteur prennent la place libérée. @ affiche de nouveau la barre. |
+| Masquer la barre (`fr-icon-eye-off-line`) | Bouton tertiaire sans bordure SM, icône seule | Info-bulle « Masquer la barre @ ». La barre descend hors de l'écran en s'effaçant (200 ms, `cubic-bezier(.23, 1, .32, 1)` ; fondu seul si l'utilisateur réduit les animations), puis le cadre et l'inspecteur prennent la place libérée. @ la fait remonter de la même façon. |
 
-Dans les info-bulles, le raccourci suit le libellé, en `--text-mention-grey`.
+Dans les info-bulles, le raccourci suit le libellé à 8 px (`fr-ml-1w`), en `--text-disabled-grey` pour bien le distinguer du libellé.
 
 Poignée : glisser le bord droit change la largeur. Le cadre restant centré, la largeur grandit de deux fois le déplacement pour suivre le pointeur. Largeur de 280 à 2560 px, sans dépasser l'espace disponible pendant le glissement ; hauteur de 320 px au moins. Une largeur de 360 ou 1440 px reprend le nom Mobile ou Desktop, sinon « Personnalisé ». Au clavier : flèches gauche et droite (8 px, 40 px avec Maj).
 
-Raccourcis (hors saisie dans un champ), affichés dans les info-bulles : R (réinitialisation), I (inspecteur), @ (masquer ou afficher la barre). Échap ferme successivement la liste des parcours, la sélection, puis l'inspecteur.
+Raccourcis (hors saisie dans un champ), affichés dans les info-bulles : R (recommencer), I (inspecteur), @ (masquer ou afficher la barre). Échap ferme successivement la liste des parcours, la sélection, puis l'inspecteur.
 
 ## Remplissage
 
@@ -59,7 +59,7 @@ Données fictives, dans l'ordre des champs (un champ qui en fait apparaître un 
 | Liste des parcours, volet inférieur | `--background-overlap-grey`, ombre `--overlap-shadow` |
 | Contour d'inspection | trait plein `--border-plain-blue-france`, 1 px au survol, 2 px à la sélection (distinct du focus DSFR) |
 | Mesure (Alt) | traits, contour de l'élément survolé et valeurs `--background-flat-red-marianne`, texte `--text-inverted-red-marianne` |
-| Raccourci dans une info-bulle | `--text-mention-grey` |
+| Raccourci dans une info-bulle | `--text-disabled-grey` |
 | Onglets de l'inspecteur | onglets DSFR en `fr-text--sm`, hauteur 32 px, padding 4 px × 12 px |
 | Étiquette d'inspection | `--background-action-high-blue-france`, texte `--text-inverted-blue-france` |
 | Zone d'espacement | `--background-contrast-yellow-tournesol`, pointillés `--border-plain-yellow-tournesol` |

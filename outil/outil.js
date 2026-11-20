@@ -36,8 +36,8 @@ function infobulle(btn, tt) {
 }
 const ttParcours = infobulle($('parcours-bouton'), $('tt-parcours'));
 infobulle($('format-bouton'), $('tt-format'));
-const ttRemplir = infobulle($('remplir'), $('tt-remplir'));
-infobulle($('reinitialiser'), $('tt-reinitialiser'));
+infobulle($('remplir'), $('tt-remplir'));
+infobulle($('recommencer'), $('tt-recommencer'));
 infobulle($('inspecter'), $('tt-inspecter'));
 infobulle($('masquer'), $('tt-masquer'));
 
@@ -66,11 +66,15 @@ format = { w: format.w };
 let echelle = 1, hauteur = 740, glisse = false;
 const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
 const estMobile = () => format.w < 768;
-/* Espace disponible pour le cadre : la poignée garde 16 px de chaque côté pour que le cadre reste centré */
+/* Espace disponible pour le cadre, centré sur la fenêtre (donc sur la barre) : la poignée garde 16 px de chaque côté.
+   Si l'inspecteur ne laisse pas 280 px centrés, le cadre se centre dans l'espace restant. */
 function dispo() {
-  const cs = getComputedStyle(vue), lib = $('format-libelle');
+  const cs = getComputedStyle(vue), lib = $('format-libelle'), r = vue.getBoundingClientRect();
+  const g = r.left + parseFloat(cs.paddingLeft), d = r.right - parseFloat(cs.paddingRight), c = innerWidth / 2;
+  const centre = 2 * Math.min(c - g, d - c) - 32, ok = centre >= 280;
   return {
-    w: vue.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 32,
+    w: ok ? centre : d - g - 32,
+    milieu: (ok ? c : (g + d) / 2) - g,
     h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom)
   };
 }
@@ -82,6 +86,7 @@ function ajuster() {
   root.setProperty('--w', format.w + 'px'); root.setProperty('--h', hauteur + 'px');
   device.style.transform = `scale(${echelle})`;
   box.style.width = format.w * echelle + 'px'; box.style.height = hauteur * echelle + 'px';
+  box.parentElement.style.marginLeft = Math.max(0, a.milieu - format.w * echelle / 2) + 'px';
   $('format-libelle').textContent = libelleFormat() + (echelle < 0.995 ? ` · ${Math.round(echelle * 100)} %` : '');
   const pl = $('poignee-largeur');
   pl.setAttribute('aria-valuenow', format.w); pl.setAttribute('aria-valuetext', `${format.w} pixels`);
@@ -207,8 +212,6 @@ function remplissable() { const p = portee(); return !!p && (formApp || p.classL
 function majRemplir() {
   const ok = remplissable(), b = $('remplir');
   if (ok) b.removeAttribute('aria-disabled'); else b.setAttribute('aria-disabled', 'true');
-  $('tt-remplir').textContent = ok ? 'Remplissage automatique' : 'Aucun formulaire sur cet écran';
-  if ($('tt-remplir').classList.contains('fr-tooltip--shown')) ttRemplir.placer();
 }
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 /* Valeur fictive selon le type du champ, quand remplissage.json n'en déclare pas. Les dates successives sont croissantes (début avant fin). */
@@ -274,22 +277,28 @@ function remplir() {
 }
 $('remplir').addEventListener('click', remplir);
 
-/* ---------- Réinitialisation : recharge le prototype (accueil, saisies effacées) ---------- */
-function reinitialiser() {
+/* ---------- Recommencer : recharge le prototype (accueil, saisies effacées) ---------- */
+function recommencer() {
   fermerListe(false); deselectionner();
   enCours = null; libelleParcours();
   frame.srcdoc = frame.srcdoc;
-  annoncer('Prototype réinitialisé');
+  annoncer('Prototype recommencé');
 }
-$('reinitialiser').addEventListener('click', reinitialiser);
+$('recommencer').addEventListener('click', recommencer);
 
 /* ---------- Masquer la barre (@ pour l'afficher de nouveau) ---------- */
 function basculerBarre() {
-  const masquer = !pied.hidden;
+  const masquer = !pied.classList.contains('outil__pied--sortie');
   if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
   fermerListe(false);
   document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
-  pied.hidden = masquer;
+  if (masquer) {
+    pied.classList.add('outil__pied--sortie');
+    finTransition(pied, () => { if (pied.classList.contains('outil__pied--sortie')) pied.hidden = true; });
+  } else {
+    pied.hidden = false; void pied.offsetWidth;
+    pied.classList.remove('outil__pied--sortie');
+  }
   annoncer(masquer ? 'Barre masquée. Appuyez sur @ pour l\'afficher.' : 'Barre affichée');
 }
 $('masquer').addEventListener('click', basculerBarre);
@@ -471,7 +480,7 @@ function clavier(e, dansCadre) {
   if (saisie) return;
   const k = e.key.toLowerCase();
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
-  else if (k === 'r') { e.preventDefault(); reinitialiser(); }
+  else if (k === 'r') { e.preventDefault(); recommencer(); }
 }
 document.addEventListener('keydown', e => clavier(e, false));
 document.addEventListener('keyup', e => { if (e.key === 'Alt') majMesure(false); });
@@ -1045,14 +1054,15 @@ onglets.forEach((o, i) => {
   });
 });
 
-/* Attend la fin de la glissière de l'inspecteur (ou tout de suite sans animation) */
-function apresTransition(fn) {
-  const d = parseFloat(getComputedStyle(inspecteur).transitionDuration) || 0;
+/* Attend la fin d'une transition (ou tout de suite sans animation) */
+function finTransition(el, fn) {
+  const d = Math.max(...getComputedStyle(el).transitionDuration.split(',').map(parseFloat), 0);
   if (!d) return fn();
   let fait = false;
-  const fin = () => { if (fait) return; fait = true; inspecteur.removeEventListener('transitionend', fin); fn(); };
-  inspecteur.addEventListener('transitionend', fin); setTimeout(fin, d * 1000 + 100);
+  const fin = e => { if (fait || (e && e.target !== el)) return; fait = true; el.removeEventListener('transitionend', fin); fn(); };
+  el.addEventListener('transitionend', fin); setTimeout(fin, d * 1000 + 100);
 }
+const apresTransition = fn => finTransition(inspecteur, fn);
 
 /* ---------- Démarrage ---------- */
 libelleParcours();
