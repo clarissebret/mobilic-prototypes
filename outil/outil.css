@@ -79,9 +79,11 @@
 .outil-element__nom { font-family: monospace; overflow-wrap: anywhere; }
 .outil-inspecteur__agrandir { display: none; }
 /* Onglets DSFR sans le conteneur .fr-tabs (piloté sans le JS du DSFR) : neutralise les marges et la puce de liste */
-.outil-onglets { --ul-type: none; --ul-start: 0; --li-bottom: 0; order: 0; margin: 0; padding: 8px 12px 0; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
-/* Onglets compacts : texte fr-text--sm, hauteur de 32 px */
-.outil-onglets .fr-tabs__tab { min-height: 2rem; padding: 4px 12px; }
+.outil-onglets { --ul-type: none; --ul-start: 0; --li-bottom: 0; order: 0; margin: 0; padding: 0 4px; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+/* Onglets à la manière de la navigation principale DSFR : texte simple, onglet actif en bleu souligné de 2 px, sans fond ni bordure */
+.outil-onglets .fr-tabs__tab[role="tab"] { --idle: transparent; --hover: var(--background-default-grey-hover); --active: var(--background-default-grey-active);
+  min-height: 2.5rem; margin: 0; padding: 8px 12px; background-color: transparent; background-image: none; box-shadow: none; color: var(--text-default-grey); }
+.outil-onglets .fr-tabs__tab[role="tab"][aria-selected="true"] { color: var(--text-active-blue-france); box-shadow: inset 0 -2px 0 0 var(--border-active-blue-france); }
 .outil-inspecteur__corps { flex: 1; min-height: 0; overflow-y: auto; }
 .outil-panneau[hidden] { display: none; }
 

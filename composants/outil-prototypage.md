@@ -60,7 +60,7 @@ Données fictives, dans l'ordre des champs (un champ qui en fait apparaître un 
 | Contour d'inspection | trait plein `--border-plain-blue-france`, 1 px au survol, 2 px à la sélection (distinct du focus DSFR) |
 | Mesure (Alt) | traits, contour de l'élément survolé et valeurs `--background-flat-red-marianne`, texte `--text-inverted-red-marianne` |
 | Raccourci dans une info-bulle | `--text-disabled-grey` |
-| Onglets de l'inspecteur | onglets DSFR en `fr-text--sm`, hauteur 32 px, padding 4 px × 12 px |
+| Onglets de l'inspecteur | onglets DSFR restylés comme la navigation principale DSFR : `fr-text--sm fr-text--regular`, `--text-default-grey`, sans fond ni bordure, padding 8 px × 12 px ; actif `--text-active-blue-france` souligné de 2 px `--border-active-blue-france` ; survol `--background-default-grey-hover` |
 | Étiquette d'inspection | `--background-action-high-blue-france`, texte `--text-inverted-blue-france` |
 | Zone d'espacement | `--background-contrast-yellow-tournesol`, pointillés `--border-plain-yellow-tournesol` |
 | Token, valeur copiable | `--text-action-high-blue-france` ; valeurs et code en police à chasse fixe |
