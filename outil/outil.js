@@ -67,27 +67,40 @@ let echelle = 1, hauteur = 740, glisse = false;
 const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
 const estMobile = () => format.w < 768;
 /* Espace disponible pour le cadre ; la poignée garde 16 px de chaque côté.
-   Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés.
-   Desktop : toute la largeur libre à côté de l'inspecteur, quitte à ne plus être centré sur la barre. */
+   Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés. */
 function dispo() {
   const cs = getComputedStyle(vue), lib = $('format-libelle'), r = vue.getBoundingClientRect();
   const g = r.left + parseFloat(cs.paddingLeft), d = r.right - parseFloat(cs.paddingRight), c = innerWidth / 2;
   const centre = 2 * Math.min(c - g, d - c) - 32, ok = estMobile() && centre >= 280;
   return {
     w: ok ? centre : d - g - 32,
+    contenu: d - g,
     milieu: (ok ? c : (g + d) / 2) - g,
     h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom)
   };
 }
-const libelleFormat = () => `${nomFormat(format.w)} ${format.w} × ${hauteur}`;
+let largeur = format.w; // largeur affichée : celle du format, rognée à droite en Desktop quand l'inspecteur est ouvert
+const libelleFormat = () => `${nomFormat(format.w)} ${largeur} × ${hauteur}`;
 function ajuster() {
   const root = document.documentElement.style, a = dispo();
-  if (!glisse) echelle = clamp(0.1, a.w / format.w, 1);
+  let gauche;
+  largeur = format.w;
+  if (estMobile()) {
+    if (!glisse) echelle = clamp(0.1, a.w / format.w, 1);
+    gauche = a.milieu - format.w * echelle / 2;
+  } else {
+    /* Desktop : même réduction et même bord gauche qu'inspecteur fermé ; l'inspecteur rogne seulement la droite du cadre,
+       comme une fenêtre de navigateur rétrécie (la largeur du prototype diminue, son contenu se réorganise) */
+    const L = outil.classList.contains('outil--inspecteur') && innerWidth >= 576 ? 424 : 0;
+    if (!glisse) echelle = clamp(0.1, (a.contenu - 32 + L) / format.w, 1);
+    gauche = (a.contenu + L) / 2 - format.w * echelle / 2;
+    largeur = Math.max(LIMITES.wMin, Math.min(format.w, Math.floor((a.contenu - 16 - gauche) / echelle)));
+  }
   hauteur = Math.max(LIMITES.hMin, Math.floor(a.h / echelle));
-  root.setProperty('--w', format.w + 'px'); root.setProperty('--h', hauteur + 'px');
+  root.setProperty('--w', largeur + 'px'); root.setProperty('--h', hauteur + 'px');
   device.style.transform = `scale(${echelle})`;
-  box.style.width = format.w * echelle + 'px'; box.style.height = hauteur * echelle + 'px';
-  box.parentElement.style.marginLeft = Math.max(0, a.milieu - format.w * echelle / 2) + 'px';
+  box.style.width = largeur * echelle + 'px'; box.style.height = hauteur * echelle + 'px';
+  box.parentElement.style.marginLeft = Math.max(0, gauche) + 'px';
   $('format-libelle').textContent = libelleFormat() + (echelle < 0.995 ? ` · ${Math.round(echelle * 100)} %` : '');
   const pl = $('poignee-largeur');
   pl.setAttribute('aria-valuenow', format.w); pl.setAttribute('aria-valuetext', `${format.w} pixels`);
