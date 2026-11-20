@@ -533,6 +533,7 @@ function clavier(e, dansCadre) {
   const k = e.key.toLowerCase();
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
   else if (k === 'r') { e.preventDefault(); recommencer(); }
+  else if (k === 'f') { e.preventDefault(); remplir(); }
 }
 document.addEventListener('keydown', e => clavier(e, false));
 document.addEventListener('keyup', e => { if (e.key === 'Alt') majMesure(false); });

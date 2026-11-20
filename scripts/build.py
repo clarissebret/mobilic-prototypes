@@ -41,7 +41,7 @@ ICONS = {
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
     'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
     # Outil de prototypage (barre de contrôle et inspecteur)
-    'magic-line': 'magic-line', 'check-line': 'check-line', 'eye-off-line': 'eye-off-line', 'restart-line': 'restart-line', 'external-link-line': 'external-link-line', 'cursor-line': 'cursor-line',
+    'magic-line': 'magic-line', 'check-line': 'check-line', 'restart-line': 'restart-line', 'external-link-line': 'external-link-line', 'cursor-line': 'cursor-line',
     'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line',
 }
 rules = []
