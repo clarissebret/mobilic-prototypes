@@ -549,6 +549,11 @@ function clavier(e, dansCadre) {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (inspection && dansCadre && naviguer(e)) return;
   if (saisie) return;
+  /* Flèche gauche : Retour du prototype, comme le bouton Android (les boutons radio gardent leurs flèches) */
+  if (e.key === 'ArrowLeft') {
+    if (e.defaultPrevented || e.shiftKey || t.type === 'radio' || (!dansCadre && t !== document.body && !frame.contains(t))) return;
+    e.preventDefault(); cmd('back'); return;
+  }
   const k = e.key.toLowerCase();
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
   else if (k === 'r') { e.preventDefault(); recommencer(); }

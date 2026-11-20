@@ -28,7 +28,7 @@ Dans les info-bulles, le raccourci suit le libellé à 8 px (`fr-ml-1w`), en `--
 
 Poignée : glisser le bord droit change la largeur. Le cadre restant centré, la largeur grandit de deux fois le déplacement pour suivre le pointeur. Largeur de 280 à 2560 px, sans dépasser l'espace disponible pendant le glissement ; hauteur de 320 px au moins. Une largeur de 360 ou 1440 px reprend le nom Mobile ou Desktop, sinon « Personnalisé ». Au clavier : flèches gauche et droite (8 px, 40 px avec Maj).
 
-Raccourcis (hors saisie dans un champ), affichés dans les info-bulles : M (changer le format d'écran), F (remplir le formulaire), R (recommencer), I (inspecteur), @ (masquer ou afficher la barre). Échap ferme successivement la liste des parcours, la sélection, puis l'inspecteur.
+Raccourcis (hors saisie dans un champ), affichés dans les info-bulles : M (changer le format d'écran), F (remplir le formulaire), R (recommencer), I (inspecteur), @ (masquer ou afficher la barre), flèche gauche (Retour du prototype, comme le bouton Android ; sans effet sur un bouton radio, dans la barre et sur la poignée). Échap ferme successivement la liste des parcours, la sélection, puis l'inspecteur.
 
 ## Remplissage
 
