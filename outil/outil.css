@@ -103,9 +103,7 @@
 .outil-inspecteur__corps { flex: 1; min-height: 0; overflow-y: auto; }
 .outil-panneau[hidden] { display: none; }
 
-.outil-groupe + .outil-groupe { box-shadow: inset 0 1px 0 0 var(--border-default-grey); }
-.outil-prop { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 0 8px; align-items: baseline; }
-.outil-prop__nom { font-family: monospace; overflow-wrap: anywhere; }
+.outil-prop { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 0 8px; align-items: baseline; }
 .outil-prop__valeurs { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .outil-valeur { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 0 4px; border: 0; border-radius: .25rem; background: none; color: inherit;
   font-family: monospace; text-align: left; overflow-wrap: anywhere; cursor: pointer; }

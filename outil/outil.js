@@ -922,9 +922,9 @@ function fusion(listes) {
 }
 /* Hiérarchie commune aux quatre onglets : sections séparées par un trait, titre fr-text--sm gras, action éventuelle à droite du titre */
 function titreSection(titre, action = '', code = false) {
-  return `<div class="outil-groupe__tete fr-mb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-0${code ? ' outil-prop__nom' : ''}">${esc(titre)}</h3>${action}</div>`;
+  return `<div class="outil-groupe__tete fr-mb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-0">${esc(titre)}</h3>${action}</div>`;
 }
-const section = (titre, corps, action = '', code = false) => `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(titre, action, code)}${corps}</section>`;
+const section = (titre, corps, action = '', code = false) => `<section class="outil-groupe fr-pt-1w fr-pb-1w">${titreSection(titre, action, code)}${corps}</section>`;
 /* En-tête de l'élément, au-dessus des onglets : type, origine, lien Storybook DSFR, nom de l'élément */
 function rendreElement(els) {
   const z = $('insp-element');
@@ -951,7 +951,7 @@ function rendreProprietes() {
   GROUPES.forEach(g => {
     const ls = lignes.filter(x => x.groupe === g);
     if (!ls.length) return;
-    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(g)}`;
+    html += `<section class="outil-groupe fr-pt-1w fr-pb-1w">${titreSection(g)}`;
     ls.forEach(x => {
       const pastille = x.couleur ? `<span class="outil-pastille" style="background-color:${esc(x.couleur)}"></span>` : '';
       let v = '';
@@ -967,7 +967,7 @@ function rendreProprietes() {
         if (x.introuvable) v += '<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d\'origine affichée</p>';
         if (x.badge) v += `<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mt-1v">${esc(x.badge)}</span>`;
       }
-      html += `<div class="outil-prop fr-mb-1w"${x.zone ? ` data-zone="${x.zone}"` : ''}><p class="fr-text--sm fr-mb-0 outil-prop__nom">${esc(x.label)}</p><div class="outil-prop__valeurs">${v}</div></div>`;
+      html += `<div class="outil-prop fr-mb-1w"${x.zone ? ` data-zone="${x.zone}"` : ''}><p class="fr-text--sm fr-mb-0">${esc(x.label)}</p><div class="outil-prop__valeurs">${v}</div></div>`;
     });
     html += '</section>';
   });
@@ -1026,7 +1026,7 @@ function rendreTokens() {
     if (prop === 'background-image' ? calc === 'none' : prop === 'box-shadow' ? calc === 'none' : prop === 'border-top-color' ? !parseFloat(cs.borderTopWidth) : prop === 'outline-color' ? cs.outlineStyle === 'none' : transparent(calc)) return;
     const d = declaration(el, prop);
     const toks = d ? [...d.v.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]) : [];
-    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(label, '', true)}`;
+    html += `<section class="outil-groupe fr-pt-1w fr-pb-1w">${titreSection(label, '', true)}`;
     if (!toks.length) {
       html += texteValeur(hex(calc), '', prop.includes('color') ? `<span class="outil-pastille" style="background-color:${esc(calc)}"></span>` : '');
       html += '<p class="fr-text--xs fr-mb-0 outil-mention">Valeur fixe, aucune variable liée</p>';
