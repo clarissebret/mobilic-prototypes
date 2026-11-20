@@ -822,15 +822,14 @@ function rendreTokens() {
         html += boutonValeur(hex(calc), hex(calc)) + `<p class="fr-text--xs fr-mb-0 outil-mention">Variable introuvable, valeur d'origine affichée (${esc(t)})</p>`;
         return;
       }
-      const cl = chaine(t, 'clair'), so = chaine(t, 'sombre'), fc = finale(cl) || '', fs = finale(so) || '';
+      const cl = chaine(t, 'clair'), fc = finale(cl) || '';
       const id = `chaine-${k++}`;
       html += `<div class="fr-mb-1w">${boutonValeur(t, `var(${t})`, 'outil-valeur--token', fc && !/var\(/.test(fc) ? `<span class="outil-pastille" style="background-color:${esc(fc)}"></span>` : '')}`
-        + `<div class="outil-prop"><p class="fr-text--xs fr-mb-0 outil-mention">Clair</p><div class="outil-prop__valeurs">${boutonValeur(fc, fc)}</div></div>`
-        + `<div class="outil-prop"><p class="fr-text--xs fr-mb-0 outil-mention">Sombre</p><div class="outil-prop__valeurs">${boutonValeur(fs, fs)}</div></div>`;
-      if (cl.length > 1 || so.length > 1) {
+        + boutonValeur(fc, fc, 'outil-mention');
+      if (cl.length > 1) {
         const ligneCh = ch => ch.map(x => esc(x.nom)).join(' → ') + (finale(ch) ? ' → ' + esc(finale(ch)) : '');
         html += `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-arrow-down-s-line" aria-expanded="false" aria-controls="${id}" data-chaine>Afficher la chaîne d'alias</button>`
-          + `<div id="${id}" hidden><p class="outil-chaine fr-text--xs fr-mb-1v">Clair : ${ligneCh(cl)}</p><p class="outil-chaine fr-text--xs fr-mb-0">Sombre : ${ligneCh(so)}</p></div>`;
+          + `<div id="${id}" hidden><p class="outil-chaine fr-text--xs fr-mb-0">${ligneCh(cl)}</p></div>`;
       }
       html += '</div>';
     });
