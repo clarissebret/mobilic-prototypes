@@ -94,9 +94,9 @@ function renderEtabs() {
   $('etabs').innerHTML = ent.etabs.map((e, i) => {
     const id = 'et' + i, sel = state.selected.includes(i);
     const head = `<span class="fr-text--bold">${esc(e.adresse)}</span><span class="fr-text--sm mention">Nom : ${esc(e.nom)}</span><span class="fr-text--xs mention">SIRET : ${e.siret}<br>CODE NAF : ${esc(e.naf)}</span>`;
-    return `<div class="etab${sel ? ' etab--selected' : ''}" id="${id}">
+    return `<div class="etab${sel ? ' etab--selected etab--open' : ''}" id="${id}">
       ${seul ? `<p class="etab__head fr-mb-0">${head}</p>` : `<div class="fr-checkbox-group"><input type="checkbox" id="${id}-check" ${sel ? 'checked' : ''} onchange="toggleEtab(${i}, this.checked)"><label class="fr-label" for="${id}-check"><span class="etab__head">${head}</span></label></div>`}
-      <div class="etab__fields" ${sel ? '' : 'hidden'}>
+      <div class="etab__body"><div class="etab__clip" ${sel ? '' : 'inert'}><div class="etab__fields">
         <div class="fr-input-group"><label class="fr-label" for="${id}-nom">Nom usuel <span class="required">*</span></label><input class="fr-input" id="${id}-nom" required value="${esc(e.nom)}"></div>
         ${telField(id + '-tel', "Numéro de téléphone de l'entreprise", false)}
         <div class="fr-input-group"><label class="fr-label" for="${id}-nb">Nombre de salariés concernés par Mobilic <span class="required">*</span><span class="fr-hint-text">Exemple : chauffeurs, accompagnateurs, agents…</span></label><input class="fr-input" id="${id}-nb" type="number" min="1" inputmode="numeric" required></div>
@@ -107,14 +107,18 @@ function renderEtabs() {
           </div>
           <div class="fr-messages-group fr-mt-1w"><p class="fr-message fr-message--info">Ce type d'activité sera appliqué par défaut à tous les salariés de l'établissement. Vous pourrez le modifier ensuite pour chaque salarié.</p></div>
         </div>
-      </div>
+      </div></div></div>
     </div>`;
   }).join('');
   eValidate();
 }
 function toggleEtab(i, on) {
   state.selected = on ? [...state.selected, i] : state.selected.filter(x => x !== i);
-  const el = $('et' + i); el.classList.toggle('etab--selected', on); el.querySelector('.etab__fields').hidden = !on;
+  const el = $('et' + i), clip = el.querySelector('.etab__clip');
+  el.classList.toggle('etab--selected', on); clip.inert = !on;
+  /* Une fois déplié, le masque est levé pour ne pas couper le contour de focus DSFR */
+  clearTimeout(el._open); el.classList.remove('etab--open');
+  if (on) el._open = setTimeout(() => el.classList.add('etab--open'), 250);
   eValidate();
 }
 function eValidate() {
@@ -142,7 +146,7 @@ function renderFin() {
   $('w-jour').textContent = d.toLocaleDateString('fr-FR', { weekday: 'short' });
   $('w-num').textContent = d.getDate();
   $('w-mois').textContent = d.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
-  $('w-heure').textContent = '10:00';
+  $('w-heure').textContent = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^./, c => c.toUpperCase()) + ' · 10:00 - 10:45 · En ligne';
   $('w-btn').disabled = false; $('w-btn').textContent = "S'inscrire";
 }
 function webinaire() { $('w-btn').disabled = true; $('w-btn').textContent = 'Inscription confirmée'; toast('Inscription au webinaire confirmée'); }

@@ -20,12 +20,16 @@ Code : `.etab` dans `prototypes/gestionnaire/app.css`, rendu par `renderEtabs()`
 
 | État | Rendu |
 |---|---|
-| Non sélectionnée | Contour 1 px `--border-default-grey` |
+| Non sélectionnée | Contour 1 px `--border-default-grey`, sans fond (celui de l'encadré) ; champs repliés et inactifs (`inert`) |
 | Sélectionnée | Contour 2 px `--border-active-blue-france` (bordure + ombre intérieure), champs affichés |
+
+## Animation
+
+À la sélection, les champs se déplient : hauteur par la grille (`grid-template-rows` 0fr → 1fr, 250 ms, `cubic-bezier(.23, 1, .32, 1)`), fondu (200 ms) et glissement de 8 px vers le bas (250 ms), même courbe. Le contour change en 200 ms (`ease`). Désélection : chemin inverse. Une fois dépliée, le masque est levé pour ne pas couper le contour de focus. Si l'utilisateur réduit les animations : fondu seul, sans dépliage ni glissement.
 
 ## Tokens et espacements
 
-Padding 16 px ; 16 px entre deux cartes ; 24 px entre l'en-tête et les champs, et entre les champs.
+Padding 24 px ; 16 px entre deux cartes ; 24 px entre l'en-tête et les champs, et entre les champs.
 
 ## Accessibilité
 
