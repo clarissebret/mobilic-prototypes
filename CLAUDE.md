@@ -24,7 +24,7 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Le cadre des prototypes (téléphone ou cadre desktop au centre, aperçu PDF) est commun : `shared/shell-mobile.html`. L'outil de prototypage qui l'entoure (barre de contrôle : parcours, format, remplissage, inspection ; inspecteur à droite) est dans `outil/`, documenté dans `composants/outil-prototypage.md`. Ne pas les dupliquer dans un prototype, et ne pas modifier un prototype pour les besoins de l'outil.
+- Le cadre des prototypes (téléphone ou cadre desktop au centre, aperçu PDF) est commun : `shared/shell-mobile.html`. L'outil de prototypage qui l'entoure (barre de contrôle : parcours, format, remplissage, réinitialisation, inspecteur ; inspecteur à droite) est dans `outil/`, documenté dans `composants/outil-prototypage.md`. Ne pas les dupliquer dans un prototype, et ne pas modifier un prototype pour les besoins de l'outil.
 - Chaque prototype a un `prototype.json` : titre, nom court (affiché dans le sélecteur de parcours), description, parcours listés dans la barre. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
 - Les valeurs fictives de « Remplir le formulaire » se déclarent par identifiant de champ dans `prototypes/<interface>/remplissage.json` ; sans valeur déclarée, l'outil en choisit une selon le type du champ.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
@@ -38,7 +38,7 @@
 - Avant de créer un style, vérifier qu'un composant ou une classe DSFR ne le fait pas déjà (systeme-de-design.gouv.fr).
 - Icônes : classes `fr-icon-*` (Remix Icon).
 - Rythme vertical : 24 px entre champs, 32 px entre sections, 40 px en bas de page.
-- Écran rendu dans un iframe, aux formats Mobile 360 × 640, 360 × 740 (par défaut) et 412 × 915, ou Desktop 1440 × 800, ou à une taille libre réglée avec les poignées. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié sur les 3 formats mobiles.
+- Écran rendu dans un iframe, au format Mobile (360 px de large, par défaut) ou Desktop (1440 px), ou à une largeur libre réglée avec la poignée ; la hauteur est celle de la fenêtre. Les règles responsives du DSFR sont celles de la largeur choisie. Vérifier chaque écran modifié en Mobile, avec une fenêtre basse et une fenêtre haute.
 - Modales DSFR ouvertes avec la classe `fr-modal--opened`, sans le JS du DSFR. Ne pas utiliser les options DSFR qui dépendent de son JS (ex. `fr-btns-group--equisized`) : sur mobile, les boutons empilés doivent prendre toute la largeur.
 - Toute action ajoutée doit avoir un comportement défini pour le bouton Retour Android.
 

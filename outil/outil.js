@@ -7,7 +7,7 @@ const DATA = JSON.parse(document.getElementById('outil-data').textContent);
 const $ = id => document.getElementById(id);
 const frame = $('app'), device = $('device'), box = $('device-box'), vue = $('vue'), calque = $('calque'), outil = $('outil');
 const barre = $('barre'), liste = $('parcours-liste'), recherche = $('parcours-recherche'), options = $('parcours-options');
-const inspecteur = $('inspecteur'), menuFormat = $('format-liste');
+const inspecteur = $('inspecteur'), pied = $('pied');
 const doc = () => frame.contentDocument, win = () => frame.contentWindow;
 const clamp = (min, v, max) => Math.max(min, Math.min(v, max));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -28,16 +28,18 @@ function infobulle(btn, tt) {
     tt.style.left = left + 'px'; tt.style.top = (r.top - t.height - 4) + 'px';
     tt.style.setProperty('--arrow-x', (r.left + r.width / 2 - left - t.width / 2) + 'px');
   };
-  const montrer = () => { if (!liste.hidden || !menuFormat.hidden) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
+  const montrer = () => { if (!liste.hidden) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
   const cacher = () => { tt.classList.remove('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'true'); };
   btn.addEventListener('mouseenter', montrer); btn.addEventListener('focus', montrer);
   btn.addEventListener('mouseleave', cacher); btn.addEventListener('blur', cacher); btn.addEventListener('click', cacher);
   return { montrer, cacher, placer };
 }
 const ttParcours = infobulle($('parcours-bouton'), $('tt-parcours'));
-const ttFormat = infobulle($('format-bouton'), $('tt-format'));
+infobulle($('format-bouton'), $('tt-format'));
 const ttRemplir = infobulle($('remplir'), $('tt-remplir'));
+infobulle($('reinitialiser'), $('tt-reinitialiser'));
 infobulle($('inspecter'), $('tt-inspecter'));
+infobulle($('masquer'), $('tt-masquer'));
 
 /* ---------- Barre : rôle toolbar, flèches entre les contrôles ---------- */
 const controles = () => [...barre.querySelectorAll('button, input[type="radio"], select')].filter(el => el.getClientRects().length);
@@ -55,103 +57,74 @@ barre.addEventListener('keydown', e => {
 });
 barre.addEventListener('focusin', e => { const i = controles().indexOf(e.target); if (i >= 0) activer(i); });
 
-/* ---------- Format d'écran : préréglages, libellé, poignées ---------- */
-const FORMATS = [['Mobile', 360, 640], ['Mobile', 360, 740], ['Mobile', 412, 915], ['Desktop', 1440, 800]];
-const LIMITES = { wMin: 280, wMax: 2560, hMin: 320, hMax: 1600 };
+/* ---------- Format d'écran : Mobile ou Desktop, hauteur de la vue, largeur réglable à la poignée ---------- */
+const FORMATS = { Mobile: 360, Desktop: 1440 };
+const LIMITES = { wMin: 280, wMax: 2560, hMin: 320 };
 let format = local.lire('format', null);
-if (!format || !(format.w > 0 && format.h > 0)) format = { w: 360, h: 740 };
-let echelle = 1, glisse = false;
-const nomFormat = (w, h) => { const f = FORMATS.find(x => x[1] === w && x[2] === h); return f ? f[0] : 'Personnalisé'; };
+if (!format || !(format.w > 0)) format = { w: FORMATS.Mobile };
+format = { w: format.w };
+let echelle = 1, hauteur = 740, glisse = false;
+const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
+const estMobile = () => format.w < 768;
+/* Espace disponible pour le cadre : la poignée garde 16 px de chaque côté pour que le cadre reste centré */
 function dispo() {
   const cs = getComputedStyle(vue), lib = $('format-libelle');
   return {
     w: vue.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 32,
-    h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom) - 16
+    h: vue.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - lib.offsetHeight - parseFloat(getComputedStyle(lib).marginBottom)
   };
 }
+const libelleFormat = () => `${nomFormat(format.w)} ${format.w} × ${hauteur}`;
 function ajuster() {
   const root = document.documentElement.style, a = dispo();
-  root.setProperty('--w', format.w + 'px'); root.setProperty('--h', format.h + 'px');
-  if (!glisse) echelle = Math.max(0.1, Math.min(1, a.w / format.w, a.h / format.h));
+  if (!glisse) echelle = clamp(0.1, a.w / format.w, 1);
+  hauteur = Math.max(LIMITES.hMin, Math.floor(a.h / echelle));
+  root.setProperty('--w', format.w + 'px'); root.setProperty('--h', hauteur + 'px');
   device.style.transform = `scale(${echelle})`;
-  box.style.width = format.w * echelle + 'px'; box.style.height = format.h * echelle + 'px';
-  $('format-libelle').textContent = `${nomFormat(format.w, format.h)} ${format.w} × ${format.h}` + (echelle < 0.995 ? ` · ${Math.round(echelle * 100)} %` : '');
+  box.style.width = format.w * echelle + 'px'; box.style.height = hauteur * echelle + 'px';
+  $('format-libelle').textContent = libelleFormat() + (echelle < 0.995 ? ` · ${Math.round(echelle * 100)} %` : '');
   const pl = $('poignee-largeur');
   pl.setAttribute('aria-valuenow', format.w); pl.setAttribute('aria-valuetext', `${format.w} pixels`);
-  $('format-bouton').classList.toggle('fr-icon-smartphone-line', format.w < 768);
-  $('format-bouton').classList.toggle('fr-icon-computer-line', format.w >= 768);
+  const fb = $('format-bouton');
+  fb.classList.toggle('fr-icon-smartphone-line', estMobile()); fb.classList.toggle('fr-icon-computer-line', !estMobile());
+  fb.textContent = `Format d'écran : ${estMobile() ? 'Mobile' : 'Desktop'}. Passer au format ${estMobile() ? 'Desktop' : 'Mobile'}`;
   dessiner();
 }
-function changerFormat(w, h, annonce) {
-  format = { w: Math.round(clamp(LIMITES.wMin, w, LIMITES.wMax)), h: Math.round(clamp(LIMITES.hMin, h, LIMITES.hMax)) };
+function changerFormat(w, annonce) {
+  format = { w: Math.round(clamp(LIMITES.wMin, w, LIMITES.wMax)) };
   local.ecrire('format', format);
   ajuster();
-  if (annonce) annoncer(`${nomFormat(format.w, format.h)} ${format.w} × ${format.h}`);
+  if (annonce) annoncer(libelleFormat());
 }
 new ResizeObserver(() => ajuster()).observe(vue);
+/* Le bouton bascule entre les deux formats ; une largeur personnalisée bascule selon son côté de 768 px */
+$('format-bouton').addEventListener('click', () => changerFormat(estMobile() ? FORMATS.Desktop : FORMATS.Mobile, true));
 
-/* Menu des formats */
-let formatActif = 0;
-function rendreFormats() {
-  const items = FORMATS.map(([n, w, h]) => ({ n, w, h }));
-  if (nomFormat(format.w, format.h) === 'Personnalisé') items.push({ n: 'Personnalisé', w: format.w, h: format.h, perso: true });
-  menuFormat.innerHTML = items.map((f, i) => {
-    const sel = f.w === format.w && f.h === format.h;
-    return `<button type="button" class="outil-option outil-option--bouton fr-text--sm fr-mb-0" role="menuitemradio" aria-checked="${sel}" tabindex="-1" data-w="${f.w}" data-h="${f.h}" id="fo-${i}">`
-      + `<span>${f.n} · ${f.w} × ${f.h}</span><span class="fr-icon-check-line fr-icon--sm" aria-hidden="true"></span></button>`;
-  }).join('');
-  formatActif = Math.max(0, items.findIndex(f => f.w === format.w && f.h === format.h));
-}
-function focusFormat(i) { const b = [...menuFormat.children]; formatActif = (i + b.length) % b.length; b[formatActif].focus(); }
-function ouvrirFormats() {
-  fermerListe(false); ttFormat.cacher();
-  rendreFormats(); menuFormat.hidden = false; placerPopover(menuFormat, $('format-bouton'));
-  $('format-bouton').setAttribute('aria-expanded', 'true');
-  focusFormat(formatActif);
-}
-function fermerFormats(rendreFocus) {
-  if (menuFormat.hidden) return;
-  menuFormat.hidden = true; $('format-bouton').setAttribute('aria-expanded', 'false');
-  if (rendreFocus) $('format-bouton').focus();
-}
 function placerPopover(pop, btn) {
   const r = btn.getBoundingClientRect();
   pop.style.left = clamp(16, r.left + r.width / 2 - pop.offsetWidth / 2, innerWidth - pop.offsetWidth - 16) + 'px';
   pop.style.bottom = (innerHeight - r.top + 8) + 'px';
 }
-$('format-bouton').addEventListener('click', () => menuFormat.hidden ? ouvrirFormats() : fermerFormats(true));
-menuFormat.addEventListener('click', e => { const b = e.target.closest('[data-w]'); if (!b) return; fermerFormats(true); changerFormat(Number(b.dataset.w), Number(b.dataset.h), true); });
-menuFormat.addEventListener('keydown', e => {
-  const j = { ArrowDown: formatActif + 1, ArrowUp: formatActif - 1, Home: 0, End: menuFormat.children.length - 1 }[e.key];
-  if (j !== undefined) { e.preventDefault(); focusFormat(j); }
-  else if (e.key === 'Tab') fermerFormats(false);
-});
-document.addEventListener('mousedown', e => { if (!menuFormat.hidden && !menuFormat.contains(e.target) && !$('format-bouton').contains(e.target)) fermerFormats(false); });
 
-/* Poignées : le cadre reste centré, la largeur grandit donc de deux fois le déplacement pour suivre le pointeur */
-function poignee(el, hauteur) {
-  el.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    try { el.setPointerCapture(e.pointerId); } catch (err) { /* capture indisponible : écoute sur la fenêtre */ }
-    const x0 = e.clientX, y0 = e.clientY, w0 = format.w, h0 = format.h, a = dispo();
-    glisse = true; outil.classList.add('outil--glisse');
-    const max = { w: a.w / echelle, h: a.h / echelle };
-    const bouger = ev => changerFormat(Math.min(max.w, w0 + 2 * (ev.clientX - x0) / echelle), hauteur ? Math.min(max.h, h0 + (ev.clientY - y0) / echelle) : h0);
-    const finir = () => {
-      window.removeEventListener('pointermove', bouger); window.removeEventListener('pointerup', finir); window.removeEventListener('pointercancel', finir);
-      glisse = false; outil.classList.remove('outil--glisse'); ajuster(); annoncer(`${nomFormat(format.w, format.h)} ${format.w} × ${format.h}`);
-    };
-    window.addEventListener('pointermove', bouger); window.addEventListener('pointerup', finir); window.addEventListener('pointercancel', finir);
-  });
-  el.addEventListener('keydown', e => {
-    const pas = e.shiftKey ? 40 : 8;
-    const d = { ArrowRight: [pas, 0], ArrowLeft: [-pas, 0], ArrowDown: hauteur ? [0, pas] : null, ArrowUp: hauteur ? [0, -pas] : null }[e.key];
-    if (!d) return;
-    e.preventDefault(); e.stopPropagation(); changerFormat(format.w + d[0], format.h + d[1], true);
-  });
-}
-poignee($('poignee-largeur'), false);
-poignee($('poignee-coin'), true);
+/* Poignée : le cadre reste centré, la largeur grandit donc de deux fois le déplacement pour suivre le pointeur */
+const poignee = $('poignee-largeur');
+poignee.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  try { poignee.setPointerCapture(e.pointerId); } catch (err) { /* capture indisponible : écoute sur la fenêtre */ }
+  const x0 = e.clientX, w0 = format.w, max = dispo().w / echelle;
+  glisse = true; outil.classList.add('outil--glisse');
+  const bouger = ev => changerFormat(Math.min(max, w0 + 2 * (ev.clientX - x0) / echelle));
+  const finir = () => {
+    window.removeEventListener('pointermove', bouger); window.removeEventListener('pointerup', finir); window.removeEventListener('pointercancel', finir);
+    glisse = false; outil.classList.remove('outil--glisse'); ajuster(); annoncer(libelleFormat());
+  };
+  window.addEventListener('pointermove', bouger); window.addEventListener('pointerup', finir); window.addEventListener('pointercancel', finir);
+});
+poignee.addEventListener('keydown', e => {
+  const pas = e.shiftKey ? 40 : 8, d = { ArrowRight: pas, ArrowLeft: -pas }[e.key];
+  if (!d) return;
+  e.preventDefault(); e.stopPropagation(); changerFormat(format.w + d, true);
+});
 
 /* ---------- Parcours ---------- */
 const iface = DATA.interfaces.find(i => i.id === DATA.interface);
@@ -159,9 +132,7 @@ let enCours = null; // l'app repart de l'accueil à chaque chargement
 let actif = -1;
 function libelleParcours() {
   const p = iface.parcours.find(x => x.commande === enCours);
-  const t = `${iface.nom} · ${p ? p.libelle : 'Choisir un parcours'}`;
-  $('parcours-bouton').textContent = `Parcours : ${t}`;
-  $('tt-parcours').textContent = `${t} (P)`;
+  $('parcours-bouton').textContent = `Parcours : ${iface.nom} · ${p ? p.libelle : 'Choisir un parcours'}`;
 }
 function rendreListe() {
   const q = norm(recherche.value.trim());
@@ -191,7 +162,7 @@ function surligner(i) {
   else recherche.removeAttribute('aria-activedescendant');
 }
 function ouvrirListe() {
-  ttParcours.cacher(); fermerFormats(false);
+  ttParcours.cacher();
   recherche.value = ''; rendreListe(); liste.hidden = false;
   placerPopover(liste, $('parcours-bouton'));
   $('parcours-bouton').setAttribute('aria-expanded', 'true');
@@ -236,7 +207,7 @@ function remplissable() { const p = portee(); return !!p && (formApp || p.classL
 function majRemplir() {
   const ok = remplissable(), b = $('remplir');
   if (ok) b.removeAttribute('aria-disabled'); else b.setAttribute('aria-disabled', 'true');
-  $('tt-remplir').textContent = ok ? 'Remplir le formulaire (R)' : 'Aucun formulaire sur cet écran';
+  $('tt-remplir').textContent = ok ? 'Remplissage automatique' : 'Aucun formulaire sur cet écran';
   if ($('tt-remplir').classList.contains('fr-tooltip--shown')) ttRemplir.placer();
 }
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -302,6 +273,26 @@ function remplir() {
   dessiner();
 }
 $('remplir').addEventListener('click', remplir);
+
+/* ---------- Réinitialisation : recharge le prototype (accueil, saisies effacées) ---------- */
+function reinitialiser() {
+  fermerListe(false); deselectionner();
+  enCours = null; libelleParcours();
+  frame.srcdoc = frame.srcdoc;
+  annoncer('Prototype réinitialisé');
+}
+$('reinitialiser').addEventListener('click', reinitialiser);
+
+/* ---------- Masquer la barre (@ pour l'afficher de nouveau) ---------- */
+function basculerBarre() {
+  const masquer = !pied.hidden;
+  if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
+  fermerListe(false);
+  document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
+  pied.hidden = masquer;
+  annoncer(masquer ? 'Barre masquée. Appuyez sur @ pour l\'afficher.' : 'Barre affichée');
+}
+$('masquer').addEventListener('click', basculerBarre);
 window.addEventListener('message', e => {
   if (e.source !== win()) return;
   const m = e.data || {};
@@ -309,30 +300,35 @@ window.addEventListener('message', e => {
 });
 
 /* ---------- Inspection : survol, sélection, calque ---------- */
-let inspection = false, survol = null, selection = [];
+let inspection = false, survol = null, selection = [], mesure = false;
+/* Composants reconnus : classe, nom, origine, équivalent react-dsfr */
 const LIBELLES = [
-  [/^fr-btns-group$/, 'Groupe de boutons DSFR', 'ButtonsGroup'], [/^fr-btn$/, 'Bouton DSFR', 'Button'],
-  [/^fr-input-group$/, 'Champ de saisie DSFR', 'Input'], [/^fr-input$/, 'Champ de saisie DSFR', 'Input'],
-  [/^fr-select-group$/, 'Liste déroulante DSFR', 'Select'], [/^fr-select$/, 'Liste déroulante DSFR', 'Select'],
-  [/^fr-search-bar$/, 'Barre de recherche DSFR', 'SearchBar'], [/^fr-radio-group$/, 'Bouton radio DSFR', 'RadioButtons'],
-  [/^fr-checkbox-group$/, 'Case à cocher DSFR', 'Checkbox'], [/^fr-fieldset$/, 'Groupe de champs DSFR', 'Fieldset'],
-  [/^fr-segmented$/, 'Contrôle segmenté DSFR', 'SegmentedControl'], [/^fr-toggle$/, 'Interrupteur DSFR', 'ToggleSwitch'],
-  [/^fr-alert$/, 'Alerte DSFR', 'Alert'], [/^fr-badge$/, 'Badge DSFR', 'Badge'], [/^fr-tag$/, 'Tag DSFR', 'Tag'],
-  [/^fr-card$/, 'Carte DSFR', 'Card'], [/^fr-tile$/, 'Tuile DSFR', 'Tile'], [/^fr-accordion$/, 'Accordéon DSFR', 'Accordion'],
-  [/^fr-modal$/, 'Modale DSFR', 'createModal'], [/^fr-stepper$/, 'Indicateur d\'étapes DSFR', 'Stepper'],
-  [/^fr-table$/, 'Tableau DSFR', 'Table'], [/^fr-tabs$/, 'Onglets DSFR', 'Tabs'], [/^fr-header$/, 'En-tête DSFR', 'Header'],
-  [/^fr-footer$/, 'Pied de page DSFR', 'Footer'], [/^fr-callout$/, 'Mise en avant DSFR', 'CallOut'], [/^fr-notice$/, 'Bandeau d\'information DSFR', 'Notice'],
-  [/^fr-breadcrumb$/, 'Fil d\'Ariane DSFR', 'Breadcrumb'], [/^fr-highlight$/, 'Mise en exergue DSFR', 'Highlight'],
-  [/^fr-pagination$/, 'Pagination DSFR', 'Pagination'], [/^fr-link$/, 'Lien DSFR', null], [/^fr-logo$/, 'Bloc marque DSFR', null],
-  [/^mobilic-table$/, 'Tableau Mobilic', 'Table'], [/^choice$/, 'Tuile de choix Mobilic', null], [/^ctrl-tabs$/, 'Onglets du contrôle Mobilic', null],
-  [/^sticky-actions$/, 'Barre d\'actions fixe Mobilic', null], [/^inf/, 'Accordéon d\'infraction Mobilic', null],
-  [/^fr-icon-/, 'Icône DSFR', null]
+  [/^fr-btns-group$/, 'Groupe de boutons', 'DSFR', 'ButtonsGroup'], [/^fr-btn$/, 'Bouton', 'DSFR', 'Button'],
+  [/^fr-input-group$/, 'Champ de saisie', 'DSFR', 'Input'], [/^fr-input$/, 'Champ de saisie', 'DSFR', 'Input'],
+  [/^fr-select-group$/, 'Liste déroulante', 'DSFR', 'Select'], [/^fr-select$/, 'Liste déroulante', 'DSFR', 'Select'],
+  [/^fr-search-bar$/, 'Barre de recherche', 'DSFR', 'SearchBar'], [/^fr-radio-group$/, 'Bouton radio', 'DSFR', 'RadioButtons'],
+  [/^fr-checkbox-group$/, 'Case à cocher', 'DSFR', 'Checkbox'], [/^fr-fieldset$/, 'Groupe de champs', 'DSFR', 'Fieldset'],
+  [/^fr-segmented$/, 'Contrôle segmenté', 'DSFR', 'SegmentedControl'], [/^fr-toggle$/, 'Interrupteur', 'DSFR', 'ToggleSwitch'],
+  [/^fr-alert$/, 'Alerte', 'DSFR', 'Alert'], [/^fr-badge$/, 'Badge', 'DSFR', 'Badge'], [/^fr-tag$/, 'Tag', 'DSFR', 'Tag'],
+  [/^fr-card$/, 'Carte', 'DSFR', 'Card'], [/^fr-tile$/, 'Tuile', 'DSFR', 'Tile'], [/^fr-accordion$/, 'Accordéon', 'DSFR', 'Accordion'],
+  [/^fr-modal$/, 'Modale', 'DSFR', 'createModal'], [/^fr-stepper$/, 'Indicateur d\'étapes', 'DSFR', 'Stepper'],
+  [/^fr-table$/, 'Tableau', 'DSFR', 'Table'], [/^fr-tabs$/, 'Onglets', 'DSFR', 'Tabs'], [/^fr-header$/, 'En-tête', 'DSFR', 'Header'],
+  [/^fr-footer$/, 'Pied de page', 'DSFR', 'Footer'], [/^fr-callout$/, 'Mise en avant', 'DSFR', 'CallOut'], [/^fr-notice$/, 'Bandeau d\'information', 'DSFR', 'Notice'],
+  [/^fr-breadcrumb$/, 'Fil d\'Ariane', 'DSFR', 'Breadcrumb'], [/^fr-highlight$/, 'Mise en exergue', 'DSFR', 'Highlight'],
+  [/^fr-pagination$/, 'Pagination', 'DSFR', 'Pagination'], [/^fr-link$/, 'Lien', 'DSFR', null], [/^fr-logo$/, 'Bloc marque', 'DSFR', null],
+  [/^mobilic-table$/, 'Tableau', 'Mobilic', 'Table'], [/^choice$/, 'Tuile de choix', 'Mobilic', null], [/^ctrl-tabs$/, 'Onglets du contrôle', 'Mobilic', null],
+  [/^sticky-actions$/, 'Barre d\'actions fixe', 'Mobilic', null], [/^inf/, 'Accordéon d\'infraction', 'Mobilic', null],
+  [/^fr-icon-/, 'Icône', 'DSFR', null]
 ];
+/* Éléments HTML sans composant : un nom générique selon la balise */
+const GENERIQUES = { p: 'Texte', span: 'Texte', strong: 'Texte', em: 'Texte', b: 'Texte', i: 'Texte', small: 'Texte', label: 'Texte', legend: 'Texte',
+  h1: 'Titre', h2: 'Titre', h3: 'Titre', h4: 'Titre', h5: 'Titre', h6: 'Titre', a: 'Lien', button: 'Bouton', input: 'Champ de saisie', textarea: 'Champ de saisie',
+  select: 'Liste déroulante', img: 'Image', svg: 'Image vectorielle', ul: 'Liste', ol: 'Liste', li: 'Élément de liste', table: 'Tableau', form: 'Formulaire', hr: 'Séparateur' };
 function identite(el) {
-  for (const [re, type, react] of LIBELLES) for (const c of el.classList) if (re.test(c)) return { type, react, classe: c };
-  const tag = el.tagName.toLowerCase();
-  return { type: tag === 'img' ? 'Image' : tag === 'svg' ? 'Image vectorielle' : `Élément ${tag}`, react: null, classe: null };
+  for (const [re, type, origine, react] of LIBELLES) for (const c of el.classList) if (re.test(c)) return { type, origine, react, classe: c };
+  return { type: GENERIQUES[el.tagName.toLowerCase()] || 'Conteneur', origine: null, react: null, classe: null };
 }
+const typeComplet = el => { const i = identite(el); return i.origine ? `${i.type}, composant ${i.origine}` : i.type; };
 function nom(el) {
   const id = identite(el);
   if (id.classe) return id.classe;
@@ -349,50 +345,90 @@ function rectCadre() {
 function boite(r, cls) {
   return `<div class="${cls}" style="left:${r.left * echelle}px;top:${r.top * echelle}px;width:${r.width * echelle}px;height:${r.height * echelle}px"></div>`;
 }
+/* Mesure (Alt) : distances entre la sélection et l'élément survolé, comme dans Figma */
+function union(rs) {
+  const l = Math.min(...rs.map(r => r.left)), t = Math.min(...rs.map(r => r.top));
+  const rr = Math.max(...rs.map(r => r.right)), b = Math.max(...rs.map(r => r.bottom));
+  return { left: l, top: t, right: rr, bottom: b, width: rr - l, height: b - t };
+}
+function mesures(A, B) {
+  const traits = [];
+  const h = (x1, x2, y) => { if (x2 - x1 >= 0.5) traits.push({ x: x1, y, w: x2 - x1, h: 0, v: x2 - x1 }); };
+  const v = (y1, y2, x) => { if (y2 - y1 >= 0.5) traits.push({ x, y: y1, w: 0, h: y2 - y1, v: y2 - y1 }); };
+  const guides = [];
+  const contient = (o, i) => o.left <= i.left && o.top <= i.top && o.right >= i.right && o.bottom >= i.bottom;
+  if (contient(B, A) || contient(A, B)) {
+    const [i, o] = contient(B, A) ? [A, B] : [B, A];
+    const cx = i.left + i.width / 2, cy = i.top + i.height / 2;
+    h(o.left, i.left, cy); h(i.right, o.right, cy); v(o.top, i.top, cx); v(i.bottom, o.bottom, cx);
+    return { traits, guides };
+  }
+  const chevY = Math.min(A.bottom, B.bottom) > Math.max(A.top, B.top), chevX = Math.min(A.right, B.right) > Math.max(A.left, B.left);
+  const y = chevY ? (Math.max(A.top, B.top) + Math.min(A.bottom, B.bottom)) / 2 : A.top + A.height / 2;
+  const x = chevX ? (Math.max(A.left, B.left) + Math.min(A.right, B.right)) / 2 : A.left + A.width / 2;
+  const guideV = (gx) => { if (!chevY) guides.push({ x: gx, y: Math.min(y, B.top), w: 0, h: Math.max(y, B.bottom) - Math.min(y, B.top) }); };
+  const guideH = (gy) => { if (!chevX) guides.push({ x: Math.min(x, B.left), y: gy, w: Math.max(x, B.right) - Math.min(x, B.left), h: 0 }); };
+  if (A.right <= B.left) { h(A.right, B.left, y); guideV(B.left); }
+  else if (B.right <= A.left) { h(B.right, A.left, y); guideV(B.right); }
+  if (A.bottom <= B.top) { v(A.bottom, B.top, x); guideH(B.top); }
+  else if (B.bottom <= A.top) { v(B.bottom, A.top, x); guideH(B.bottom); }
+  return { traits, guides };
+}
 let zone = null;
 function dessiner() {
   if (!doc() || !doc().body) return;
-  const c = rectCadre();
+  const c = rectCadre(), k = echelle;
   let html = '';
   const vivant = el => el && el.isConnected && el.getClientRects().length;
-  selection.filter(vivant).forEach(el => { html += boite(el.getBoundingClientRect(), 'outil-contour outil-contour--selection'); });
+  const sel = selection.filter(vivant);
+  sel.forEach(el => { html += boite(el.getBoundingClientRect(), 'outil-contour outil-contour--selection'); });
   if (zone) zone.forEach(r => { html += boite(r, 'outil-zone'); });
   const cible = inspection && vivant(survol) ? survol : null;
-  if (cible) {
+  if (cible && mesure && sel.length && !sel.includes(cible)) {
+    const B = cible.getBoundingClientRect(), m = mesures(union(sel.map(e => e.getBoundingClientRect())), B);
+    html += boite(B, 'outil-contour outil-contour--mesure');
+    m.guides.forEach(g => { html += `<div class="outil-mesure outil-mesure--guide" style="left:${g.x * k}px;top:${g.y * k}px;width:${g.w * k}px;height:${g.h * k}px"></div>`; });
+    m.traits.forEach(t => {
+      html += `<div class="outil-mesure" style="left:${t.x * k}px;top:${t.y * k}px;width:${Math.max(1, t.w * k)}px;height:${Math.max(1, t.h * k)}px"></div>`;
+      html += `<p class="outil-mesure__valeur fr-text--xs fr-mb-0" style="left:${(t.x + t.w / 2) * k}px;top:${(t.y + t.h / 2) * k}px">${Math.round(t.v * 10) / 10}</p>`;
+    });
+  } else if (cible) {
     const r = cible.getBoundingClientRect();
     if (!selection.includes(cible)) html += boite(r, 'outil-contour');
-    const haut = r.top * echelle > 24;
-    html += `<p class="outil-etiquette fr-text--xs fr-mb-0" style="left:${Math.max(0, r.left * echelle)}px;top:${haut ? r.top * echelle : r.bottom * echelle}px;transform:translateY(${haut ? '-100%' : '0'})">${esc(nom(cible))} · ${dims(cible)}</p>`;
+    const haut = r.top * k > 24;
+    html += `<p class="outil-etiquette fr-text--xs fr-mb-0" style="left:${Math.max(0, r.left * k)}px;top:${haut ? r.top * k : r.bottom * k}px;transform:translateY(${haut ? '-100%' : '0'})">${esc(nom(cible))} · ${dims(cible)}</p>`;
   }
   calque.innerHTML = `<div class="outil-calque__cadre" style="left:${c.x}px;top:${c.y}px;width:${c.w}px;height:${c.h}px">${html}</div>`;
 }
+function majMesure(etat) { if (etat !== mesure) { mesure = etat; if (inspection) dessiner(); } }
+/* Le bouton Inspecteur ouvre l'inspecteur et active le mode inspection ; le fermer quitte ce mode */
 function basculerInspection(etat, clavier) {
   inspection = etat === undefined ? !inspection : etat;
   $('inspecter').setAttribute('aria-pressed', String(inspection));
-  if (!inspection) { survol = null; deselectionner(); annoncer('Mode inspection désactivé'); }
-  else if (clavier) {
-    survol = portee(); frame.focus();
-    annoncer('Mode inspection activé. Flèches haut et bas pour passer au parent ou à l\'enfant, gauche et droite entre éléments voisins, Entrée pour sélectionner, Échap pour quitter.');
-  } else annoncer('Mode inspection activé. Cliquez sur un élément du prototype.');
+  if (!inspection) { survol = null; selection = []; zone = null; fermerInspecteur(); annoncer('Inspecteur fermé'); }
+  else {
+    ouvrirInspecteur();
+    if (clavier) {
+      survol = portee(); frame.focus();
+      annoncer('Inspecteur ouvert. Flèches haut et bas pour passer au parent ou à l\'enfant, gauche et droite entre éléments voisins, Entrée pour sélectionner, Échap pour quitter.');
+    } else annoncer('Inspecteur ouvert. Cliquez sur un élément du prototype.');
+  }
   dessiner();
 }
 function selectionner(el, ajout) {
   if (ajout) selection = selection.includes(el) ? selection.filter(x => x !== el) : selection.concat(el);
   else selection = [el];
   if (!selection.length) return deselectionner();
-  ouvrirInspecteur(); dessiner();
-  annoncer(`Sélectionné : ${selection.length > 1 ? selection.length + ' éléments' : nom(el) + ', ' + identite(el).type}`);
+  rafraichir(); dessiner();
+  annoncer(`Sélectionné : ${selection.length > 1 ? selection.length + ' éléments' : typeComplet(el) + ', ' + nom(el)}`);
 }
 function deselectionner() {
-  const ouvert = !inspecteur.hidden;
+  if (!selection.length && !zone) return;
   selection = []; zone = null;
-  outil.classList.remove('outil--inspecteur');
-  if (ouvert) apresTransition(() => { if (!outil.classList.contains('outil--inspecteur')) inspecteur.hidden = true; });
-  if (ouvert) annoncer('Inspecteur fermé');
-  dessiner();
+  rafraichir(); dessiner();
 }
 $('inspecter').addEventListener('click', e => basculerInspection(undefined, e.detail === 0));
-$('insp-fermer').addEventListener('click', () => { deselectionner(); $('inspecter').focus(); });
+$('insp-fermer').addEventListener('click', () => { basculerInspection(false); $('inspecter').focus(); });
 $('insp-agrandir').addEventListener('click', e => {
   const on = inspecteur.classList.toggle('outil-inspecteur--agrandi');
   e.currentTarget.setAttribute('aria-pressed', String(on));
@@ -412,31 +448,34 @@ function naviguer(e) {
   else if (e.key === 'Enter') { e.preventDefault(); selectionner(cur, e.shiftKey); return true; }
   else return false;
   e.preventDefault();
-  if (next) { survol = next; next.scrollIntoView({ block: 'nearest' }); dessiner(); annoncer(`${nom(next)}, ${identite(next).type}, ${dims(next)}`); }
+  if (next) { survol = next; next.scrollIntoView({ block: 'nearest' }); dessiner(); annoncer(`${typeComplet(next)}, ${nom(next)}, ${dims(next)}`); }
   return true;
 }
 
-/* Échap : liste ouverte, puis sélection, puis mode inspection */
+/* Échap : liste ouverte, puis sélection, puis inspecteur */
 function echap() {
   if (!liste.hidden) { fermerListe(true); return true; }
-  if (!menuFormat.hidden) { fermerFormats(true); return true; }
-  if (selection.length) { deselectionner(); return true; }
+  if (selection.length) { deselectionner(); annoncer('Sélection effacée'); return true; }
   if (inspection) { basculerInspection(false); return true; }
   return false;
 }
 function clavier(e, dansCadre) {
+  if (e.key === 'Alt') { majMesure(true); if (inspection) e.preventDefault(); return; }
   if (e.key === 'Escape') { if (echap()) e.preventDefault(); return; }
+  const t = e.target;
+  const saisie = t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || (t.tagName === 'INPUT' && !['radio', 'checkbox', 'button'].includes(t.type));
+  /* @ s'obtient avec une touche de modification sur certains claviers */
+  if (e.key === '@' && !saisie) { e.preventDefault(); basculerBarre(); return; }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (inspection && dansCadre && naviguer(e)) return;
-  const t = e.target;
-  if (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || (t.tagName === 'INPUT' && !['radio', 'checkbox', 'button'].includes(t.type))) return;
+  if (saisie) return;
   const k = e.key.toLowerCase();
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
-  else if (k === 'r') { e.preventDefault(); remplir(); }
-  else if (k === 'p') { e.preventDefault(); ouvrirListe(); }
-  else if (k === 'f') { e.preventDefault(); ouvrirFormats(); }
+  else if (k === 'r') { e.preventDefault(); reinitialiser(); }
 }
 document.addEventListener('keydown', e => clavier(e, false));
+document.addEventListener('keyup', e => { if (e.key === 'Alt') majMesure(false); });
+window.addEventListener('blur', () => { if (!frame.contains(document.activeElement) && document.activeElement !== frame) majMesure(false); });
 
 /* Écoute de l'iframe (même origine) */
 let installe = null;
@@ -447,16 +486,23 @@ function installer() {
   const bloquer = e => { if (!inspection) return; e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); };
   ['mousedown', 'mouseup', 'pointerdown', 'pointerup', 'dblclick', 'submit'].forEach(t => d.addEventListener(t, bloquer, true));
   d.addEventListener('click', e => { if (!inspection) return; bloquer(e); selectionner(e.target.nodeType === 1 ? e.target : e.target.parentElement, e.shiftKey); }, true);
-  d.addEventListener('mousemove', e => { if (inspection && survol !== e.target) { survol = e.target; dessiner(); } }, true);
+  d.addEventListener('mousemove', e => {
+    if (!inspection) return;
+    const m = e.altKey !== mesure;
+    mesure = e.altKey;
+    if (survol !== e.target || m) { survol = e.target; dessiner(); }
+  }, true);
+  d.addEventListener('keyup', e => { if (e.key === 'Alt') majMesure(false); }, true);
   d.addEventListener('mouseleave', () => { if (inspection) { survol = null; dessiner(); } });
   d.addEventListener('keydown', e => clavier(e, true), true);
-  d.addEventListener('mousedown', () => { fermerListe(false); fermerFormats(false); });
+  d.addEventListener('mousedown', () => fermerListe(false));
   win().addEventListener('scroll', () => dessiner(), true);
   win().addEventListener('resize', () => dessiner());
   let attente = 0;
   new (win().MutationObserver)(() => { cancelAnimationFrame(attente); attente = requestAnimationFrame(() => { majRemplir(); dessiner(); if (!inspecteur.hidden) rafraichir(); }); })
     .observe(d.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
   majRemplir();
+  formApp = false; majRemplir();
   const h = location.hash.match(/^#parcours=(.+)$/);
   if (h) { history.replaceState(null, '', location.pathname); const c = decodeURIComponent(h[1]); if (iface.parcours.some(p => p.commande === c)) setTimeout(() => choisirParcours(DATA.interface, c), 0); }
 }
@@ -656,7 +702,13 @@ function rendreProprietes() {
   const els = selection.filter(x => x.isConnected);
   if (!els.length) { $('panneau-proprietes').innerHTML = '<p class="fr-text--sm fr-mb-0">Sélectionnez un élément pour voir ses propriétés</p>'; return; }
   const lignes = fusion(els.map(proprietes));
-  let html = '';
+  let html;
+  if (els.length > 1) html = `<h3 class="fr-h6 fr-mb-0">${els.length} éléments</h3><p class="fr-text--xs fr-mb-1w outil-mention">Sélection multiple</p>`;
+  else {
+    const id = identite(els[0]);
+    html = `<h3 class="fr-h6 fr-mb-0">${esc(id.type)}${id.origine ? ` <span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--blue-france fr-ml-1v">Composant ${id.origine}</span>` : ''}</h3>`
+      + `<p class="fr-text--xs fr-mb-1w outil-mention outil-element__nom">${esc(nom(els[0]))}${els[0].id ? ' #' + esc(els[0].id) : ''}</p>`;
+  }
   GROUPES.forEach(g => {
     const ls = lignes.filter(x => x.groupe === g);
     if (!ls.length) return;
@@ -960,17 +1012,23 @@ async function zip(fichiers) {
 /* ---------- Panneau inspecteur : ouverture, onglets ---------- */
 const onglets = [...inspecteur.querySelectorAll('[role="tab"]')];
 let onglet = 'proprietes';
+/* Sans sélection : état vide ; avec sélection : onglets */
 function rafraichir() {
+  if (inspecteur.hidden) return;
   const els = selection.filter(x => x.isConnected);
+  $('insp-vide').hidden = els.length > 0; $('insp-contenu').hidden = !els.length;
   if (!els.length) return;
-  $('insp-nom').textContent = els.length > 1 ? `${els.length} éléments` : nom(els[0]);
-  $('insp-type').textContent = els.length > 1 ? 'Sélection multiple' : identite(els[0]).type;
   ({ proprietes: rendreProprietes, code: rendreCode, tokens: rendreTokens, assets: rendreAssets })[onglet]();
 }
 function ouvrirInspecteur() {
   if (inspecteur.hidden) { inspecteur.hidden = false; void inspecteur.offsetWidth; }
   outil.classList.add('outil--inspecteur');
   rafraichir();
+}
+function fermerInspecteur() {
+  if (inspecteur.hidden) return;
+  outil.classList.remove('outil--inspecteur');
+  apresTransition(() => { if (!outil.classList.contains('outil--inspecteur')) inspecteur.hidden = true; });
 }
 function choisirOnglet(o, focus) {
   onglet = o.id.replace('onglet-', '');

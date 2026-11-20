@@ -2,35 +2,37 @@
    Composant propre à l'outil, hors DSFR, documenté dans composants/outil-prototypage.md.
    Uniquement des tokens DSFR ; valeurs de padding sur la grille de 4 px. */
 
-/* ---------- Mise en page : scène (libellé, cadre, barre) et inspecteur ---------- */
-.outil { display: grid; grid-template-columns: minmax(0, 1fr) auto; height: 100vh; height: 100dvh; overflow: hidden; }
-.outil__scene { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; min-height: 0; }
-.outil__vue { position: relative; flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-start; justify-content: center; padding: 16px 24px 0; overflow: hidden; }
+/* ---------- Mise en page : scène (libellé, cadre) et inspecteur en haut, barre en bas sur toute la largeur ---------- */
+.outil { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr) auto; height: 100vh; height: 100dvh; overflow: hidden; }
+.outil__scene { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.outil__vue { position: relative; flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-start; justify-content: center; padding: 16px; overflow: hidden; }
+/* Inspecteur ouvert : seul l'espace de la poignée sépare le cadre de l'inspecteur */
+.outil--inspecteur .outil__vue { padding-right: 0; }
+.outil__pied { grid-column: 1 / -1; display: flex; justify-content: center; }
+.outil__pied[hidden] { display: none; }
 .outil-cadre { display: flex; flex-direction: column; }
 .outil-cadre__libelle { color: var(--text-mention-grey); white-space: nowrap; }
 
 /* Cadre du prototype : rectangle blanc à la taille du format, réduit à l'affichage si besoin */
 .device-box { position: relative; }
-.device { position: absolute; top: 0; left: 0; overflow: hidden; border-radius: .25rem; transform-origin: top left; background-color: var(--background-default-grey); }
+.device { position: absolute; top: 0; left: 0; overflow: hidden; border-radius: .75rem; transform-origin: top left; background-color: var(--background-default-grey); }
 #app { display: block; width: var(--w, 360px); height: var(--h, 740px); border: 0; }
 .outil--glisse #app { pointer-events: none; }
 
-/* Poignées de redimensionnement : bord droit (largeur) et coin bas droit (largeur et hauteur) */
+/* Poignée de redimensionnement : bord droit (largeur) */
 .outil-poignee { position: absolute; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; background: none; touch-action: none; }
 .outil-poignee::before { content: ""; border-radius: 2px; background-color: var(--border-default-grey); }
 .outil-poignee:hover::before, .outil-poignee:active::before, .outil--glisse .outil-poignee::before { background-color: var(--border-plain-grey); }
 .outil-poignee--largeur { top: 50%; left: 100%; width: 16px; height: 48px; transform: translateY(-50%); cursor: ew-resize; }
 .outil-poignee--largeur::before { width: 4px; height: 32px; }
-.outil-poignee--coin { top: 100%; left: 100%; width: 16px; height: 16px; cursor: nwse-resize; }
-.outil-poignee--coin::before { width: 8px; height: 8px; border-radius: 0 0 2px 0; background-color: transparent;
-  box-shadow: inset -2px -2px 0 0 var(--border-default-grey); }
-.outil-poignee--coin:hover::before, .outil--glisse .outil-poignee--coin::before { background-color: transparent; box-shadow: inset -2px -2px 0 0 var(--border-plain-grey); }
 
-/* ---------- Barre de contrôle : 4 boutons à icône seule ---------- */
+/* ---------- Barre de contrôle : boutons à icône seule ---------- */
 .outil-barre { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: .25rem; background-color: var(--background-default-grey); }
 .outil-mention, .outil-liste__vide { color: var(--text-mention-grey); }
 .outil-barre .fr-btn[aria-disabled="true"] { color: var(--text-disabled-grey); cursor: not-allowed; }
 .outil-barre .fr-btn[aria-expanded="true"], .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
+/* Raccourci clavier dans une info-bulle, en texte plus clair */
+.outil-raccourci { color: var(--text-mention-grey); }
 
 /* Liste des parcours (au-dessus de la barre) */
 .outil-liste { position: fixed; z-index: 1000; width: 24rem; max-width: calc(100vw - 32px); max-height: 60vh; overflow-y: auto; padding: 8px;
@@ -39,10 +41,8 @@
 .outil-liste__groupe { padding: 8px 8px 4px; }
 .outil-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px; border-radius: .25rem; cursor: pointer; }
 .outil-option:hover, .outil-option--active { background-color: var(--background-overlap-grey-hover); }
-.outil-option[aria-selected="true"], .outil-option[aria-checked="true"] { color: var(--text-action-high-blue-france); }
-.outil-option:not([aria-selected="true"]):not([aria-checked="true"]) .fr-icon-check-line { visibility: hidden; }
-.outil-option--bouton { width: 100%; border: 0; background: none; text-align: left; }
-#format-liste { width: auto; min-width: 14rem; }
+.outil-option[aria-selected="true"] { color: var(--text-action-high-blue-france); }
+.outil-option:not([aria-selected="true"]) .fr-icon-check-line { visibility: hidden; }
 
 /* ---------- Calque d'inspection (au-dessus du cadre) ---------- */
 .outil-calque { position: absolute; inset: 0; pointer-events: none; }
@@ -50,21 +50,31 @@
 .outil-contour { position: absolute; outline: 1px solid var(--border-plain-blue-france); }
 .outil-contour--selection { outline-width: 2px; }
 .outil-etiquette { position: absolute; padding: 0 4px; white-space: nowrap; background-color: var(--background-action-high-blue-france); color: var(--text-inverted-blue-france); }
+.outil-mesure { position: absolute; background-color: var(--background-flat-red-marianne); }
+.outil-mesure--guide { background-color: transparent; outline: 1px dashed var(--background-flat-red-marianne); }
+.outil-mesure__valeur { position: absolute; padding: 0 4px; border-radius: 2px; white-space: nowrap; transform: translate(-50%, -50%);
+  background-color: var(--background-flat-red-marianne); color: var(--text-inverted-red-marianne); }
+.outil-contour--mesure { outline-color: var(--background-flat-red-marianne); }
 .outil-zone { position: absolute; opacity: .7; background-color: var(--background-contrast-yellow-tournesol); outline: 1px dashed var(--border-plain-yellow-tournesol); }
 
 /* ---------- Inspecteur ---------- */
 .outil-inspecteur { width: 0; min-height: 0; overflow: hidden; transition: width 300ms cubic-bezier(.32, .72, 0, 1); }
 .outil--inspecteur .outil-inspecteur { width: 424px; }
 .outil-inspecteur[hidden] { display: none; }
-/* Piste de largeur fixe : en élargissant la colonne, la carte entre depuis la droite. Haut aligné sur le cadre (16 + 20 + 8 px), bas sur la vue (barre 48 px + 2 × 16 px) */
-.outil-inspecteur__piste { width: 424px; height: 100%; padding: 44px 24px 80px 0; }
+/* Piste de largeur fixe : en élargissant la colonne, la carte entre depuis la droite. Haut aligné sur le cadre (16 + 20 + 8 px), bas sur celui de la vue (16 px) */
+.outil-inspecteur__piste { width: 424px; height: 100%; padding: 44px 16px 16px 0; }
 .outil-inspecteur__carte { display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: .25rem; background-color: var(--background-default-grey); }
 @media (prefers-reduced-motion: reduce) { .outil-inspecteur { transition: none; } }
-.outil-inspecteur__tete { display: flex; align-items: flex-start; gap: 8px; }
-.outil-inspecteur__titre { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.outil-inspecteur__tete { display: flex; align-items: center; gap: 8px; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+.outil-inspecteur__titre { flex: 1; min-width: 0; }
+.outil-inspecteur__contenu { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.outil-inspecteur__contenu[hidden], .outil-inspecteur__vide[hidden] { display: none; }
+.outil-element__nom { font-family: monospace; overflow-wrap: anywhere; }
 .outil-inspecteur__agrandir { display: none; }
 /* Onglets DSFR sans le conteneur .fr-tabs (piloté sans le JS du DSFR) : neutralise les marges et la puce de liste */
-.outil-onglets { --ul-type: none; --ul-start: 0; --li-bottom: 0; order: 0; margin: 0; padding: 4px 0 0; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+.outil-onglets { --ul-type: none; --ul-start: 0; --li-bottom: 0; order: 0; margin: 0; padding: 8px 12px 0; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+/* Onglets compacts : texte fr-text--sm, hauteur de 32 px */
+.outil-onglets .fr-tabs__tab { min-height: 2rem; padding: 4px 12px; }
 .outil-inspecteur__corps { flex: 1; min-height: 0; overflow-y: auto; }
 .outil-panneau[hidden] { display: none; }
 
@@ -98,6 +108,7 @@
   .outil-barre .fr-btn--sm.outil-barre__icone::before { margin-right: 14px; }
   .outil-poignee { display: none; }
   .outil--inspecteur .outil__scene { padding-bottom: 50vh; }
+  .outil--inspecteur .outil__vue { padding-right: 16px; }
   .outil-inspecteur, .outil--inspecteur .outil-inspecteur { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; width: auto; height: 50vh;
     box-shadow: var(--overlap-shadow); transform: translateY(100%); transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
   .outil--inspecteur .outil-inspecteur { transform: none; }

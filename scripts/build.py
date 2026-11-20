@@ -41,8 +41,8 @@ ICONS = {
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
     'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
     # Outil de prototypage (barre de contrôle et inspecteur)
-    'cursor-line': 'cursor-line', 'magic-line': 'magic-line', 'check-line': 'check-line',
-    'road-map-line': 'road-map-line', 'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line',
+    'magic-line': 'magic-line', 'check-line': 'check-line', 'eye-off-line': 'eye-off-line',
+    'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line',
 }
 rules = []
 for cls, remix in ICONS.items():

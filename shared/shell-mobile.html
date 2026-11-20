@@ -48,60 +48,66 @@
         <div class="device-box" id="device-box">
           <div class="device" id="device"><iframe id="app" title="Application Mobilic : {{TITRE}}"></iframe></div>
           <div class="outil-poignee outil-poignee--largeur" id="poignee-largeur" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largeur du cadre" aria-valuemin="280" aria-valuemax="2560"></div>
-          <button type="button" class="outil-poignee outil-poignee--coin" id="poignee-coin" aria-label="Redimensionner le cadre : flèches pour la largeur et la hauteur"></button>
         </div>
       </div>
       <div class="outil-calque" id="calque" aria-hidden="true"></div>
     </div>
-
-    <div class="outil-barre fr-my-2w" id="barre" role="toolbar" aria-label="Outil de prototypage">
-      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-road-map-line outil-barre__icone" id="parcours-bouton" aria-haspopup="dialog" aria-expanded="false" aria-controls="parcours-liste" aria-describedby="tt-parcours">Parcours</button>
-      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-smartphone-line outil-barre__icone" id="format-bouton" aria-haspopup="menu" aria-expanded="false" aria-controls="format-liste" aria-describedby="tt-format">Format d'écran</button>
-      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-magic-line outil-barre__icone" id="remplir" aria-describedby="tt-remplir">Remplir le formulaire</button>
-      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-cursor-line outil-barre__icone outil-inspecter" id="inspecter" aria-pressed="false" aria-describedby="tt-inspecter">Inspecter</button>
-    </div>
-
-    <div class="outil-liste" id="parcours-liste" role="dialog" aria-label="Choisir un parcours" hidden>
-      <div class="fr-input-group fr-mb-0">
-        <label class="fr-label fr-sr-only" for="parcours-recherche">Rechercher un parcours</label>
-        <input class="fr-input" id="parcours-recherche" type="text" role="combobox" aria-expanded="true" aria-controls="parcours-options" aria-autocomplete="list" autocomplete="off" placeholder="Rechercher un parcours">
-      </div>
-      <div class="fr-mt-1w" id="parcours-options" role="listbox" aria-label="Parcours"></div>
-      <p class="fr-text--sm fr-mt-2w fr-mb-1w outil-liste__vide" id="parcours-vide" role="status" hidden></p>
-    </div>
-    <div class="outil-liste" id="format-liste" role="menu" aria-label="Format d'écran" hidden></div>
   </main>
 
-  <aside class="outil-inspecteur" id="inspecteur" aria-labelledby="insp-nom" hidden>
+  <aside class="outil-inspecteur" id="inspecteur" aria-labelledby="insp-titre" hidden>
   <div class="outil-inspecteur__piste"><div class="outil-inspecteur__carte">
-    <div class="outil-inspecteur__tete fr-px-2w fr-pt-2w">
-      <div class="outil-inspecteur__titre">
-        <h2 class="fr-h6 fr-mb-0" id="insp-nom"></h2>
-        <p class="fr-text--sm fr-mb-0 outil-mention" id="insp-type"></p>
-      </div>
+    <div class="outil-inspecteur__tete fr-pl-2w fr-pr-1w fr-py-1w">
+      <h2 class="fr-text--sm fr-text--bold fr-mb-0 outil-inspecteur__titre" id="insp-titre">Inspecteur</h2>
       <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-up-s-line outil-inspecteur__agrandir" id="insp-agrandir" aria-pressed="false">Agrandir l'inspecteur</button>
-      <button type="button" class="fr-btn--close fr-btn" id="insp-fermer" title="Fermer l'inspecteur">Fermer</button>
+      <button type="button" class="fr-btn--close fr-btn fr-mb-0" id="insp-fermer" title="Fermer l'inspecteur">Fermer</button>
     </div>
-    <ul class="fr-tabs__list outil-onglets fr-mt-1w" role="tablist" aria-label="Inspecteur">
-      <li role="presentation"><button type="button" class="fr-tabs__tab" role="tab" id="onglet-proprietes" aria-controls="panneau-proprietes" aria-selected="true">Propriétés</button></li>
-      <li role="presentation"><button type="button" class="fr-tabs__tab" role="tab" id="onglet-code" aria-controls="panneau-code" aria-selected="false" tabindex="-1">Code</button></li>
-      <li role="presentation"><button type="button" class="fr-tabs__tab" role="tab" id="onglet-tokens" aria-controls="panneau-tokens" aria-selected="false" tabindex="-1">Tokens</button></li>
-      <li role="presentation"><button type="button" class="fr-tabs__tab" role="tab" id="onglet-assets" aria-controls="panneau-assets" aria-selected="false" tabindex="-1">Assets</button></li>
-    </ul>
-    <div class="outil-inspecteur__corps">
-      <div class="outil-panneau fr-p-2w" id="panneau-proprietes" role="tabpanel" aria-labelledby="onglet-proprietes" tabindex="0"></div>
-      <div class="outil-panneau fr-p-2w" id="panneau-code" role="tabpanel" aria-labelledby="onglet-code" tabindex="0" hidden></div>
-      <div class="outil-panneau fr-p-2w" id="panneau-tokens" role="tabpanel" aria-labelledby="onglet-tokens" tabindex="0" hidden></div>
-      <div class="outil-panneau fr-p-2w" id="panneau-assets" role="tabpanel" aria-labelledby="onglet-assets" tabindex="0" hidden></div>
+    <div class="outil-inspecteur__vide fr-p-2w" id="insp-vide">
+      <p class="fr-text--sm fr-mb-0 outil-mention">Cliquez sur un élément du prototype pour l'inspecter.</p>
+    </div>
+    <div class="outil-inspecteur__contenu" id="insp-contenu" hidden>
+      <ul class="fr-tabs__list outil-onglets" role="tablist" aria-label="Inspecteur">
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm" role="tab" id="onglet-proprietes" aria-controls="panneau-proprietes" aria-selected="true">Propriétés</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm" role="tab" id="onglet-code" aria-controls="panneau-code" aria-selected="false" tabindex="-1">Code</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm" role="tab" id="onglet-tokens" aria-controls="panneau-tokens" aria-selected="false" tabindex="-1">Tokens</button></li>
+        <li role="presentation"><button type="button" class="fr-tabs__tab fr-text--sm" role="tab" id="onglet-assets" aria-controls="panneau-assets" aria-selected="false" tabindex="-1">Assets</button></li>
+      </ul>
+      <div class="outil-inspecteur__corps">
+        <div class="outil-panneau fr-p-2w" id="panneau-proprietes" role="tabpanel" aria-labelledby="onglet-proprietes" tabindex="0"></div>
+        <div class="outil-panneau fr-p-2w" id="panneau-code" role="tabpanel" aria-labelledby="onglet-code" tabindex="0" hidden></div>
+        <div class="outil-panneau fr-p-2w" id="panneau-tokens" role="tabpanel" aria-labelledby="onglet-tokens" tabindex="0" hidden></div>
+        <div class="outil-panneau fr-p-2w" id="panneau-assets" role="tabpanel" aria-labelledby="onglet-assets" tabindex="0" hidden></div>
+      </div>
     </div>
   </div></div>
   </aside>
+
+  <div class="outil__pied" id="pied">
+    <div class="outil-barre fr-mb-2w" id="barre" role="toolbar" aria-label="Outil de prototypage">
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-play-line outil-barre__icone" id="parcours-bouton" aria-haspopup="dialog" aria-expanded="false" aria-controls="parcours-liste" aria-describedby="tt-parcours">Parcours</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-smartphone-line outil-barre__icone" id="format-bouton" aria-describedby="tt-format">Passer au format Desktop</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-magic-line outil-barre__icone" id="remplir" aria-describedby="tt-remplir">Remplir le formulaire</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-refresh-line outil-barre__icone" id="reinitialiser" aria-describedby="tt-reinitialiser">Réinitialiser le prototype</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-search-line outil-barre__icone outil-inspecter" id="inspecter" aria-pressed="false" aria-describedby="tt-inspecter">Inspecteur</button>
+      <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-eye-off-line outil-barre__icone" id="masquer" aria-describedby="tt-masquer">Masquer la barre</button>
+    </div>
+  </div>
+
+  <div class="outil-liste" id="parcours-liste" role="dialog" aria-label="Choisir un parcours" hidden>
+    <div class="fr-input-group fr-mb-0">
+      <label class="fr-label fr-sr-only" for="parcours-recherche">Rechercher un parcours</label>
+      <input class="fr-input" id="parcours-recherche" type="text" role="combobox" aria-expanded="true" aria-controls="parcours-options" aria-autocomplete="list" autocomplete="off" placeholder="Rechercher un parcours">
+    </div>
+    <div class="fr-mt-1w" id="parcours-options" role="listbox" aria-label="Parcours"></div>
+    <p class="fr-text--sm fr-mt-2w fr-mb-1w outil-liste__vide" id="parcours-vide" role="status" hidden></p>
+  </div>
 </div>
 
-<span class="fr-tooltip fr-placement" id="tt-parcours" role="tooltip" aria-hidden="true">Changer de parcours (P)</span>
-<span class="fr-tooltip fr-placement" id="tt-format" role="tooltip" aria-hidden="true">Format d'écran (F)</span>
-<span class="fr-tooltip fr-placement" id="tt-remplir" role="tooltip" aria-hidden="true">Remplir le formulaire (R)</span>
-<span class="fr-tooltip fr-placement" id="tt-inspecter" role="tooltip" aria-hidden="true">Inspecter (I)</span>
+<span class="fr-tooltip fr-placement" id="tt-parcours" role="tooltip" aria-hidden="true">Parcours</span>
+<span class="fr-tooltip fr-placement" id="tt-format" role="tooltip" aria-hidden="true">Format d'écran</span>
+<span class="fr-tooltip fr-placement" id="tt-remplir" role="tooltip" aria-hidden="true">Remplissage automatique</span>
+<span class="fr-tooltip fr-placement" id="tt-reinitialiser" role="tooltip" aria-hidden="true">Réinitialisation <span class="outil-raccourci">R</span></span>
+<span class="fr-tooltip fr-placement" id="tt-inspecter" role="tooltip" aria-hidden="true">Inspecteur <span class="outil-raccourci">I</span></span>
+<span class="fr-tooltip fr-placement" id="tt-masquer" role="tooltip" aria-hidden="true">Masquer la barre <span class="outil-raccourci">@</span></span>
 <p class="fr-sr-only" id="outil-annonce" role="status" aria-live="polite"></p>
 
 <div class="pdf-overlay" id="pdf" role="dialog" aria-modal="true" aria-label="Aperçu du bulletin de contrôle PDF">
