@@ -40,6 +40,8 @@ ICONS = {
     'signal-wifi-fill': 'signal-wifi-fill', 'signal-cellular-3-fill': 'signal-cellular-3-fill', 'battery-fill': 'battery-fill',
     'edit-line': 'edit-line', 'refresh-line': 'refresh-line',
     'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
+    # Outil de prototypage (barre de contrôle et inspecteur)
+    'cursor-line': 'cursor-line', 'magic-line': 'magic-line', 'check-line': 'check-line',
 }
 rules = []
 for cls, remix in ICONS.items():
@@ -52,13 +54,20 @@ css += '\n:root{--chevron:url(' + datauri(glob.glob(f'{REMIX}*/arrow-down-s-line
 from html import escape
 CONF = json.load(open(B + 'prototype.json'))
 SHELL = (open(os.path.join(ROOT, 'shared/shell-mobile.html')).read()
-  .replace('{{TITRE}}', escape(CONF['titre'])).replace('{{DESCRIPTION}}', escape(CONF['description']))
-  .replace('{{PARCOURS}}', '\n'.join(
-    f'      <li class="flow fr-mb-2w"><span class="fr-text--sm fr-mb-0">{escape(p["libelle"])}</span>'
-    f'<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm fr-icon-play-line" title="Démarrer : {escape(p["libelle"])}" '
-    f'onclick="cmd(\'{p["commande"]}\')">Démarrer : {escape(p["libelle"])}</button></li>' for p in CONF['parcours'])))
+  .replace('{{TITRE}}', escape(CONF['titre'])))
+
+# Outil de prototypage : parcours de toutes les interfaces, données de remplissage de celle-ci
+INTERFACES = []
+for d in sorted(os.listdir(os.path.join(ROOT, 'prototypes'))):
+    pj = os.path.join(ROOT, 'prototypes', d, 'prototype.json')
+    if os.path.exists(pj):
+        c = json.load(open(pj))
+        INTERFACES.append({'id': d, 'nom': c['nom'], 'parcours': c['parcours']})
+REMPLISSAGE = json.load(open(B + 'remplissage.json')) if os.path.exists(B + 'remplissage.json') else {}
+OUTIL_DATA = json.dumps({'interface': PROTO, 'interfaces': INTERFACES, 'remplissage': REMPLISSAGE}, ensure_ascii=False).replace('</', '<\\/')
+OUTIL_CSS = open(os.path.join(ROOT, 'outil/outil.css')).read()
 app_css = open(os.path.join(ROOT, 'shared/mobilic.css')).read() + '\n' + open(B + 'app.css').read()
-for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL):
+for tok in re.findall(r'var\(--([a-z0-9-]+)\)', app_css + SHELL + OUTIL_CSS):
     if f'--{tok}:' not in css and tok not in ('icon-size',):
         raise SystemExit(f'Token DSFR inconnu : --{tok}')
 
@@ -110,6 +119,8 @@ app = re.sub(r'<label class="fr-label" for="([^"]+)">(.*?)</label>', star, app, 
 assert '{{' not in app, re.findall(r'\{\{[^}]*\}\}', app)
 
 out = (SHELL
+       .replace('{{OUTIL_CSS}}', OUTIL_CSS).replace('{{OUTIL_DATA}}', OUTIL_DATA)
+       .replace('{{OUTIL_JS}}', open(os.path.join(ROOT, 'outil/outil.js')).read())
        .replace('{{DSFR_CSS}}', css).replace('{{APP_CSS}}', app_css)
        .replace('{{APP_HTML}}', app).replace('{{APP_JS}}', open(B + 'app.js').read() + '\n' + open(B + 'infractions.js').read() + "\nrenderHistory(); go('home');\n"))
 import shutil

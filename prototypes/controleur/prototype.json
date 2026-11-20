@@ -1,5 +1,6 @@
 {
   "titre": "Interface contrôleur",
+  "nom": "Contrôleur",
   "description": "Application mobile des agents de contrôle (contrôle en bord de route ou en entreprise).",
   "parcours": [
     {

@@ -24,8 +24,9 @@
 ## Organisation
 
 - Un dossier par interface dans `prototypes/` (`controleur`, plus tard `gestionnaire`, `salarie`). Plusieurs flux par interface, un seul `SPECS.md` par interface.
-- Le cadre des prototypes mobiles (panneau à gauche : parcours, remplissage, réinitialisation, choix du téléphone ; téléphone au centre ; aperçu PDF) est commun : `shared/shell-mobile.html`. Ne pas le dupliquer dans un prototype.
-- Chaque prototype a un `prototype.json` : titre, description (affichés en haut du panneau), parcours listés dans le panneau. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
+- Le cadre des prototypes (téléphone ou cadre desktop au centre, aperçu PDF) est commun : `shared/shell-mobile.html`. L'outil de prototypage qui l'entoure (barre de contrôle : parcours, format, remplissage, inspection ; inspecteur à droite) est dans `outil/`, documenté dans `composants/outil-prototypage.md`. Ne pas les dupliquer dans un prototype, et ne pas modifier un prototype pour les besoins de l'outil.
+- Chaque prototype a un `prototype.json` : titre, nom court (affiché dans le sélecteur de parcours), description, parcours listés dans la barre. Un nouveau parcours s'ajoute là, et dans la table du `README.md`.
+- Les valeurs fictives de « Remplir le formulaire » se déclarent par identifiant de champ dans `prototypes/<interface>/remplissage.json` ; sans valeur déclarée, l'outil en choisit une selon le type du champ.
 - Une nouvelle interface s'ajoute dans `scripts/build-index.mjs` et dans le script `build` de `package.json`.
 
 ## Conventions UI

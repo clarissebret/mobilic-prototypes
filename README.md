@@ -16,8 +16,8 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Utilisation du prototype
 
-- Le panneau « Parcours » à gauche liste les parcours à tester (bouton ▷ pour démarrer), propose « Remplir le formulaire » sur les écrans qui en ont un, et « Réinitialiser ».
-- En bas du panneau, le menu « Téléphone » permet de choisir la taille d'écran (Galaxy S5, Galaxy S8+, Pixel 7). Le téléphone est réduit si la fenêtre n'est pas assez haute.
+- La barre « Outil de prototypage », sous le téléphone, permet de choisir un parcours (P), de passer en format Mobile (Galaxy S5, Galaxy S8+, Pixel 7) ou Desktop (1440 px), de remplir le formulaire affiché (R) et d'inspecter un élément (I). Choisir le parcours en cours le recommence. Le cadre est réduit si la fenêtre est trop petite.
+- L'inspecteur, à droite, donne les propriétés, le code (React ou CSS), les tokens DSFR et les images et icônes à exporter de l'élément sélectionné. Voir [composants/outil-prototypage.md](composants/outil-prototypage.md).
 - La barre Android du bas est active : le bouton Retour revient à l'écran précédent ou ferme la modale ouverte.
 - SIREN de test : `110014016`.
 
@@ -32,10 +32,12 @@ prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
   app.css              styles propres à Mobilic, uniquement à partir des tokens DSFR
   app.js               logique des écrans
   infractions.js       relevé des infractions et composant « Accordéon d'infraction »
-  prototype.json       titre, description, parcours du panneau
+  prototype.json       titre, nom court, description, parcours de la barre de contrôle
+  remplissage.json     données fictives de « Remplir le formulaire », par identifiant de champ
 composants/            documentation des composants Mobilic hors DSFR
 shared/mobilic.css     styles Mobilic communs à toutes les interfaces
-shared/shell-mobile.html  cadre commun des prototypes mobiles : panneau Parcours, téléphone, aperçu PDF
+shared/shell-mobile.html  cadre commun des prototypes : téléphone ou cadre desktop, aperçu PDF
+outil/                 outil de prototypage : barre de contrôle et inspecteur
 .claude/skills/        skills Claude Code du dépôt (dont ceux d'Emil Kowalski, licence MIT)
 assets/                logo Mobilic
 scripts/build.py       assemble un prototype en un fichier HTML autonome dans dist/<interface>/
