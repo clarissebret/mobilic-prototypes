@@ -31,6 +31,18 @@
 .etab__row { display: grid; gap: 1.5rem; }
 @media (min-width: 36em) { .etab__row { grid-template-columns: 1fr 1fr; } }
 
+/* Champ téléphone : indicatif pays + numéro */
+.tel__row { display: flex; gap: .5rem; margin-top: .5rem; }
+.tel__row .fr-input, .tel__row .fr-select { margin-top: 0; }
+.tel__code { width: auto; flex: none; }
+
+/* En-tête de la carte d'établissement */
+.etab__head { display: flex; flex-direction: column; gap: .25rem; }
+.etab__head > * { margin-bottom: 0; }
+
+/* Comment avez-vous connu Mobilic : sur deux colonnes à partir de 768 px */
+@media (min-width: 48em) { .sources { columns: 2; column-gap: 1.5rem; } .sources > * { break-inside: avoid; } }
+
 /* Finalisation */
 .picto { width: 5rem; height: 5rem; }
 .webinaire { padding: 1.5rem; background-color: var(--background-alt-grey); }

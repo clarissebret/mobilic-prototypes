@@ -20,10 +20,11 @@ Sur ordinateur, au bureau, le plus souvent. L'interface reste utilisable sur mob
 2. création du compte professionnel (Cerbère, service d'authentification du ministère) :
    - a. e-mail et SIREN,
    - b. informations du compte ;
-3. établissements de l'entreprise (Mobilic) ;
-4. finalisation de l'inscription (Mobilic).
+3. détails de l'entreprise (Mobilic) ;
+4. comment avez-vous connu Mobilic (Mobilic) ;
+5. confirmation de l'inscription et webinaire (Mobilic).
 
-Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. Le prototype les simule pour rendre le parcours compréhensible ; leurs règles ci-dessous décrivent ce que le gestionnaire y rencontre, pas une demande d'évolution.
+Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. Le prototype les reproduit à l'identique (mêmes champs, mêmes libellés) pour rendre le parcours compréhensible ; leurs règles ci-dessous décrivent ce que le gestionnaire y rencontre, pas une demande d'évolution. Les écrans Mobilic n'ont pas d'indicateur d'étapes : il n'y en a pas sur Cerbère, et le parcours paraîtrait recommencer.
 
 ## 1. Choix du métier
 
@@ -33,7 +34,7 @@ Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. 
 
 ## 2a. Cerbère : e-mail et SIREN
 
-- **CER-01** Titre : « Création d'un compte professionnel ». Champs obligatoires : « E-mail » et « SIREN ».
+- **CER-01** Titre : « Création d'un compte professionnel ». Champs obligatoires : « E-mail » et « SIREN ». Boutons « Valider » et « Annuler ».
 - **CER-02** À la validation, une erreur est signalée sous le champ concerné :
 
   | Cas | Message |
@@ -45,44 +46,51 @@ Les étapes 2a et 2b sont des pages de Cerbère : Mobilic ne les maîtrise pas. 
 
 ## 2b. Cerbère : informations du compte
 
-- **CER-04** Le SIREN et l'e-mail saisis à l'étape précédente sont affichés, non modifiables.
-- **CER-05** Champs : civilité (Monsieur, Madame, Autre), prénom, nom, adresse, code postal, ville, pays, téléphone, téléphone portable, mot de passe, confirmation du mot de passe. Obligatoires : civilité, prénom, nom, mot de passe et confirmation.
-- **CER-06** Le mot de passe doit contenir 12 caractères minimum, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial. Chaque condition s'affiche sous le champ et passe au vert dès qu'elle est remplie.
-- **CER-07** Si la confirmation ne correspond pas au mot de passe : « Les deux mots de passe ne sont pas identiques. »
-- **CER-08** « Valider » est actif quand les champs obligatoires sont remplis et que le mot de passe respecte CER-06 et CER-07. Il crée le compte et renvoie vers Mobilic. « Annuler » ramène à l'étape 2a.
+- **CER-04** Le SIREN saisi à l'étape précédente est affiché, non modifiable. L'e-mail est prérempli.
+- **CER-05** Champs, dans cet ordre : Civilité (Monsieur, Madame, Autre), Prénom, Nom, E-mail, Adresse, Code postal, Ville, Pays, codePays, Téléphone, Téléphone portable, Mot de passe, Confirmation du mot de passe. Obligatoires : civilité, prénom, nom, e-mail, mot de passe et confirmation.
+- **CER-06** Le téléphone, le téléphone portable et codePays sont facultatifs : le gestionnaire peut quitter Cerbère sans numéro de téléphone (voir ETA-09).
+- **CER-07** Sous les mots de passe : « Votre mot de passe doit respecter les critères suivants : » puis « Être constitué de 12 caractères minimum », « au moins 1 caractère(s) majuscule(s) », « au moins 1 caractère(s) minuscule(s) », « au moins 1 chiffre(s) », « au moins 1 caractère(s) spécial(aux) ». Chaque critère passe au vert dès qu'il est rempli.
+- **CER-08** Si la confirmation ne correspond pas au mot de passe : « Les deux mots de passe ne sont pas identiques. »
+- **CER-09** « Valider » est actif quand les champs obligatoires sont remplis et que le mot de passe respecte CER-07 et CER-08. Il crée le compte et renvoie vers Mobilic. « Annuler » ramène à l'étape 2a.
 
-## 3. Établissements
+## 3. Détails de l'entreprise
 
-- **ETA-01** Titre : « Création de votre compte Mobilic », indicateur d'étapes « Vos établissements », étape 1 sur 2, étape suivante « Finalisation de l'inscription ».
-- **ETA-02** Le nom de l'entreprise et son SIREN sont rappelés en haut de l'écran.
-- **ETA-03** Les établissements (SIRET) rattachés au SIREN sont listés, chacun avec son adresse, son SIRET et son code NAF.
-- **ETA-04** Plusieurs établissements : texte « Sélectionnez le ou les établissements que vous gérez, puis complétez leurs informations : ». Le gestionnaire coche un ou plusieurs établissements ; les champs d'un établissement s'affichent sous lui quand il est coché.
-- **ETA-05** Un seul établissement : texte « Complétez les informations de votre établissement : ». L'établissement est déjà sélectionné, sans case à cocher, ses champs affichés.
+- **ETA-01** En arrivant, une alerte de succès confirme la création du compte : « Votre compte Mobilic a bien été créé », « Il ne reste plus qu'à renseigner les détails de votre entreprise. »
+- **ETA-02** Titre : « Renseigner les détails de l'entreprise ». Le nom de l'entreprise et son SIREN sont rappelés dessous.
+- **ETA-03** Les établissements (SIRET) rattachés au SIREN sont listés, chacun avec son adresse, son nom (« Nom : »), son SIRET (« SIRET : ») et son code NAF (« CODE NAF : »).
+- **ETA-04** Plusieurs établissements : texte « Veuillez sélectionner un ou plusieurs établissements : ». Le gestionnaire coche un ou plusieurs établissements ; les champs d'un établissement s'affichent sous lui quand il est coché.
+- **ETA-05** Un seul établissement : texte « Votre établissement : ». L'établissement est déjà sélectionné, sans case à cocher, ses champs affichés.
 - **ETA-06** Champs de chaque établissement sélectionné :
 
   | Champ | Obligatoire | Aide |
   |---|---|---|
-  | Nom usuel | Oui | Nom sous lequel vos salariés connaissent l'établissement |
-  | Téléphone de l'établissement | Non | |
-  | Nombre de salariés concernés par Mobilic | Oui, 1 au moins | Conducteurs, déménageurs, ambulanciers… |
+  | Nom usuel | Oui | Prérempli avec le nom de l'établissement s'il est connu |
+  | Numéro de téléphone de l'entreprise | Non | Indicatif pays, puis numéro. « Format attendu : 01 99 00 12 34 » |
+  | Nombre de salariés concernés par Mobilic | Oui, 1 au moins | « Exemple : chauffeurs, accompagnateurs, agents… » |
   | Type de transport routier | Oui | Marchandises (TRM), Voyageurs (TRV), Sanitaire (TRS), Déménagement |
   | Activité principale | Oui | |
 
-- **ETA-07** « Continuer » est actif quand au moins un établissement est sélectionné et que les champs obligatoires de chaque établissement sélectionné sont remplis.
+- **ETA-07** Sous le type de transport et l'activité : « Ce type d'activité sera appliqué par défaut à tous les salariés de l'établissement. Vous pourrez le modifier ensuite pour chaque salarié. »
+- **ETA-08** « Continuer » est actif quand au moins un établissement est sélectionné, que les champs obligatoires de chaque établissement sélectionné sont remplis, et que le téléphone du gestionnaire est connu (ETA-09).
+- **ETA-09** Si le gestionnaire n'a donné ni téléphone ni téléphone portable sur Cerbère, une section « Vos coordonnées » s'affiche sous les établissements, avant « Continuer » : « Pour que l'équipe Mobilic puisse vous accompagner dans la mise en place. », champ obligatoire « Votre numéro de téléphone » (indicatif pays, puis numéro). Sinon, elle n'est pas affichée.
 
-## 4. Finalisation de l'inscription
+## 4. Comment avez-vous connu Mobilic
 
-- **FIN-01** Indicateur d'étapes « Finalisation de l'inscription », étape 2 sur 2. Titre : « Votre compte est créé ». Texte : « Un e-mail de vérification a été envoyé à [e-mail]. Cliquez sur le lien qu'il contient pour activer votre compte. »
-- **FIN-02** Question facultative « Comment avez-vous connu Mobilic ? », plusieurs réponses possibles : Courriel de l'équipe Mobilic ; Appel de l'équipe Mobilic ; Sur les réseaux sociaux ; Lors d'un webinaire organisé par l'équipe Mobilic ; Lors d'un contrôle ; Un courrier ou courriel de la DREAL ; Recherche internet ; Bouche à oreille ; Autre.
-- **FIN-03** Case facultative : « Je souhaite recevoir la lettre d'information de Mobilic pour être informé des nouveautés ».
-- **FIN-04** « Accéder à mon espace » ouvre l'espace gestionnaire.
-- **FIN-05** Encart « Offrez-vous une formation gratuite de 45 minutes » : prochain webinaire « Mobilic : formation gestionnaires » (date et heure) et bouton « Je m'inscris ». Après inscription, le bouton devient « Inscription confirmée », inactif.
+- **SRC-01** Titre : « Dernière question ». Question facultative « Comment avez-vous connu Mobilic ? », une seule réponse (boutons radio), sur deux colonnes sur grand écran : Courriel de l'équipe Mobilic ; Appel de l'équipe Mobilic ; Sur les réseaux sociaux ; Lors d'un webinaire organisé par l'équipe Mobilic ; Une plateforme de mise en relation entre entreprises et particuliers ; Lors d'un contrôle ; Un courriel/courrier de la DREAL ; Recherche internet ; Bouche à oreille ; Autre.
+- **SRC-02** Case facultative : « Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit ».
+- **SRC-03** « Terminer » mène à la confirmation, que le gestionnaire ait répondu ou non.
+
+## 5. Confirmation et webinaire
+
+- **FIN-01** Titre : « Votre inscription est terminée ». Texte : « Un e-mail de vérification de votre compte vous a été envoyé à l'adresse [e-mail]. Cliquez sur le lien qu'il contient pour activer votre compte. »
+- **FIN-02** « Aller dans mon espace » ouvre l'espace gestionnaire.
+- **FIN-03** Encart « Offrez-vous une formation gratuite de 45 minutes ! » : « Apprenez à maîtriser Mobilic grâce à un accompagnement personnalisé et gagnez du temps : formation à la mise en place, démonstration et réponse à toutes vos questions ! », puis le prochain webinaire « Mobilic : Formation gestionnaires » (date et heure) et le lien « S'inscrire ». Après inscription, il devient « Inscription confirmée », inactif.
 
 ## Navigation
 
-- **NAV-01** Retour (bouton Android ou Échap) : de 2a vers le choix du métier, de 2b vers 2a, de la finalisation vers les établissements. Sans effet sur le choix du métier.
+- **NAV-01** Retour (bouton Android ou Échap) : de 2a vers le choix du métier, de 2b vers 2a, de « Comment avez-vous connu Mobilic » vers les détails de l'entreprise, de la confirmation vers « Comment avez-vous connu Mobilic ». Sans effet sur le choix du métier.
 
 ## Composants utilisés
 
-- DSFR : en-tête, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, indicateur d'étapes, groupe de boutons.
-- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md).
+- DSFR : en-tête, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, groupe de boutons.
+- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md).

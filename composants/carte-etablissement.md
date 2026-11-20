@@ -6,8 +6,8 @@ Code : `.etab` dans `prototypes/gestionnaire/app.css`, rendu par `renderEtabs()`
 
 ## Anatomie
 
-- En-tête : case à cocher DSFR (`fr-checkbox-group`) dont le libellé contient l'adresse (en gras), puis le SIRET et le code NAF en `fr-text--sm` `--text-mention-grey`.
-- Champs : groupe de champs DSFR, affiché seulement quand la carte est sélectionnée. Type de transport et activité principale côte à côte à partir de 576 px (36em), empilés en dessous.
+- En-tête : case à cocher DSFR (`fr-checkbox-group`) dont le libellé contient l'adresse (en gras), le nom (`fr-text--sm`), puis le SIRET et le code NAF (`fr-text--xs`), en `--text-mention-grey`, 4 px entre chaque ligne.
+- Champs : groupe de champs DSFR, affiché seulement quand la carte est sélectionnée. Type de transport et activité principale côte à côte à partir de 576 px (36em), empilés en dessous, suivis d'un message d'information DSFR (`fr-message--info`). Le téléphone utilise le [Champ téléphone](champ-telephone.md).
 
 ## Variantes
 

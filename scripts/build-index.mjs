@@ -8,7 +8,7 @@ const PROTOTYPES = {
   },
   gestionnaire: {
     titre: 'Interface gestionnaire',
-    description: "Application web des gestionnaires d'entreprise. Flux disponible : inscription (choix du métier, compte professionnel, établissements, finalisation).",
+    description: "Application web des gestionnaires d'entreprise. Flux disponible : inscription (choix du métier, compte professionnel Cerbère, détails de l'entreprise, comment avez-vous connu Mobilic, confirmation et webinaire).",
   },
 };
 
