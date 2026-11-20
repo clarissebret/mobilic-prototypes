@@ -654,6 +654,46 @@ function hex(v) {
   if (m[4] !== undefined && m[4] !== '1') return v;
   return '#' + [m[1], m[2], m[3]].map(x => Number(x).toString(16).padStart(2, '0')).join('');
 }
+/* Taille de texte DSFR qui s'applique : classe fr-text--* ou fr-h*, titre h1-h6, ou taille de base du DSFR (fr-text--md, 1rem sur body) */
+function classeTaille(el, profondeur = 0) {
+  const d = declaration(el, 'font-size');
+  if (!d) return 'fr-text--md';
+  if (/^(inherit|unset)$/.test(d.v) && el.parentElement && profondeur < 30) return classeTaille(el.parentElement, profondeur + 1);
+  if (d.source !== 'dsfr') return null;
+  const cible = d.herite || el;
+  for (const s of decouper(d.selecteur)) {
+    let ok = false; try { ok = cible.matches(s); } catch (e) { /* sélecteur non pris en charge */ }
+    if (!ok) continue;
+    const m = /\.fr-(h[1-6]|text--(?:xs|sm|md|lg|xl|lead))(?![\w-])/.exec(s);
+    if (m) return 'fr-' + m[1];
+    const t = /^(h[1-6])(?![\w-])/.exec(s);
+    if (t) return 'fr-' + t[1];
+    if (/^(html|body|:root)$/.test(s)) return 'fr-text--md';
+  }
+  return null;
+}
+/* Échelle typographique du DSFR mesurée dans le prototype (dépend de la largeur : tailles mobiles ou desktop) */
+const TYPOS = ['fr-text--xs', 'fr-text--sm', 'fr-text--md', 'fr-text--lg', 'fr-text--lead', 'fr-h6', 'fr-h5', 'fr-h4', 'fr-h3', 'fr-h2', 'fr-h1'];
+let echelleTypo = null;
+function typos() {
+  const W = win(), cle = doc().documentElement.clientWidth;
+  if (echelleTypo && echelleTypo.doc === doc() && echelleTypo.cle === cle) return echelleTypo.l;
+  const zone = doc().createElement('div');
+  zone.setAttribute('aria-hidden', 'true'); zone.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none';
+  zone.innerHTML = TYPOS.map(c => `<p class="${c}">x</p>`).join('');
+  doc().body.appendChild(zone);
+  const l = [...zone.children].map(p => { const cs = W.getComputedStyle(p); return [p.className, cs.fontSize, cs.lineHeight]; });
+  zone.remove();
+  echelleTypo = { doc: doc(), cle, l };
+  return l;
+}
+/* Classe de taille qui s'applique ; sinon, la taille DSFR identique (taille et hauteur de ligne, ou taille seule) */
+function tailleDsfr(el, cs) {
+  const c = classeTaille(el);
+  if (c) return { classe: c };
+  const l = typos(), m = l.find(x => x[1] === cs.fontSize && x[2] === cs.lineHeight) || l.find(x => x[1] === cs.fontSize);
+  return m ? { classe: m[0], equivalent: true } : {};
+}
 const UTILITAIRE = /^\.fr-(m|p)[trblxy]?-n?\d+[vw]?$|^\.fr-text--(xs|sm|lg|lead|bold|regular|heavy)$|^\.fr-h[1-6]$/;
 
 /* ---------- Propriétés ---------- */
@@ -704,7 +744,7 @@ function proprietes(el) {
   if (mar.some(Boolean)) out.push(ligne('Structure', 'Marge', ecrire4(mar), { zone: 'margin', ...avecToken(el, 'margin-bottom', ecrire4(mar)) }));
   // Apparence
   if (!transparent(cs.backgroundColor)) out.push(ligne('Apparence', 'Fond', hex(cs.backgroundColor), { couleur: cs.backgroundColor, ...avecToken(el, 'background-color', hex(cs.backgroundColor)) }));
-  if (cs.backgroundImage !== 'none' && !/^url\(.data:image\/svg/.test(cs.backgroundImage)) out.push(ligne('Apparence', 'Image de fond', cs.backgroundImage.length > 80 ? cs.backgroundImage.slice(0, 80) + '…' : cs.backgroundImage, avecToken(el, 'background-image', '')));
+  if (cs.backgroundImage !== 'none' && !/^url\(.data:image\/svg/.test(cs.backgroundImage)) { const bi = cs.backgroundImage.length > 80 ? cs.backgroundImage.slice(0, 80) + '…' : cs.backgroundImage; out.push(ligne('Apparence', 'Image de fond', bi, avecToken(el, 'background-image', bi))); }
   const rad = ['top-left', 'top-right', 'bottom-right', 'bottom-left'].map(c => parseFloat(cs.getPropertyValue(`border-${c}-radius`)) || 0);
   if (rad.some(Boolean)) out.push(ligne('Apparence', 'Rayon', ecrire4(rad)));
   if (parseFloat(cs.opacity) < 1) out.push(ligne('Apparence', 'Opacité', Math.round(parseFloat(cs.opacity) * 100) + ' %'));
@@ -723,12 +763,14 @@ function proprietes(el) {
   }
   if (cs.filter !== 'none') out.push(ligne('Effets', 'Filtre', cs.filter));
   // Texte
-  const aTexte = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(el.tagName);
+  /* Texte : dès que l'élément contient du texte (le sien ou celui de ses enfants), avec la taille de l'élément lui-même */
+  const aTexte = !!el.textContent.trim() || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(el.tagName);
   if (aTexte) {
-    const typo = [...el.classList].find(c => /^fr-(text--(xs|sm|lg|lead)|h[1-6])$/.test(c));
-    if (typo) out.push(ligne('Texte', 'Style DSFR', typo));
     out.push(ligne('Texte', 'Police', cs.fontFamily.split(',')[0].replace(/"/g, '')));
-    out.push(ligne('Texte', 'Taille', `${px(parseFloat(cs.fontSize))} / ${cs.lineHeight === 'normal' ? 'normal' : px(parseFloat(cs.lineHeight))}`, avecToken(el, 'font-size', '')));
+    const taille = `${px(parseFloat(cs.fontSize))} / ${cs.lineHeight === 'normal' ? 'normal' : px(parseFloat(cs.lineHeight))}`;
+    const typo = tailleDsfr(el, cs), tok = avecToken(el, 'font-size', taille);
+    out.push(ligne('Texte', 'Taille', taille, { ...tok, classe: typo.classe || tok.classe,
+      mention: typo.equivalent ? `Taille / hauteur de ligne. Sans classe : même taille que ${typo.classe}` : typo.classe || tok.classe ? 'Taille / hauteur de ligne' : 'Taille / hauteur de ligne. Hors échelle DSFR' }));
     out.push(ligne('Texte', 'Graisse', cs.fontWeight));
     out.push(ligne('Texte', 'Couleur', hex(cs.color), { couleur: cs.color, ...avecToken(el, 'color', hex(cs.color)) }));
     if (cs.textAlign !== 'start' && cs.textAlign !== 'left') out.push(ligne('Texte', 'Alignement', cs.textAlign));
