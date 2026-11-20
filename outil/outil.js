@@ -377,6 +377,14 @@ const LIBELLES = [
 const GENERIQUES = { p: 'Texte', span: 'Texte', strong: 'Texte', em: 'Texte', b: 'Texte', i: 'Texte', small: 'Texte', label: 'Texte', legend: 'Texte',
   h1: 'Titre', h2: 'Titre', h3: 'Titre', h4: 'Titre', h5: 'Titre', h6: 'Titre', a: 'Lien', button: 'Bouton', input: 'Champ de saisie', textarea: 'Champ de saisie',
   select: 'Liste déroulante', img: 'Image', svg: 'Image vectorielle', ul: 'Liste', ol: 'Liste', li: 'Élément de liste', table: 'Tableau', form: 'Formulaire', hr: 'Séparateur' };
+/* Page du composant dans le Storybook du DSFR, par classe de composant */
+const STORYBOOK = 'https://storybook.systeme-de-design.gouv.fr/?path=/docs/';
+const STORIES = { 'fr-btns-group': 'buttons-group', 'fr-btn': 'button', 'fr-input-group': 'input', 'fr-input': 'input', 'fr-select-group': 'select', 'fr-select': 'select',
+  'fr-search-bar': 'search', 'fr-radio-group': 'radio', 'fr-checkbox-group': 'checkbox', 'fr-fieldset': 'fieldset', 'fr-segmented': 'segmented', 'fr-toggle': 'toggle',
+  'fr-alert': 'alert', 'fr-badge': 'badge', 'fr-tag': 'tag', 'fr-card': 'card', 'fr-tile': 'tile', 'fr-accordion': 'accordion', 'fr-modal': 'modal', 'fr-stepper': 'stepper',
+  'fr-table': 'table', 'fr-tabs': 'tabs', 'fr-header': 'header', 'fr-footer': 'footer', 'fr-callout': 'callout', 'fr-notice': 'notice', 'fr-breadcrumb': 'breadcrumb',
+  'fr-highlight': 'highlight', 'fr-pagination': 'pagination', 'fr-link': 'link', 'fr-logo': 'logo' };
+const lienStorybook = id => { if (id.origine !== 'DSFR' || !id.classe) return null; const s = STORIES[id.classe] || (/^fr-icon-/.test(id.classe) ? 'icon' : null); return s ? `${STORYBOOK}${s}--docs` : null; };
 function identite(el) {
   for (const [re, type, origine, react] of LIBELLES) for (const c of el.classList) if (re.test(c)) return { type, origine, react, classe: c };
   return { type: GENERIQUES[el.tagName.toLowerCase()] || 'Conteneur', origine: null, react: null, classe: null };
@@ -912,6 +920,22 @@ function fusion(listes) {
     return pareil ? { ...xs[0], mention: '', zone: null } : { groupe, label, valeur: 'mixed', mixte: true };
   });
 }
+/* Hiérarchie commune aux quatre onglets : sections séparées par un trait, titre fr-text--sm gras, action éventuelle à droite du titre */
+function titreSection(titre, action = '', code = false) {
+  return `<div class="outil-groupe__tete fr-mb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-0${code ? ' outil-prop__nom' : ''}">${esc(titre)}</h3>${action}</div>`;
+}
+const section = (titre, corps, action = '', code = false) => `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(titre, action, code)}${corps}</section>`;
+/* En-tête de l'élément, au-dessus des onglets : type, origine, lien Storybook DSFR, nom de l'élément */
+function rendreElement(els) {
+  const z = $('insp-element');
+  if (els.length > 1) { z.innerHTML = `<h3 class="fr-h6 fr-mb-0">${els.length} éléments</h3><p class="fr-text--xs fr-mb-0 outil-mention">Sélection multiple</p>`; return; }
+  const id = identite(els[0]), sb = lienStorybook(id);
+  z.innerHTML = `<div class="outil-element__titre"><h3 class="fr-h6 fr-mb-0">${esc(id.type)}</h3>`
+    + (id.origine ? `<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--blue-france">Composant ${id.origine}</span>` : '')
+    + (sb ? `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-links-line" data-lien="${esc(sb)}" title="Ouvrir ${esc(id.type)} dans le Storybook du DSFR (nouvel onglet)">Ouvrir ${esc(id.type)} dans le Storybook du DSFR</button>` : '')
+    + `</div><p class="fr-text--xs fr-mb-0 outil-mention outil-element__nom">${esc(nom(els[0]))}${els[0].id ? ' #' + esc(els[0].id) : ''}</p>`;
+}
+$('insp-element').addEventListener('click', e => { const b = e.target.closest('[data-lien]'); if (b) window.open(b.dataset.lien, '_blank', 'noopener'); });
 /* Valeur non copiable (seuls les tokens et les classes se copient) */
 function texteValeur(texte, cls = '', avant = '') {
   return `<span class="outil-valeur outil-valeur--fixe fr-text--sm fr-mb-0 ${cls}">${avant}<span>${esc(texte)}</span></span>`;
@@ -923,17 +947,11 @@ function rendreProprietes() {
   const els = selection.filter(x => x.isConnected);
   if (!els.length) { $('panneau-proprietes').innerHTML = '<p class="fr-text--sm fr-mb-0">Sélectionnez un élément pour voir ses propriétés</p>'; return; }
   const lignes = fusion(els.map(proprietes));
-  let html;
-  if (els.length > 1) html = `<h3 class="fr-h6 fr-mb-0">${els.length} éléments</h3><p class="fr-text--xs fr-mb-1w outil-mention">Sélection multiple</p>`;
-  else {
-    const id = identite(els[0]);
-    html = `<h3 class="fr-h6 fr-mb-0">${esc(id.type)}${id.origine ? ` <span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--blue-france fr-ml-1v">Composant ${id.origine}</span>` : ''}</h3>`
-      + `<p class="fr-text--xs fr-mb-1w outil-mention outil-element__nom">${esc(nom(els[0]))}${els[0].id ? ' #' + esc(els[0].id) : ''}</p>`;
-  }
+  let html = '';
   GROUPES.forEach(g => {
     const ls = lignes.filter(x => x.groupe === g);
     if (!ls.length) return;
-    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-1w">${g}</h3>`;
+    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(g)}`;
     ls.forEach(x => {
       const pastille = x.couleur ? `<span class="outil-pastille" style="background-color:${esc(x.couleur)}"></span>` : '';
       let v = '';
@@ -1008,7 +1026,7 @@ function rendreTokens() {
     if (prop === 'background-image' ? calc === 'none' : prop === 'box-shadow' ? calc === 'none' : prop === 'border-top-color' ? !parseFloat(cs.borderTopWidth) : prop === 'outline-color' ? cs.outlineStyle === 'none' : transparent(calc)) return;
     const d = declaration(el, prop);
     const toks = d ? [...d.v.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]) : [];
-    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w"><h3 class="fr-text--sm fr-text--bold fr-mb-1w">${label}</h3>`;
+    html += `<section class="outil-groupe fr-pt-2w fr-pb-1w">${titreSection(label, '', true)}`;
     if (!toks.length) {
       html += texteValeur(hex(calc), '', prop.includes('color') ? `<span class="outil-pastille" style="background-color:${esc(calc)}"></span>` : '');
       html += '<p class="fr-text--xs fr-mb-0 outil-mention">Valeur fixe, aucune variable liée</p>';
@@ -1097,13 +1115,11 @@ function rendreCode() {
   const els = selection.filter(x => x.isConnected);
   if (!els.length) { $('panneau-code').innerHTML = '<p class="fr-text--sm fr-mb-0">Sélectionnez un élément pour voir son code</p>'; return; }
   const texte = els.map(code).join('\n\n');
-  $('panneau-code').innerHTML = `<div class="outil-actions fr-mb-2w">
-    <fieldset class="fr-segmented fr-segmented--sm fr-segmented--no-legend"><legend class="fr-segmented__legend">Langage</legend><div class="fr-segmented__elements">
+  $('panneau-code').innerHTML = section('Langage', `<fieldset class="fr-segmented fr-segmented--sm fr-segmented--no-legend fr-mb-1w"><legend class="fr-segmented__legend">Langage</legend><div class="fr-segmented__elements">
       <div class="fr-segmented__element"><input value="react" type="radio" id="lang-react" name="langage"${langage === 'react' ? ' checked' : ''}><label class="fr-label" for="lang-react">React</label></div>
       <div class="fr-segmented__element"><input value="css" type="radio" id="lang-css" name="langage"${langage === 'css' ? ' checked' : ''}><label class="fr-label" for="lang-css">CSS</label></div>
-    </div></fieldset>
-    <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" data-copie="${esc(texte)}"><span>Copier</span></button></div>
-    <pre class="outil-code fr-text--xs fr-mb-0"><code>${esc(texte)}</code></pre>`;
+    </div></fieldset>`)
+    + section('Code', `<pre class="outil-code fr-text--xs fr-mb-1w"><code>${esc(texte)}</code></pre>`, `<button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" data-copie="${esc(texte)}"><span>Copier</span></button>`);
 }
 $('panneau-code').addEventListener('change', e => { if (e.target.name === 'langage') { langage = e.target.value; local.ecrire('langage', langage); rendreCode(); $('lang-' + langage).focus(); } });
 
@@ -1174,15 +1190,15 @@ function rendreAssets() {
   if (el.every(x => !visibleEl(x) || !x.getClientRects().length)) { p.innerHTML = '<p class="fr-text--sm fr-mb-0">Rien à exporter : cet élément est vide ou masqué</p>'; assetsCourants = []; return; }
   assetsCourants = el.flatMap(assets);
   if (!assetsCourants.length) { p.innerHTML = '<p class="fr-text--sm fr-mb-0">Aucune image ni icône dans cet élément.</p>'; return; }
-  const seg = (name, label, vals, cur, cls = '') => `<fieldset class="fr-segmented fr-segmented--sm fr-mb-2w ${cls}"><legend class="fr-segmented__legend fr-text--sm">${label}</legend><div class="fr-segmented__elements">`
+  const seg = (name, label, vals, cur, cls = '') => `<fieldset class="fr-segmented fr-segmented--sm fr-mb-1w ${cls}"><legend class="fr-segmented__legend fr-text--sm">${label}</legend><div class="fr-segmented__elements">`
     + vals.map(([v, l]) => `<div class="fr-segmented__element"><input value="${v}" type="radio" id="${name}-${v}" name="${name}"${String(cur) === String(v) ? ' checked' : ''}><label class="fr-label" for="${name}-${v}">${l}</label></div>`).join('') + '</div></fieldset>';
   const noms = nomsFichiers(assetsCourants);
-  p.innerHTML = seg('asset-format', 'Format', [['png', 'PNG'], ['jpg', 'JPG'], ['svg', 'SVG']], assetFormat, 'fr-mr-3w')
-    + (assetFormat === 'svg' ? '<p class="fr-text--xs fr-mb-2w outil-mention">SVG : format vectoriel, sans échelle.</p>' : seg('asset-echelle', 'Échelle', [[1, '1x'], [2, '2x'], [3, '3x'], [4, '4x']], assetEchelle))
-    + '<p class="fr-text--sm fr-text--bold fr-mb-1w">Aperçu</p><div class="outil-apercu fr-mb-2w" id="asset-apercu"></div>'
-    + `<fieldset class="fr-fieldset fr-mb-0"><legend class="fr-fieldset__legend fr-fieldset__legend--regular fr-text--sm">Assets à exporter</legend>`
+  p.innerHTML = section('Export', seg('asset-format', 'Format', [['png', 'PNG'], ['jpg', 'JPG'], ['svg', 'SVG']], assetFormat, 'fr-mr-3w')
+    + (assetFormat === 'svg' ? '<p class="fr-text--xs fr-mb-1w outil-mention">SVG : format vectoriel, sans échelle.</p>' : seg('asset-echelle', 'Échelle', [[1, '1x'], [2, '2x'], [3, '3x'], [4, '4x']], assetEchelle)))
+    + section('Aperçu', '<div class="outil-apercu fr-mb-1w" id="asset-apercu"></div>')
+    + section('Fichiers', `<fieldset class="fr-fieldset fr-mb-0"><legend class="fr-sr-only">Fichiers à exporter</legend>`
     + assetsCourants.map((a, i) => `<div class="fr-fieldset__element"><div class="fr-checkbox-group fr-checkbox-group--sm"><input type="checkbox" id="asset-${i}" checked data-asset="${i}"><label class="fr-label" for="asset-${i}"><span class="outil-asset"><span class="outil-asset__vignette" id="asset-vignette-${i}"></span><span class="outil-asset__nom">${esc(noms[i])}</span></span></label></div></div>`).join('')
-    + '</fieldset><button type="button" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-download-line" id="asset-exporter">Télécharger</button>';
+    + '</fieldset><button type="button" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-download-line fr-mb-1w" id="asset-exporter">Télécharger</button>');
   apercus();
 }
 async function apercus() {
@@ -1244,6 +1260,7 @@ function rafraichir() {
   $('insp-vide').hidden = els.length > 0; $('insp-contenu').hidden = !els.length;
   if (!els.length) return;
   if (premier) placerIndicateur(false);
+  rendreElement(els);
   ({ proprietes: rendreProprietes, code: rendreCode, tokens: rendreTokens, assets: rendreAssets })[onglet]();
 }
 function ouvrirInspecteur() {

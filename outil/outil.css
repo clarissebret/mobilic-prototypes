@@ -82,6 +82,8 @@
 .outil-inspecteur__vide { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; }
 .outil-inspecteur__pictogramme { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%;
   background-color: var(--background-contrast-grey); color: var(--text-mention-grey); }
+.outil-groupe__tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.outil-element__titre { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .outil-element__nom { font-family: monospace; overflow-wrap: anywhere; }
 .outil-inspecteur__agrandir { display: none; }
 /* Onglets DSFR sans le conteneur .fr-tabs (piloté sans le JS du DSFR) : neutralise les marges et la puce de liste */
@@ -102,7 +104,7 @@
 .outil-panneau[hidden] { display: none; }
 
 .outil-groupe + .outil-groupe { box-shadow: inset 0 1px 0 0 var(--border-default-grey); }
-.outil-prop { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 0 8px; align-items: baseline; }
+.outil-prop { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 0 8px; align-items: baseline; }
 .outil-prop__nom { font-family: monospace; overflow-wrap: anywhere; }
 .outil-prop__valeurs { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .outil-valeur { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 0 4px; border: 0; border-radius: .25rem; background: none; color: inherit;
