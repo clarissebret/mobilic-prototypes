@@ -69,6 +69,10 @@
 .outil-inspecteur__titre { flex: 1; min-width: 0; }
 .outil-inspecteur__contenu { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .outil-inspecteur__contenu[hidden], .outil-inspecteur__vide[hidden] { display: none; }
+/* État vide : pictogramme et consigne centrés dans la carte */
+.outil-inspecteur__vide { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; }
+.outil-inspecteur__pictogramme { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%;
+  background-color: var(--background-contrast-grey); color: var(--text-mention-grey); }
 .outil-element__nom { font-family: monospace; overflow-wrap: anywhere; }
 .outil-inspecteur__agrandir { display: none; }
 /* Onglets DSFR sans le conteneur .fr-tabs (piloté sans le JS du DSFR) : neutralise les marges et la puce de liste */
