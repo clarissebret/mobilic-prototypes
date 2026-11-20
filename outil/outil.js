@@ -66,12 +66,13 @@ format = { w: format.w };
 let echelle = 1, hauteur = 740, glisse = false;
 const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
 const estMobile = () => format.w < 768;
-/* Espace disponible pour le cadre, centré sur la fenêtre (donc sur la barre) : la poignée garde 16 px de chaque côté.
-   Si l'inspecteur ne laisse pas 280 px centrés, le cadre se centre dans l'espace restant. */
+/* Espace disponible pour le cadre ; la poignée garde 16 px de chaque côté.
+   Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés.
+   Desktop : toute la largeur libre à côté de l'inspecteur, quitte à ne plus être centré sur la barre. */
 function dispo() {
   const cs = getComputedStyle(vue), lib = $('format-libelle'), r = vue.getBoundingClientRect();
   const g = r.left + parseFloat(cs.paddingLeft), d = r.right - parseFloat(cs.paddingRight), c = innerWidth / 2;
-  const centre = 2 * Math.min(c - g, d - c) - 32, ok = centre >= 280;
+  const centre = 2 * Math.min(c - g, d - c) - 32, ok = estMobile() && centre >= 280;
   return {
     w: ok ? centre : d - g - 32,
     milieu: (ok ? c : (g + d) / 2) - g,
