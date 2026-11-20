@@ -978,10 +978,10 @@ function rendreAssets() {
   if (el.every(x => !visibleEl(x) || !x.getClientRects().length)) { p.innerHTML = '<p class="fr-text--sm fr-mb-0">Rien à exporter : cet élément est vide ou masqué</p>'; assetsCourants = []; return; }
   assetsCourants = el.flatMap(assets);
   if (!assetsCourants.length) { p.innerHTML = '<p class="fr-text--sm fr-mb-0">Aucune image ni icône dans cet élément.</p>'; return; }
-  const seg = (name, label, vals, cur) => `<fieldset class="fr-segmented fr-segmented--sm fr-mb-2w"><legend class="fr-segmented__legend fr-text--sm">${label}</legend><div class="fr-segmented__elements">`
+  const seg = (name, label, vals, cur, cls = '') => `<fieldset class="fr-segmented fr-segmented--sm fr-mb-2w ${cls}"><legend class="fr-segmented__legend fr-text--sm">${label}</legend><div class="fr-segmented__elements">`
     + vals.map(([v, l]) => `<div class="fr-segmented__element"><input value="${v}" type="radio" id="${name}-${v}" name="${name}"${String(cur) === String(v) ? ' checked' : ''}><label class="fr-label" for="${name}-${v}">${l}</label></div>`).join('') + '</div></fieldset>';
   const noms = nomsFichiers(assetsCourants);
-  p.innerHTML = seg('asset-format', 'Format', [['png', 'PNG'], ['jpg', 'JPG'], ['svg', 'SVG']], assetFormat)
+  p.innerHTML = seg('asset-format', 'Format', [['png', 'PNG'], ['jpg', 'JPG'], ['svg', 'SVG']], assetFormat, 'fr-mr-3w')
     + (assetFormat === 'svg' ? '<p class="fr-text--xs fr-mb-2w outil-mention">SVG : format vectoriel, sans échelle.</p>' : seg('asset-echelle', 'Échelle', [[1, '1x'], [2, '2x'], [3, '3x'], [4, '4x']], assetEchelle))
     + '<p class="fr-text--sm fr-text--bold fr-mb-1w">Aperçu</p><div class="outil-apercu fr-mb-2w" id="asset-apercu"></div>'
     + `<fieldset class="fr-fieldset fr-mb-0"><legend class="fr-fieldset__legend fr-fieldset__legend--regular fr-text--sm">Assets à exporter</legend>`
