@@ -109,6 +109,8 @@ def picto(m):
 while '{{FILE:' in app:   # fragments, éventuellement imbriqués
     app = re.sub(r'\{\{FILE:([a-z.-]+)\}\}', lambda m: open(B + m.group(1)).read(), app)
 app = re.sub(r'\{\{PICTO:([a-z/-]+)\}\}', picto, app)
+# Illustrations propres au prototype (SVG dans son dossier)
+app = re.sub(r'\{\{IMG:([a-z.-]+\.svg)\}\}', lambda m: datauri(B + m.group(1)), app)
 app = (app.replace('{{LOGO}}', logo).replace('{{NATS}}', NATS)
        .replace('{{DATE:f}}', date_group('f')).replace('{{DATE:b}}', date_group('b')))
 for n in (1, 2, 3):

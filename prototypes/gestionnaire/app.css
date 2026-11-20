@@ -1,5 +1,7 @@
 /* Styles propres à l'interface gestionnaire, uniquement à partir des tokens DSFR */
 .screen { display: none; }
+/* L'attribut hidden l'emporte sur les display des composants DSFR et Mobilic */
+.screen [hidden] { display: none !important; }
 .screen.active { display: block; }
 .mention { color: var(--text-mention-grey); }
 .required { color: var(--text-default-error); }
@@ -10,10 +12,13 @@
 
 /* Colonne de lecture sur grand écran */
 .page-col { max-width: 48rem; margin: 0 auto; }
+.page-col--etroite { max-width: 36rem; }
 
 /* Choix du métier : tuiles empilées sur mobile, côte à côte au-delà */
-.metiers { display: grid; gap: 1rem; max-width: 40rem; margin: 0 auto; }
+.metiers { display: grid; gap: 1rem; max-width: 48rem; margin: 0 auto; }
 @media (min-width: 36em) { .metiers { grid-template-columns: 1fr 1fr; } }
+/* Illustrations des métiers à 80 px, taille des pictogrammes DSFR (la tuile --sm les réduirait à 56 px) */
+.metiers .fr-tile__pictogram, .metiers .fr-tile__pictogram img { width: 5rem; height: 5rem; }
 
 /* Pages Cerbère simulées (hors Mobilic) */
 .cerbere.active { min-height: 100vh; display: flex; flex-direction: column; background-color: var(--background-alt-blue-france); }

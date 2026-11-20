@@ -1,0 +1,32 @@
+<svg width="80px" height="80px" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pictogramme Mobilic « Gestionnaire », dans le style des pictogrammes DSFR :
+       trait de 2, peu d'interruptions, toujours le même écart visible (3) entre deux traits,
+       rouge jamais superposé au bleu, points décoratifs -->
+  <style>
+    .decorative { fill: #ECECFF; }
+    .minor { fill: none; stroke: #E1000F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .major { fill: none; stroke: #000091; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+  <!-- Points décoratifs -->
+  <circle class="decorative" cx="10" cy="20" r="1"/>
+  <circle class="decorative" cx="72" cy="12" r="1"/>
+  <circle class="decorative" cx="38" cy="77" r="1"/>
+  <!-- Gestionnaire derrière le bureau -->
+  <path class="major" d="M45.64 19.95A6 6 0 1 1 42.15 16.4"/>
+  <path class="major" d="M29 42v-4a6 6 0 0 1 6-6h10a6 6 0 0 1 6 6v4"/>
+  <!-- Dossiers empilés, celui du milieu en rouge -->
+  <path class="major" d="M12 31h12"/>
+  <path class="minor" d="M13 36h10"/>
+  <path class="major" d="M12 41h12"/>
+  <!-- Relevé -->
+  <path class="major" d="M56 47V31h10v11"/>
+  <path class="minor" d="M60 35h2M60 39h2"/>
+  <!-- Bureau -->
+  <path class="major" d="M8 47h64"/>
+  <path class="major" d="M13 47v19M67 52v14"/>
+  <path class="major" d="M18 52h44v10H18z"/>
+  <path class="minor" d="M36 57h8"/>
+  <!-- Sol (une interruption) et pointillés -->
+  <path class="major" d="M6 71h31M42 71h32"/>
+  <path class="minor" d="M16 76h8M56 76h8"/>
+</svg>

@@ -5,23 +5,24 @@
 <section class="screen" id="screen-metier">
   {{FILE:header.html}}
   <div class="fr-container fr-pt-5w fr-pb-5w">
-    <h1 class="fr-h3 fr-mb-4w center">Quel est votre métier&nbsp;?</h1>
+    <h1 class="fr-h3 fr-mt-3w fr-mb-5w center">Créer un compte en tant que</h1>
     <div class="metiers">
       <div class="fr-tile fr-tile--sm fr-enlarge-link">
         <div class="fr-tile__body"><div class="fr-tile__content">
-          <h2 class="fr-tile__title"><a href="#" onclick="toast('Parcours salarié&nbsp;: hors scope');return false">Travailleur mobile</a></h2>
-          <p class="fr-tile__detail">Je suis salarié ou indépendant et je renseigne mon temps de travail</p>
+          <h2 class="fr-tile__title fr-h6"><a href="#" onclick="toast('Parcours salarié&nbsp;: hors scope');return false">Travailleur mobile</a></h2>
+          <p class="fr-tile__detail fr-text--sm fr-mt-1v">Je suis travailleur mobile et je renseigne mon temps de travail</p>
         </div></div>
-        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:map/backpack}}" alt=""></div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{IMG:picto-travailleur.svg}}" alt=""></div></div>
       </div>
       <div class="fr-tile fr-tile--sm fr-enlarge-link">
         <div class="fr-tile__body"><div class="fr-tile__content">
-          <h2 class="fr-tile__title"><a href="#" onclick="go('compte');return false">Gestionnaire</a></h2>
-          <p class="fr-tile__detail">Je gère le temps de travail des salariés de mon entreprise</p>
+          <h2 class="fr-tile__title fr-h6"><a href="#" onclick="go('compte');return false">Gestionnaire</a></h2>
+          <p class="fr-tile__detail fr-text--sm fr-mt-1v">Je gère le temps de travail des salariés de mon entreprise</p>
         </div></div>
-        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:buildings/companie}}" alt=""></div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{IMG:picto-gestionnaire.svg}}" alt=""></div></div>
       </div>
     </div>
+    <p class="fr-mt-4w fr-mb-0 center">Déjà un compte&nbsp;? <a class="fr-link" href="#" onclick="ouvrirConnexion();return false">Se connecter</a></p>
   </div>
 </section>
 
@@ -36,8 +37,63 @@
         <p class="fr-mb-0">Pour créer votre compte, vous allez être redirigé vers Cerbère, le service de connexion sécurisée des ministères chargés des transports. Vous reviendrez ensuite sur Mobilic pour inscrire votre entreprise.</p>
         <div class="cerbere-cta fr-mt-3w">
           <button type="button" class="fr-btn fr-btn--lg" onclick="go('cerbere-1')">Continuer</button>
-          <a class="fr-link" href="https://identite.din.developpement-durable.gouv.fr/aide/" target="_blank" rel="noopener" title="Qu'est-ce que Cerbère&nbsp;? - nouvelle fenêtre">Qu'est-ce que Cerbère&nbsp;?</a>
+          <a class="fr-link fr-link--sm" href="https://identite.din.developpement-durable.gouv.fr/aide/" target="_blank" rel="noopener" title="Qu'est-ce que Cerbère&nbsp;? - nouvelle fenêtre">Qu'est-ce que Cerbère&nbsp;?</a>
         </div>
+        <hr class="fr-hr fr-mt-4w fr-pb-3w">
+        <p class="fr-mb-0 center"><a class="fr-link" href="#" onclick="ouvrirConnexion();return false">J'ai déjà un compte</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONNEXION : CHOIX DU PROFIL (Mobilic) -->
+<section class="screen" id="screen-profil">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <h1 class="fr-h3 fr-mt-3w fr-mb-5w center">Se connecter en tant que</h1>
+    <div class="metiers">
+      <div class="fr-tile fr-tile--sm fr-enlarge-link">
+        <div class="fr-tile__body"><div class="fr-tile__content">
+          <h2 class="fr-tile__title fr-h6"><a href="#" onclick="go('connexion');return false">Entreprise ou salarié</a></h2>
+          <p class="fr-tile__detail fr-text--sm fr-mt-1v">Je suis travailleur mobile ou gestionnaire d'une entreprise de transport</p>
+        </div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{IMG:picto-travailleur.svg}}" alt=""></div></div>
+      </div>
+      <div class="fr-tile fr-tile--sm fr-enlarge-link">
+        <div class="fr-tile__body"><div class="fr-tile__content">
+          <h2 class="fr-tile__title fr-h6"><a href="#" onclick="toast('Connexion contrôleur&nbsp;: hors scope');return false">Contrôleur</a></h2>
+          <p class="fr-tile__detail fr-text--sm fr-mt-1v">Je suis agent public de l'État et je me connecte à mon espace dédié</p>
+        </div></div>
+        <div class="fr-tile__header"><div class="fr-tile__pictogram"><img src="{{PICTO:institutions/police}}" alt=""></div></div>
+      </div>
+    </div>
+    <p class="fr-mt-4w fr-mb-0 center">Pas encore de compte&nbsp;? <a class="fr-link" href="#" onclick="resetAll();return false">Je m'inscris</a></p>
+  </div>
+</section>
+
+<!-- CONNEXION (Mobilic)&nbsp;: via Cerbère ou avec un compte Mobilic -->
+<section class="screen" id="screen-connexion">
+  {{FILE:header.html}}
+  <div class="fr-container fr-pt-5w fr-pb-5w">
+    <div class="page-col page-col--etroite">
+      <h1 class="fr-h3 fr-mt-3w fr-mb-5w center">Se connecter</h1>
+      <div class="encadre">
+        <p class="fr-mb-3w">Cerbère est le service de connexion sécurisée des ministères chargés des transports.</p>
+        <div class="cerbere-cta">
+          <button type="button" class="fr-btn fr-btn--lg" onclick="go('cerbere-login')">Continuer avec Cerbère</button>
+          <a class="fr-link fr-link--sm" href="https://identite.din.developpement-durable.gouv.fr/aide/" target="_blank" rel="noopener" title="Qu'est-ce que Cerbère&nbsp;? - nouvelle fenêtre">Qu'est-ce que Cerbère&nbsp;?</a>
+        </div>
+        <p class="fr-hr-or fr-my-4w">ou</p>
+        <div id="cx-form" oninput="cxValidate()">
+          <div class="fr-input-group"><label class="fr-label" for="cx-email">Adresse e-mail<span class="fr-hint-text">Format attendu&nbsp;: nom@domaine.fr</span></label><input class="fr-input" id="cx-email" type="email" autocomplete="email" required></div>
+          <div class="fr-input-group fr-mb-1w"><label class="fr-label" for="cx-mdp">Mot de passe</label><input class="fr-input" id="cx-mdp" type="password" autocomplete="current-password" required></div>
+          <p class="fr-mb-4w"><a class="fr-link fr-link--sm" href="#" onclick="toast('Mot de passe oublié&nbsp;: hors scope');return false">Mot de passe oublié&nbsp;?</a></p>
+          <ul class="fr-btns-group">
+            <li><button type="button" class="fr-btn fr-btn--lg" id="cx-submit" disabled onclick="toast('Espace gestionnaire&nbsp;: hors scope')">Se connecter</button></li>
+          </ul>
+        </div>
+        <hr class="fr-hr fr-mt-1w fr-pb-3w">
+        <p class="fr-mb-0 center"><a class="fr-link" href="#" onclick="resetAll();return false">Je n'ai pas de compte</a></p>
       </div>
     </div>
   </div>
@@ -63,6 +119,24 @@
         <ul class="fr-btns-group fr-btns-group--icon-left fr-mt-2w">
           <li><button type="button" class="fr-btn fr-icon-check-line" onclick="c1Submit()">Valider</button></li>
           <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" onclick="go('compte')">Annuler</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2c. CERBERE : CONNEXION A UN COMPTE EXISTANT (page simulée, hors Mobilic) -->
+<section class="screen cerbere" id="screen-cerbere-login">
+  {{FILE:header-cerbere.html}}
+  <div class="cerbere__body">
+    <div class="cerbere__card">
+      <h1 class="fr-h5 fr-mb-3w">Connexion à votre compte professionnel</h1>
+      <div id="cl-form" oninput="clValidate()">
+        <div class="fr-input-group"><label class="fr-label" for="cl-email">E-mail</label><input class="fr-input" id="cl-email" type="email" autocomplete="email" required></div>
+        <div class="fr-input-group"><label class="fr-label" for="cl-mdp">Mot de passe</label><input class="fr-input" id="cl-mdp" type="password" autocomplete="current-password" required></div>
+        <ul class="fr-btns-group fr-btns-group--icon-left fr-mt-2w">
+          <li><button type="button" class="fr-btn fr-icon-check-line" id="cl-submit" disabled onclick="clSubmit()">Valider</button></li>
+          <li><button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" onclick="go('connexion')">Annuler</button></li>
         </ul>
       </div>
     </div>
@@ -120,13 +194,14 @@
   <div class="fr-container fr-pt-5w fr-pb-5w">
     <div class="page-col">
       <h1 class="fr-h3 fr-mt-3w fr-mb-5w center">S'inscrire comme gestionnaire</h1>
-      <div class="fr-alert fr-alert--success fr-alert--sm fr-mb-4w"><p>Votre compte Mobilic a bien été créé</p></div>
+      <div class="fr-alert fr-alert--success fr-alert--sm fr-mb-4w" id="e-cree"><p>Votre compte Mobilic a bien été créé</p></div>
       <div class="encadre">
         <div class="fr-stepper fr-mb-4w"><h2 class="fr-stepper__title">Inscription de l'entreprise<span class="fr-stepper__state">Étape 2 sur 3</span></h2><div class="fr-stepper__steps" data-fr-current-step="2" data-fr-steps="3"></div><p class="fr-stepper__details"><span class="fr-text--bold">Étape suivante&nbsp;:</span> Finaliser votre inscription</p></div>
+        <div class="fr-alert fr-alert--info" id="e-deja" hidden>{{FILE:alerte-deja-inscrit.html}}</div>
         <p class="fr-mb-1w" id="e-intro"></p>
-        <p class="fr-hint-text fr-mb-3w"><span class="required">*</span> Informations obligatoires</p>
+        <p class="fr-hint-text fr-mb-3w" id="e-hint"><span class="required">*</span> Informations obligatoires</p>
         <div id="etabs" class="etabs" oninput="eValidate()" onchange="eValidate()"></div>
-        <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--right fr-mt-4w">
+        <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--right fr-mt-4w" id="e-actions">
           <li><button type="button" class="fr-btn fr-btn--lg" id="e-submit" disabled onclick="go('source')">Continuer</button></li>
         </ul>
       </div>
@@ -171,7 +246,7 @@
       <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--center">
         <li><button type="button" class="fr-btn" onclick="toast('Espace gestionnaire&nbsp;: hors scope')">Aller dans mon espace</button></li>
       </ul>
-      <div class="webinaire fr-mt-5w">
+      <div class="webinaire fr-mt-5w" id="webinaire">
         <h2 class="fr-h5 fr-mb-2w">Offrez-vous une formation gratuite de 45 minutes&nbsp;!</h2>
         <p class="fr-mb-0"><span class="fr-text--bold">Apprenez à maîtriser Mobilic</span> grâce à un accompagnement personnalisé et <span class="fr-text--bold">gagnez du temps</span>&nbsp;: formation à la mise en place, démonstration et réponse à toutes vos questions&nbsp;!</p>
         <div class="webinaire__row fr-mt-5w">

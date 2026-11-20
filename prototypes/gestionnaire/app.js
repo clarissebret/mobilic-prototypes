@@ -2,12 +2,18 @@ const $ = id => document.getElementById(id);
 const v = id => $(id).value.trim();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-/* Entreprises fictives : le SIREN de test a deux établissements, tout autre SIREN valide un seul */
+/* Entreprises fictives :
+   - 110014016 : deux établissements, celui de Lyon déjà inscrit sur Mobilic ;
+   - 220000002 : entreprise déjà inscrite sur Mobilic ;
+   - tout autre SIREN valide : un seul établissement. */
 const ENTREPRISES = {
   '110014016': { nom: 'DUPONT TRANSPORT SARL', etabs: [
     { siret: '11001401600015', nom: 'DUPONT TRANSPORT PARIS', adresse: '24 BOULEVARD DE L’EXEMPLE, 75007 PARIS', naf: '49.41A - Transports routiers de fret interurbains' },
-    { siret: '11001401600023', nom: '', adresse: '8 RUE DES ENTREPÔTS, 69007 LYON', naf: '49.41B - Transports routiers de fret de proximité' }] },
+    { siret: '11001401600023', nom: '', adresse: '8 RUE DES ENTREPÔTS, 69007 LYON', naf: '49.41B - Transports routiers de fret de proximité', inscrit: true }] },
+  '220000002': { nom: 'TRANSPORTS MARTIN SAS', inscrite: true, etabs: [
+    { siret: '22000000200014', nom: 'TRANSPORTS MARTIN', adresse: '3 AVENUE DU FICTIF, 33000 BORDEAUX', naf: '49.41B - Transports routiers de fret de proximité' }] },
 };
+const TRM = 'Marchandises (TRM)';
 const entreprise = siren => ENTREPRISES[siren] || { nom: 'ENTREPRISE FICTIVE ' + siren.slice(-3), etabs: [
   { siret: siren + '00012', nom: '', adresse: "12 RUE DE L'EXEMPLE, 35000 RENNES", naf: '49.41B - Transports routiers de fret de proximité' }] };
 
@@ -27,7 +33,7 @@ function go(name) {
   current = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + name));
   window.scrollTo(0, 0);
-  parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'fin'].includes(name) }, '*');
+  parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'profil', 'fin'].includes(name) }, '*');
 }
 /* Menu de l'en-tête sous 992 px : modale DSFR ouverte sans le JS du DSFR */
 function openMenu(btn) {
@@ -47,7 +53,11 @@ function back() {
   if (current === 'compte') return go('metier');
   if (current === 'cerbere-1') return go('compte');
   if (current === 'cerbere-2') return go('cerbere-1');
-  if (current === 'source') return go('etab');
+  if (current === 'connexion') return go('profil');
+  if (current === 'profil') return go(state.avantConnexion && !state.avantConnexion.startsWith('cerbere') ? state.avantConnexion : 'metier');
+  if (current === 'cerbere-login') return go('connexion');
+  /* Inscription de l'entreprise : le compte Cerbère existe, Retour ne fait rien */
+  if (current === 'source' && !state.repriseFinalisation) return go('etab');
   if (current === 'fin') return go('source');
 }
 function toast(msg) {
@@ -85,10 +95,30 @@ function c2Validate() {
 }
 function c2Submit() {
   state.email = v('c2-email');
-  state.telGestionnaire = v('c2-tel') || v('c2-mobile');
+  /* Téléphone repris de Cerbère : le portable est prioritaire sur le fixe */
+  state.telGestionnaire = v('c2-mobile') || v('c2-tel');
+  state.codePays = v('c2-codepays');
+  state.compteCree = true;
+  ouvrirInscriptionEntreprise();
+}
+function ouvrirInscriptionEntreprise() {
   state.ent = entreprise(state.siren);
   state.selected = state.ent.etabs.length === 1 ? [0] : [];
   renderEtabs(); go('etab');
+}
+
+/* ---------- Connexion (Mobilic) : via Cerbère ou avec un compte Mobilic ---------- */
+/* Choix du profil (entreprise ou salarié, contrôleur), puis page de connexion */
+function ouvrirConnexion() { if (!['profil', 'connexion'].includes(current)) state.avantConnexion = current; go('profil'); }
+function cxValidate() { $('cx-submit').disabled = !(v('cx-email') && $('cx-mdp').value); }
+
+/* ---------- 2c. Cerbère : connexion à un compte existant ---------- */
+function clValidate() { $('cl-submit').disabled = !(v('cl-email') && $('cl-mdp').value); }
+function clSubmit() {
+  /* Compte existant fictif : SIREN de test, sans téléphone */
+  state.email = v('cl-email'); state.siren = '110014016'; state.telGestionnaire = ''; state.codePays = '';
+  state.compteCree = false;
+  ouvrirInscriptionEntreprise();
 }
 
 /* ---------- 3. Détails de l'entreprise ---------- */
@@ -103,6 +133,12 @@ const telField = (id, label, req) => `<div class="fr-input-group tel" id="${id}-
 </div>`;
 function renderEtabs() {
   const ent = state.ent, seul = ent.etabs.length === 1;
+  /* Alerte « compte créé » seulement à la sortie de la création du compte Cerbère */
+  $('e-cree').hidden = !state.compteCree;
+  /* Entreprise déjà inscrite : seulement l'alerte, pas de formulaire */
+  $('e-deja').hidden = !ent.inscrite;
+  ['e-intro', 'e-hint', 'etabs', 'e-actions'].forEach(id => $(id).hidden = !!ent.inscrite);
+  if (ent.inscrite) { $('etabs').innerHTML = ''; return; }
   $('e-intro').textContent = seul ? 'Votre établissement :' : 'Veuillez sélectionner un ou plusieurs établissements :';
   $('etabs').innerHTML = ent.etabs.map((e, i) => {
     const id = 'et' + i, sel = state.selected.includes(i);
@@ -110,16 +146,16 @@ function renderEtabs() {
     return `<div class="etab${sel ? ' etab--selected etab--open' : ''}" id="${id}">
       ${seul ? `<p class="etab__head fr-mb-0">${head}</p>` : `<div class="fr-checkbox-group"><input type="checkbox" id="${id}-check" ${sel ? 'checked' : ''} onchange="toggleEtab(${i}, this.checked)"><label class="fr-label" for="${id}-check"><span class="etab__head">${head}</span></label></div>`}
       <div class="etab__body"><div class="etab__clip" ${sel ? '' : 'inert'}><div class="etab__fields">
-        <div class="fr-input-group"><label class="fr-label" for="${id}-nom">Nom usuel <span class="required">*</span></label><input class="fr-input" id="${id}-nom" required value="${esc(e.nom)}"></div>
+        ${e.inscrit ? `<div class="fr-alert fr-alert--info"><h3 class="fr-alert__title">Cet établissement est déjà inscrit sur Mobilic</h3><p>Rapprochez-vous d'un gestionnaire de votre entreprise pour qu'il vous donne accès à son espace.</p></div>` : `<div class="fr-input-group"><label class="fr-label" for="${id}-nom">Nom usuel <span class="required">*</span></label><input class="fr-input" id="${id}-nom" required value="${esc(e.nom)}"></div>
         ${telField(id + '-tel', "Numéro de téléphone de l'entreprise", false)}
-        <div class="fr-input-group"><label class="fr-label" for="${id}-nb">Nombre de salariés concernés par Mobilic <span class="required">*</span><span class="fr-hint-text">Exemple : chauffeurs, accompagnateurs, agents…</span></label><input class="fr-input" id="${id}-nb" type="number" min="1" inputmode="numeric" required></div>
+        <div class="fr-input-group" id="${id}-nb-group"><label class="fr-label" for="${id}-nb">Nombre de salariés concernés par Mobilic <span class="required">*</span><span class="fr-hint-text">Exemple : chauffeurs, accompagnateurs, agents…</span></label><input class="fr-input" id="${id}-nb" type="number" min="1" inputmode="numeric" required><p class="fr-error-text" id="${id}-nb-error" style="display:none">Indiquez au moins 1 salarié.</p></div>
         <div>
           <div class="etab__row">
             <div class="fr-select-group"><label class="fr-label" for="${id}-type">Type de transport routier <span class="required">*</span></label><select class="fr-select" id="${id}-type" required>${opts(TYPES, 'Sélectionner un type')}</select></div>
-            <div class="fr-select-group"><label class="fr-label" for="${id}-act">Activité principale <span class="required">*</span></label><select class="fr-select" id="${id}-act" required>${opts(ACTIVITES, 'Sélectionner une activité')}</select></div>
+            <div class="fr-select-group fr-select-group--disabled" id="${id}-act-group"><label class="fr-label" for="${id}-act">Activité principale <span class="required">*</span></label><select class="fr-select" id="${id}-act" disabled>${opts(ACTIVITES, 'Sélectionner une activité')}</select></div>
           </div>
           <div class="fr-messages-group fr-mt-1w"><p class="fr-message fr-message--info">Ce type d'activité sera appliqué par défaut à tous les salariés de l'établissement. Vous pourrez le modifier ensuite pour chaque salarié.</p></div>
-        </div>
+        </div>`}
       </div></div></div>
     </div>`;
   }).join('');
@@ -135,21 +171,36 @@ function toggleEtab(i, on) {
   eValidate();
 }
 function eValidate() {
-  const ok = state.selected.length > 0 && state.selected.every(i => ['nom', 'nb', 'type', 'act'].every(k => v(`et${i}-${k}`) !== '') && Number(v(`et${i}-nb`)) >= 1);
-  $('e-submit').disabled = !ok;
+  const etabs = state.ent ? state.ent.etabs : [];
+  etabs.forEach((e, i) => {
+    if (e.inscrit || !$(`et${i}-type`)) return;
+    /* Activité principale : seulement pour le transport de marchandises, grisée sinon */
+    const trm = $(`et${i}-type`).value === TRM, act = $(`et${i}-act`);
+    if (act.disabled === trm) { act.disabled = !trm; act.required = trm; if (!trm) act.value = ''; $(`et${i}-act-group`).classList.toggle('fr-select-group--disabled', !trm); }
+    /* Nombre de salariés : 1 au moins */
+    const nb = v(`et${i}-nb`); fieldError(`et${i}-nb-group`, nb !== '' && !(Number(nb) >= 1));
+  });
+  /* Les établissements déjà inscrits ne comptent pas : au moins un autre doit être sélectionné et complet */
+  const aInscrire = state.selected.filter(i => !etabs[i].inscrit);
+  const complet = i => ['nom', 'nb', 'type'].every(k => v(`et${i}-${k}`) !== '') && Number(v(`et${i}-nb`)) >= 1 && ($(`et${i}-type`).value !== TRM || v(`et${i}-act`) !== '');
+  $('e-submit').disabled = !(aInscrire.length > 0 && aInscrire.every(complet));
 }
 
 /* ---------- 4. Finalisation de l'inscription ---------- */
 function renderSources() {
-  /* Téléphone du gestionnaire : demandé ici seulement s'il n'a été donné ni comme téléphone ni comme portable sur Cerbère */
-  if (!state.telGestionnaire && !$('s-gtel')) $('s-gtel-wrap').innerHTML = '<div class="fr-mb-4w">' + telField('s-gtel', 'Votre numéro de téléphone', true) + '</div>';
-  if (state.telGestionnaire) $('s-gtel-wrap').innerHTML = '';
+  /* Téléphone du gestionnaire : toujours demandé, prérempli avec celui de Cerbère (portable, sinon fixe) */
+  if (!$('s-gtel')) {
+    $('s-gtel-wrap').innerHTML = '<div class="fr-mb-4w">' + telField('s-gtel', 'Votre numéro de téléphone', true) + '</div>';
+    $('s-gtel').value = state.telGestionnaire || '';
+    const code = (state.codePays || '').replace(/\s/g, '').replace(/^00/, '+').replace(/^(\d)/, '+$1');
+    if (code && [...$('s-gtel-code').options].some(o => o.value === code)) $('s-gtel-code').value = code;
+  }
   sValidate();
   if ($('f-sources').children.length) return;
   $('f-sources').innerHTML = SOURCES.map((s, i) => `<div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" name="source" id="src-${i}" value="${esc(s)}"><label class="fr-label" for="src-${i}">${esc(s)}</label></div></div>`).join('');
 }
 
-function sValidate() { $('s-submit').disabled = !!$('s-gtel') && v('s-gtel') === ''; }
+function sValidate() { $('s-submit').disabled = v('s-gtel') === ''; }
 
 /* ---------- 5. Confirmation et webinaire ---------- */
 function renderFin() {
@@ -161,9 +212,13 @@ function renderFin() {
   $('w-mois').textContent = d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '') + ' ' + d.getFullYear();
   $('w-heure').textContent = '10:00';
   $('w-btn').disabled = false; $('w-btn').textContent = "S'inscrire";
+  /* Aucun webinaire programmé : l'encart est masqué */
+  $('webinaire').hidden = !!state.sansWebinaire;
 }
 function webinaire() { $('w-btn').disabled = true; $('w-btn').textContent = 'Inscription confirmée'; toast('Inscription au webinaire confirmée'); }
 
+/* Compte Cerbère fictif pour les parcours de reprise */
+function demoCompte() { state.email = 'camille.martin@example.fr'; state.siren = '123456789'; state.telGestionnaire = '06 39 98 12 34'; state.codePays = ''; state.compteCree = false; }
 function resetAll() {
   document.querySelectorAll('input, select').forEach(el => { if (el.type === 'radio' || el.type === 'checkbox') el.checked = false; else el.value = ''; });
   document.querySelectorAll('.fr-input-group--error').forEach(g => fieldError(g.id, false));
@@ -177,5 +232,10 @@ window.addEventListener('message', e => {
   const m = e.data || {};
   if (m.type !== 'cmd') return;
   if (m.name === 'flow-inscription' || m.name === 'reset') resetAll();
+  /* Reprise à la connexion : compte créé mais entreprise pas encore inscrite */
+  if (m.name === 'flow-reprise-entreprise') { resetAll(); demoCompte(); ouvrirInscriptionEntreprise(); }
+  /* Reprise à la connexion : entreprise inscrite, finalisation pas terminée */
+  if (m.name === 'flow-reprise-finalisation') { resetAll(); demoCompte(); state.repriseFinalisation = true; renderSources(); go('source'); }
+  if (m.name === 'flow-sans-webinaire') { resetAll(); state.sansWebinaire = true; }
   if (m.name === 'back') back();
 });

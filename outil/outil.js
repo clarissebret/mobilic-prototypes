@@ -593,14 +593,43 @@ frame.addEventListener('load', () => { if (recharge) { recharge = false; fonduCa
 if (doc() && doc().readyState === 'complete') installer();
 
 /* ---------- Lecture des styles : règles, déclarations, tokens ---------- */
-let REGLES = null, TOKENS = null;
+/* Les règles sont lues une seule fois : sélecteurs découpés, spécificité, validité, et un index par
+   classe, id ou balise du dernier composé du sélecteur (comme un navigateur). Un élément n'est ainsi
+   comparé qu'aux quelques règles qui peuvent le viser, au lieu des ~3 000 règles du DSFR. */
+let REGLES = null, TOKENS = null, INDEX = null;
+const ETATS = /:(hover|active|focus-visible|focus-within|focus)\b/g;
+function valide(s) { try { doc().documentElement.matches(s); return true; } catch (e) { return false; } }
+/* Clé d'index d'un sélecteur : id, sinon classe, sinon balise du dernier composé, sinon * */
+function cle(s) {
+  let prof = 0, debut = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '(' || c === '[') prof++;
+    else if (c === ')' || c === ']') prof--;
+    else if (!prof && (c === ' ' || c === '>' || c === '+' || c === '~')) debut = i + 1;
+  }
+  let comp = s.slice(debut).replace(/\[[^\]]*\]/g, '');
+  if (comp.includes('\\')) return '*';
+  while (/\([^()]*\)/.test(comp)) comp = comp.replace(/\([^()]*\)/g, '');
+  comp = comp.replace(/::?[\w-]+/g, '');
+  const m = /#([\w-]+)/.exec(comp) || /\.([\w-]+)/.exec(comp);
+  if (m) return m[0][0] + m[1];
+  const t = /^[a-zA-Z][\w-]*/.exec(comp);
+  return t ? t[0].toLowerCase() : '*';
+}
 function regles() {
   if (REGLES) return REGLES;
-  REGLES = []; TOKENS = { clair: new Map(), sombre: new Map() };
+  REGLES = []; TOKENS = { clair: new Map(), sombre: new Map() }; INDEX = new Map();
   const parcourir = (liste, src, media) => {
     for (const r of liste) {
       if (r.selectorText !== undefined && r.style) {
-        REGLES.push({ r, src, media, ordre: REGLES.length });
+        const regle = { r, src, media, ordre: REGLES.length };
+        regle.sels = decouper(r.selectorText).map(s => {
+          const sans = s.replace(ETATS, '') || '*';
+          return { s, sans, sp: specificite(s), ok: valide(s), okSans: sans === s ? null : valide(sans), regle };
+        });
+        regle.sels.forEach(x => { const k = cle(x.sans); if (!INDEX.has(k)) INDEX.set(k, []); INDEX.get(k).push(x); });
+        REGLES.push(regle);
         if (!media && (r.selectorText === ':root' || r.selectorText === ':root[data-fr-theme=dark]' || r.selectorText === ':root[data-fr-theme="dark"]')) {
           const m = r.selectorText === ':root' ? TOKENS.clair : TOKENS.sombre;
           for (const p of r.style) if (p.startsWith('--')) m.set(p, r.style.getPropertyValue(p).trim());
@@ -619,15 +648,29 @@ function specificite(sel) {
   return a * 10000 + b * 100 + c;
 }
 const decouper = sel => sel.split(/,(?![^(]*\))/).map(x => x.trim());
-function correspondances(el, avecEtats) {
-  const W = win();
-  return regles().filter(({ r, media }) => {
-    if (media && !W.matchMedia(media).matches) return false;
-    return decouper(r.selectorText).some(s => { try { return el.matches(avecEtats ? s.replace(/:(hover|active|focus-visible|focus-within|focus)\b/g, '') || '*' : s); } catch (e) { return false; } });
-  }).map(x => {
-    const sp = Math.max(...decouper(x.r.selectorText).map(s => { try { return el.matches(s) ? specificite(s) : -1; } catch (e) { return -1; } }));
-    return { ...x, sp };
-  });
+/* Résultat des @media, mis en cache pour une largeur de cadre donnée */
+let cacheMedia = new Map(), largeurMedia = 0;
+function mediaActif(m) {
+  const lc = doc().documentElement.clientWidth;
+  if (lc !== largeurMedia) { cacheMedia = new Map(); largeurMedia = lc; }
+  if (!cacheMedia.has(m)) cacheMedia.set(m, win().matchMedia(m).matches);
+  return cacheMedia.get(m);
+}
+/* Règles qui visent l'élément, dans l'ordre des feuilles de style. avecEtats : en ignorant :hover, :focus…
+   toutesMedias : y compris les règles dont le @media ne s'applique pas à la largeur actuelle. */
+function correspondances(el, avecEtats, toutesMedias) {
+  regles();
+  const cles = ['*', el.tagName.toLowerCase()];
+  if (el.id) cles.push('#' + el.id);
+  for (const c of el.classList) cles.push('.' + c);
+  const trouvees = new Map();
+  for (const k of cles) for (const x of INDEX.get(k) || []) {
+    const { regle } = x;
+    if (regle.media && !toutesMedias && !mediaActif(regle.media)) continue;
+    if (x.ok && el.matches(x.s)) trouvees.set(regle, Math.max(trouvees.get(regle) ?? -1, x.sp));
+    else if (avecEtats && x.okSans && !trouvees.has(regle) && el.matches(x.sans)) trouvees.set(regle, -1);
+  }
+  return [...trouvees].sort((a, b) => a[0].ordre - b[0].ordre).map(([regle, sp]) => ({ ...regle, sp }));
 }
 const RACCOURCIS = {
   'background-color': ['background'], 'background-image': ['background'], color: [],
@@ -839,8 +882,8 @@ function responsive(el) {
   });
   /* Règles propres à Mobilic qui dépendent de la largeur */
   const medias = new Set();
-  regles().filter(x => x.src === 'mobilic' && x.media).forEach(x => { if (decouper(x.r.selectorText).some(s => { try { return el.matches(s); } catch (e) { return false; } })) medias.add(x.media); });
-  if (medias.size) out.push(ligne('Responsive', 'Mobilic @media', [...medias].join(' '), { items: [...medias].map(m => ({ texte: `@media ${m}`, actif: win().matchMedia(m).matches })) }));
+  correspondances(el, false, true).forEach(x => { if (x.src === 'mobilic' && x.media) medias.add(x.media); });
+  if (medias.size) out.push(ligne('Responsive', 'Mobilic @media', [...medias].join(' '), { items: [...medias].map(m => ({ texte: `@media ${m}`, actif: mediaActif(m) })) }));
   if (out.length) { const p = palier(), seuil = PALIERS.find(x => x[0] === p)[1]; out.unshift(ligne('Responsive', 'breakpoint', seuil ? `${p} · ≥ ${seuil}px` : `${p} · < 576px`)); }
   return out;
 }
@@ -1289,6 +1332,8 @@ function ouvrirInspecteur() {
   if (inspecteur.hidden) { inspecteur.hidden = false; void inspecteur.offsetWidth; }
   outil.classList.add('outil--inspecteur');
   ajuster(); rafraichir();
+  /* Lecture des règles CSS pendant un temps mort, pour que le premier clic soit aussi rapide que les suivants */
+  if (!REGLES) (window.requestIdleCallback || setTimeout)(() => { if (doc() && doc().body) regles(); });
 }
 function fermerInspecteur() {
   if (inspecteur.hidden) return;
