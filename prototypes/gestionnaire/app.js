@@ -1,7 +1,6 @@
 const $ = id => document.getElementById(id);
 const v = id => $(id).value.trim();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const fmtSiren = s => s.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
 
 /* Entreprises fictives : le SIREN de test a deux établissements, tout autre SIREN valide un seul */
 const ENTREPRISES = {
@@ -90,7 +89,6 @@ const telField = (id, label, req) => `<div class="fr-input-group tel" id="${id}-
 </div>`;
 function renderEtabs() {
   const ent = state.ent, seul = ent.etabs.length === 1;
-  $('e-ent').textContent = ent.nom; $('e-siren').textContent = fmtSiren(state.siren);
   $('e-intro').textContent = seul ? 'Votre établissement :' : 'Veuillez sélectionner un ou plusieurs établissements :';
   $('etabs').innerHTML = ent.etabs.map((e, i) => {
     const id = 'et' + i, sel = state.selected.includes(i);
@@ -111,9 +109,6 @@ function renderEtabs() {
       </div>
     </div>`;
   }).join('');
-  /* Téléphone du gestionnaire : demandé ici seulement s'il n'a été donné ni comme téléphone ni comme portable sur Cerbère */
-  $('e-contact').hidden = !!state.telGestionnaire;
-  $('e-gtel-wrap').innerHTML = state.telGestionnaire ? '' : telField('e-gtel', 'Votre numéro de téléphone', true);
   eValidate();
 }
 function toggleEtab(i, on) {
@@ -122,16 +117,21 @@ function toggleEtab(i, on) {
   eValidate();
 }
 function eValidate() {
-  const ok = state.selected.length > 0 && state.selected.every(i => ['nom', 'nb', 'type', 'act'].every(k => v(`et${i}-${k}`) !== '') && Number(v(`et${i}-nb`)) >= 1)
-    && (state.telGestionnaire || v('e-gtel') !== '');
+  const ok = state.selected.length > 0 && state.selected.every(i => ['nom', 'nb', 'type', 'act'].every(k => v(`et${i}-${k}`) !== '') && Number(v(`et${i}-nb`)) >= 1);
   $('e-submit').disabled = !ok;
 }
 
-/* ---------- 4. Comment avez-vous connu Mobilic ---------- */
+/* ---------- 4. Finalisation de l'inscription ---------- */
 function renderSources() {
+  /* Téléphone du gestionnaire : demandé ici seulement s'il n'a été donné ni comme téléphone ni comme portable sur Cerbère */
+  if (!state.telGestionnaire && !$('s-gtel')) $('s-gtel-wrap').innerHTML = '<div class="fr-mb-3w">' + telField('s-gtel', 'Votre numéro de téléphone', true) + '</div>';
+  if (state.telGestionnaire) $('s-gtel-wrap').innerHTML = '';
+  sValidate();
   if ($('f-sources').children.length) return;
   $('f-sources').innerHTML = SOURCES.map((s, i) => `<div class="fr-fieldset__element"><div class="fr-radio-group"><input type="radio" name="source" id="src-${i}" value="${esc(s)}"><label class="fr-label" for="src-${i}">${esc(s)}</label></div></div>`).join('');
 }
+
+function sValidate() { $('s-submit').disabled = !!$('s-gtel') && v('s-gtel') === ''; }
 
 /* ---------- 5. Confirmation et webinaire ---------- */
 function renderFin() {
@@ -149,7 +149,7 @@ function webinaire() { $('w-btn').disabled = true; $('w-btn').textContent = 'Ins
 function resetAll() {
   document.querySelectorAll('input, select').forEach(el => { if (el.type === 'radio' || el.type === 'checkbox') el.checked = false; else el.value = ''; });
   document.querySelectorAll('.fr-input-group--error').forEach(g => fieldError(g.id, false));
-  $('f-sources').innerHTML = '';
+  $('f-sources').innerHTML = ''; $('s-gtel-wrap').innerHTML = '';
   Object.keys(state).forEach(k => delete state[k]);
   current = 'metier'; go('metier');
 }
