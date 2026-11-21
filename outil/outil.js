@@ -92,7 +92,6 @@ let largeur = format.w; // largeur affichée : celle du format, rognée à droit
 const libelleFormat = () => `${nomFormat(format.w)} ${largeur} × ${hauteur}`;
 function ajuster() {
   const root = document.documentElement.style;
-  barre.classList.toggle('fr-mb-2w', !petit());
   majMasquer();
   if (petit()) {
     echelle = 1; largeur = vue.clientWidth; hauteur = vue.clientHeight;
@@ -394,7 +393,7 @@ function rabattre(etat) {
 }
 function majMasquer() {
   const b = $('masquer'), p = petit(), rabattu = p && pied.classList.contains('outil__pied--rabattu');
-  b.classList.toggle('fr-icon-close-line', !p); b.classList.toggle('fr-icon-arrow-down-s-line', p);
+  b.classList.toggle('fr-icon-close-line', !p); b.classList.toggle('fr-icon-arrow-left-s-line', p);
   b.textContent = !p ? 'Masquer les outils' : rabattu ? 'Afficher les outils' : 'Rabattre les outils';
   if (p) b.setAttribute('aria-expanded', String(!rabattu)); else b.removeAttribute('aria-expanded');
   $('tt-masquer').firstChild.textContent = b.textContent;

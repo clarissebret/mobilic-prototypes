@@ -146,11 +146,12 @@
   .outil-cadre { width: 100%; height: 100%; }
   .outil-cadre__libelle, #format-bouton, #inspecter { display: none; }
   .device { border-radius: 0; }
-  /* Barre flottante : 4 boutons de 44 px, gap 8 px, padding 8 px = 216 px. Rabattue, elle se resserre sur la flèche (60 px),
-     dont le bord droit ne bouge pas (translation de la moitié de l'écart) : le bouton reste sous le doigt pour rouvrir */
-  .outil__pied .outil-barre { width: 216px; justify-content: flex-end; overflow: hidden; box-shadow: var(--overlap-shadow);
-    transition: width 300ms cubic-bezier(.32, .72, 0, 1), transform 300ms cubic-bezier(.32, .72, 0, 1); }
-  .outil__pied--rabattu .outil-barre { width: 60px; transform: translateX(78px); }
+  /* Barre flottante alignée à droite, à 16 px du bas (fr-mb-2w) et du bord droit : 4 boutons de 44 px, gap 8 px, padding 8 px = 216 px.
+     Rabattue, elle se resserre sur la flèche (60 px) ; son bord droit ne bouge pas : le bouton reste sous le doigt pour rouvrir */
+  .outil__pied { justify-content: flex-end; padding-right: 16px; }
+  .outil__pied .outil-barre { width: 216px; justify-content: flex-end; overflow: hidden; box-shadow: var(--lifted-shadow);
+    transition: width 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil__pied--rabattu .outil-barre { width: 60px; }
   .outil-barre .outil-barre__icone { flex-shrink: 0; transition: opacity 150ms cubic-bezier(.23, 1, .32, 1) 100ms; }
   .outil__pied--rabattu .outil-barre__icone:not(#masquer) { opacity: 0; transition-duration: 100ms; transition-delay: 0ms; }
   #masquer::before { transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
