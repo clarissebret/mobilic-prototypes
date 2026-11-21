@@ -12,7 +12,6 @@
 .outil__pied { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
 .outil__pied .outil-barre { pointer-events: auto; }
 .outil__pied[hidden] { display: none; }
-.outil-rouvrir { display: none; }
 /* Barre masquée (@) : la place est libérée (ou réservée) d'un coup au début, puis la barre descend hors de l'écran
    en s'effaçant par-dessus le cadre, et remonte de la même façon dans la place réservée */
 .outil__pied { transition: transform 200ms cubic-bezier(.23, 1, .32, 1), opacity 200ms cubic-bezier(.23, 1, .32, 1); }
@@ -40,7 +39,7 @@
 .outil-barre { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: .25rem; background-color: var(--background-default-grey); }
 .outil-mention, .outil-liste__vide { color: var(--text-mention-grey); }
 .outil-barre .fr-btn[aria-disabled="true"] { color: var(--text-disabled-grey); cursor: not-allowed; }
-.outil-barre .fr-btn[aria-expanded="true"], .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
+.outil-barre .fr-btn[aria-expanded="true"]:not(#masquer), .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
 /* Raccourci clavier dans une info-bulle, en texte plus clair */
 .outil-raccourci { color: var(--text-disabled-grey); }
 
@@ -140,18 +139,23 @@
   /* Icône de 16 px centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
   .outil-barre .fr-btn--sm.outil-barre__icone::before { margin-right: 14px; }
   .outil-poignee { display: none; }
-  /* Téléphone : toujours au format Mobile, à la largeur de l'écran ; le prototype occupe tout l'écran au-dessus de la barre.
-     Seuls Parcours, Remplir, Recommencer et Rabattre restent dans la barre, posée sur toute la largeur en bas */
-  .outil { padding-bottom: 60px; }
-  .outil--sans-barre { padding-bottom: 0; }
+  /* Téléphone : toujours au format Mobile, à la largeur de l'écran ; le prototype occupe tout l'écran, la barre flotte par-dessus.
+     Seuls Parcours, Remplir, Recommencer et Rabattre restent dans la barre, centrée en bas */
+  .outil, .outil--sans-barre { padding-bottom: 0; }
   .outil__vue { padding: 0; }
   .outil-cadre { width: 100%; height: 100%; }
   .outil-cadre__libelle, #format-bouton, #inspecter { display: none; }
   .device { border-radius: 0; }
-  .outil__pied .outil-barre { flex: 1; justify-content: space-between; border-radius: 0; box-shadow: inset 0 1px 0 0 var(--border-default-grey); }
-  /* Barre rabattue : seul le bouton flèche reste, flottant en bas à droite, pour rouvrir les outils */
-  .outil-rouvrir { display: inline-flex; position: fixed; right: 16px; bottom: 16px; z-index: 1; background-color: var(--background-default-grey); box-shadow: var(--overlap-shadow); }
-  .outil-rouvrir[hidden] { display: none; }
+  /* Barre flottante : 4 boutons de 44 px, gap 8 px, padding 8 px = 216 px. Rabattue, elle se resserre sur la flèche (60 px),
+     dont le bord droit ne bouge pas (translation de la moitié de l'écart) : le bouton reste sous le doigt pour rouvrir */
+  .outil__pied .outil-barre { width: 216px; justify-content: flex-end; overflow: hidden; box-shadow: var(--overlap-shadow);
+    transition: width 300ms cubic-bezier(.32, .72, 0, 1), transform 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil__pied--rabattu .outil-barre { width: 60px; transform: translateX(78px); }
+  .outil-barre .outil-barre__icone { flex-shrink: 0; transition: opacity 150ms cubic-bezier(.23, 1, .32, 1) 100ms; }
+  .outil__pied--rabattu .outil-barre__icone:not(#masquer) { opacity: 0; transition-duration: 100ms; transition-delay: 0ms; }
+  #masquer::before { transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil__pied--rabattu #masquer::before { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .outil__pied .outil-barre, #masquer::before { transition: none; } }
   .outil--inspecteur .outil__scene { padding-bottom: 50vh; }
   .outil-inspecteur, .outil--inspecteur .outil-inspecteur { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; width: auto; height: 50vh;
     box-shadow: var(--overlap-shadow); transform: translateY(100%); transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }

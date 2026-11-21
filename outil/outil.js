@@ -28,7 +28,7 @@ function infobulle(btn, tt) {
     tt.style.left = left + 'px'; tt.style.top = (r.top - t.height - 4) + 'px';
     tt.style.setProperty('--arrow-x', (r.left + r.width / 2 - left - t.width / 2) + 'px');
   };
-  const montrer = () => { if (listeOuverte()) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
+  const montrer = () => { if (listeOuverte() || petit()) return; /* pas d'info-bulle sur téléphone (écran tactile) */ tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
   const cacher = () => { tt.classList.remove('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'true'); };
   btn.addEventListener('mouseenter', montrer); btn.addEventListener('focus', montrer);
   btn.addEventListener('mouseleave', cacher); btn.addEventListener('blur', cacher); btn.addEventListener('click', cacher);
@@ -42,7 +42,7 @@ infobulle($('inspecter'), $('tt-inspecter'));
 infobulle($('masquer'), $('tt-masquer'));
 
 /* ---------- Barre : rôle toolbar, flèches entre les contrôles ---------- */
-const controles = () => [...barre.querySelectorAll('button, input[type="radio"], select')].filter(el => el.getClientRects().length);
+const controles = () => [...barre.querySelectorAll('button, input[type="radio"], select')].filter(el => el.getClientRects().length && !el.inert);
 function activer(i, focus) {
   const c = controles(); i = (i + c.length) % c.length;
   c.forEach((el, k) => { el.tabIndex = k === i ? 0 : -1; });
@@ -342,10 +342,10 @@ $('recommencer').addEventListener('click', recommencer);
 
 /* ---------- Masquer la barre (@ pour l'afficher de nouveau) ---------- */
 function basculerBarre() {
+  if (petit()) { rabattre(!pied.classList.contains('outil__pied--rabattu')); return; }
   const masquer = !pied.classList.contains('outil__pied--sortie');
-  const auClavier = pied.contains(document.activeElement) || document.activeElement === $('rouvrir');
-  if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
-  $('rouvrir').hidden = !masquer;
+  const auClavier = pied.contains(document.activeElement);
+  if (masquer && auClavier) document.activeElement.blur();
   fermerListe(false);
   document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
   if (masquer) {
@@ -355,17 +355,15 @@ function basculerBarre() {
     outil.classList.add('outil--sans-barre'); ajuster();
     revelerBas(delta, true);
     pied.classList.add('outil__pied--sortie');
-    if (auClavier) $('rouvrir').focus({ preventScroll: true });
     finTransition(pied, () => { if (pied.classList.contains('outil__pied--sortie')) pied.hidden = true; });
   } else {
     /* Le bord bas remonte avec la barre grâce au masque ; la place n'est réservée qu'à la fin */
     pied.hidden = false; void pied.offsetWidth;
-    if (auClavier) $('masquer').focus({ preventScroll: true });
     const delta = pied.offsetHeight;
     pied.classList.remove('outil__pied--sortie');
     revelerBas(delta, false).then(() => { if (!pied.classList.contains('outil__pied--sortie')) { outil.classList.remove('outil--sans-barre'); ajuster(); } annulerMasques(); });
   }
-  annoncer(masquer ? (petit() ? 'Outils rabattus' : 'Outils masqués. Appuyez sur @ pour les afficher.') : 'Outils affichés');
+  annoncer(masquer ? 'Outils masqués. Appuyez sur @ pour les afficher.' : 'Outils affichés');
 }
 let masques = [];
 function annulerMasques() { masques.forEach(a => a.cancel()); masques = []; }
@@ -385,16 +383,34 @@ function revelerBas(delta, ouvrir) {
   return Promise.race([Promise.all(masques.map(a => a.finished)), new Promise(r => setTimeout(r, 250))]).catch(() => {});
 }
 $('masquer').addEventListener('click', basculerBarre);
-$('rouvrir').addEventListener('click', basculerBarre);
-/* Sur téléphone, le bouton de masquage devient une flèche d'accordéon : la barre se rabat */
+/* Sur téléphone, le bouton de masquage devient une flèche d'accordéon : la barre flottante se resserre sur ce bouton
+   (morph en CSS, interruptible) et les autres boutons sortent du parcours du clavier */
+function rabattre(etat) {
+  fermerListe(false);
+  pied.classList.toggle('outil__pied--rabattu', etat);
+  barre.querySelectorAll('.outil-barre__icone:not(#masquer)').forEach(b => { b.inert = etat; });
+  majMasquer();
+  annoncer(etat ? 'Outils rabattus' : 'Outils affichés');
+}
 function majMasquer() {
-  const b = $('masquer'), p = petit();
+  const b = $('masquer'), p = petit(), rabattu = p && pied.classList.contains('outil__pied--rabattu');
   b.classList.toggle('fr-icon-close-line', !p); b.classList.toggle('fr-icon-arrow-down-s-line', p);
-  b.textContent = p ? 'Rabattre les outils' : 'Masquer les outils';
+  b.textContent = !p ? 'Masquer les outils' : rabattu ? 'Afficher les outils' : 'Rabattre les outils';
+  if (p) b.setAttribute('aria-expanded', String(!rabattu)); else b.removeAttribute('aria-expanded');
   $('tt-masquer').firstChild.textContent = b.textContent;
 }
-/* En passant sur téléphone, l'inspecteur (absent de la barre) se referme */
-telephone.addEventListener('change', () => { if (petit() && inspection) basculerInspection(false); });
+/* En passant sur téléphone, l'inspecteur (absent de la barre) se referme et une barre masquée revient rabattue ;
+   en repassant au-dessus, la barre rabattue se déplie */
+telephone.addEventListener('change', () => {
+  if (petit()) {
+    if (inspection) basculerInspection(false);
+    if (pied.hidden || pied.classList.contains('outil__pied--sortie')) {
+      annulerMasques(); pied.hidden = false; pied.classList.remove('outil__pied--sortie'); outil.classList.remove('outil--sans-barre');
+      rabattre(true);
+    }
+  } else if (pied.classList.contains('outil__pied--rabattu')) rabattre(false);
+  ajuster();
+});
 window.addEventListener('message', e => {
   if (e.source !== win()) return;
   const m = e.data || {};
