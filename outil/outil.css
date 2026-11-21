@@ -135,9 +135,9 @@
 /* ---------- Petits écrans : barre en zones de 44 px, inspecteur en volet inférieur ---------- */
 @media (max-width: 575.98px) {
   .outil { grid-template-columns: minmax(0, 1fr); }
-  .outil-barre .fr-btn--sm.outil-barre__icone { max-width: 44px; max-height: 44px; min-height: 44px; padding-left: 10px; padding-right: 10px; }
-  /* Icône de 24 px (taille DSFR md) centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
-  .outil-barre .fr-btn--sm.outil-barre__icone::before { --icon-size: 1.5rem; margin-right: 10px; }
+  .outil-barre .fr-btn--sm.outil-barre__icone { max-width: 44px; max-height: 44px; min-height: 44px; padding-left: 12px; padding-right: 12px; }
+  /* Icône de 20 px centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
+  .outil-barre .fr-btn--sm.outil-barre__icone::before { --icon-size: 1.25rem; margin-right: 12px; }
   .outil-poignee { display: none; }
   /* Téléphone : toujours au format Mobile, à la largeur de l'écran ; le prototype occupe tout l'écran, la barre flotte par-dessus.
      Seuls Parcours, Remplir, Recommencer et Rabattre restent dans la barre, centrée en bas */
