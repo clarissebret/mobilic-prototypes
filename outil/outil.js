@@ -28,7 +28,7 @@ function infobulle(btn, tt) {
     tt.style.left = left + 'px'; tt.style.top = (r.top - t.height - 4) + 'px';
     tt.style.setProperty('--arrow-x', (r.left + r.width / 2 - left - t.width / 2) + 'px');
   };
-  const montrer = () => { if (listeOuverte()) return; tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
+  const montrer = () => { if (listeOuverte() || petit()) return; /* pas d'info-bulle sur téléphone (écran tactile) */ tt.classList.add('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'false'); placer(); };
   const cacher = () => { tt.classList.remove('fr-tooltip--shown'); tt.setAttribute('aria-hidden', 'true'); };
   btn.addEventListener('mouseenter', montrer); btn.addEventListener('focus', montrer);
   btn.addEventListener('mouseleave', cacher); btn.addEventListener('blur', cacher); btn.addEventListener('click', cacher);
@@ -42,7 +42,7 @@ infobulle($('inspecter'), $('tt-inspecter'));
 infobulle($('masquer'), $('tt-masquer'));
 
 /* ---------- Barre : rôle toolbar, flèches entre les contrôles ---------- */
-const controles = () => [...barre.querySelectorAll('button, input[type="radio"], select')].filter(el => el.getClientRects().length);
+const controles = () => [...barre.querySelectorAll('button, input[type="radio"], select')].filter(el => el.getClientRects().length && !el.inert);
 function activer(i, focus) {
   const c = controles(); i = (i + c.length) % c.length;
   c.forEach((el, k) => { el.tabIndex = k === i ? 0 : -1; });
@@ -66,6 +66,9 @@ format = { w: format.w };
 let echelle = 1, hauteur = 740, glisse = false;
 const nomFormat = w => Object.keys(FORMATS).find(k => FORMATS[k] === w) || 'Personnalisé';
 const estMobile = () => format.w < 768;
+/* Téléphone (sous 576 px) : le prototype prend toute la place, au format Mobile, à la largeur de l'écran */
+const telephone = matchMedia('(max-width: 575.98px)');
+const petit = () => telephone.matches;
 /* Espace disponible pour le cadre ; la poignée garde 16 px de chaque côté.
    Mobile : centré sur la fenêtre (donc sur la barre), sauf si l'inspecteur ne laisse pas 280 px centrés.
    Calculé pour l'état final de l'inspecteur (ouvert ou fermé), pas pour sa largeur en cours d'animation :
@@ -88,7 +91,18 @@ function dispo() {
 let largeur = format.w; // largeur affichée : celle du format, rognée à droite en Desktop quand l'inspecteur est ouvert
 const libelleFormat = () => `${nomFormat(format.w)} ${largeur} × ${hauteur}`;
 function ajuster() {
-  const root = document.documentElement.style, a = dispo();
+  const root = document.documentElement.style;
+  majMasquer();
+  if (petit()) {
+    echelle = 1; largeur = vue.clientWidth; hauteur = vue.clientHeight;
+    root.setProperty('--w', largeur + 'px'); root.setProperty('--h', hauteur + 'px');
+    device.style.transform = '';
+    box.style.width = largeur + 'px'; box.style.height = hauteur + 'px';
+    box.parentElement.style.marginLeft = '0px';
+    dessiner();
+    return;
+  }
+  const a = dispo();
   let gauche;
   largeur = format.w;
   if (estMobile()) {
@@ -327,8 +341,10 @@ $('recommencer').addEventListener('click', recommencer);
 
 /* ---------- Masquer la barre (@ pour l'afficher de nouveau) ---------- */
 function basculerBarre() {
+  if (petit()) { rabattre(!pied.classList.contains('outil__pied--rabattu')); return; }
   const masquer = !pied.classList.contains('outil__pied--sortie');
-  if (masquer && pied.contains(document.activeElement)) document.activeElement.blur();
+  const auClavier = pied.contains(document.activeElement);
+  if (masquer && auClavier) document.activeElement.blur();
   fermerListe(false);
   document.querySelectorAll('.fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); });
   if (masquer) {
@@ -362,9 +378,38 @@ function revelerBas(delta, ouvrir) {
     return el.animate({ clipPath: ouvrir ? [cache, plein] : [plein, cache] }, { duration: 200, easing: 'cubic-bezier(.23, 1, .32, 1)', fill: 'forwards' });
   });
   if (ouvrir) masques.forEach(a => a.finished.then(() => a.cancel(), () => {}));
-  return Promise.all(masques.map(a => a.finished)).catch(() => {});
+  /* Garde-fou : une animation suspendue (onglet en arrière-plan) ne doit pas bloquer la place de la barre */
+  return Promise.race([Promise.all(masques.map(a => a.finished)), new Promise(r => setTimeout(r, 250))]).catch(() => {});
 }
 $('masquer').addEventListener('click', basculerBarre);
+/* Sur téléphone, le bouton de masquage devient une flèche d'accordéon : la barre flottante se resserre sur ce bouton
+   (morph en CSS, interruptible) et les autres boutons sortent du parcours du clavier */
+function rabattre(etat) {
+  fermerListe(false);
+  pied.classList.toggle('outil__pied--rabattu', etat);
+  barre.querySelectorAll('.outil-barre__icone:not(#masquer)').forEach(b => { b.inert = etat; });
+  majMasquer();
+  annoncer(etat ? 'Outils rabattus' : 'Outils affichés');
+}
+function majMasquer() {
+  const b = $('masquer'), p = petit(), rabattu = p && pied.classList.contains('outil__pied--rabattu');
+  b.classList.toggle('fr-icon-close-line', !p); b.classList.toggle('fr-icon-arrow-left-s-line', p);
+  b.textContent = !p ? 'Masquer les outils' : rabattu ? 'Afficher les outils' : 'Rabattre les outils';
+  if (p) b.setAttribute('aria-expanded', String(!rabattu)); else b.removeAttribute('aria-expanded');
+  $('tt-masquer').firstChild.textContent = b.textContent;
+}
+/* En passant sur téléphone, l'inspecteur (absent de la barre) se referme et une barre masquée revient rabattue ;
+   en repassant au-dessus, la barre rabattue se déplie */
+telephone.addEventListener('change', () => {
+  if (petit()) {
+    if (inspection) basculerInspection(false);
+    if (pied.hidden || pied.classList.contains('outil__pied--sortie')) {
+      annulerMasques(); pied.hidden = false; pied.classList.remove('outil__pied--sortie'); outil.classList.remove('outil--sans-barre');
+      rabattre(true);
+    }
+  } else if (pied.classList.contains('outil__pied--rabattu')) rabattre(false);
+  ajuster();
+});
 window.addEventListener('message', e => {
   if (e.source !== win()) return;
   const m = e.data || {};
@@ -555,6 +600,7 @@ function clavier(e, dansCadre) {
     e.preventDefault(); cmd('back'); return;
   }
   const k = e.key.toLowerCase();
+  if (petit() && (k === 'i' || k === 'm')) return; // absents de la barre sur téléphone
   if (k === 'i') { e.preventDefault(); basculerInspection(undefined, true); }
   else if (k === 'r') { e.preventDefault(); recommencer(); }
   else if (k === 'f') { e.preventDefault(); remplir(); }

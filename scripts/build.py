@@ -42,7 +42,7 @@ ICONS = {
     'arrow-up-s-line': 'arrow-up-s-line', 'delete-line': 'delete-bin-line', 'add-line': 'add-line', 'play-line': 'play-line',
     # Outil de prototypage (barre de contrôle et inspecteur)
     'magic-line': 'magic-line', 'check-line': 'check-line', 'restart-line': 'restart-line', 'external-link-line': 'external-link-line', 'cursor-line': 'cursor-line',
-    'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line',
+    'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line', 'arrow-left-s-line': 'arrow-left-s-line',
     # En-tête gestionnaire
     'mail-line': 'mail-line', 'account-circle-fill': 'account-circle-fill',
 }

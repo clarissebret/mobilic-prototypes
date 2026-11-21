@@ -39,7 +39,7 @@
 .outil-barre { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: .25rem; background-color: var(--background-default-grey); }
 .outil-mention, .outil-liste__vide { color: var(--text-mention-grey); }
 .outil-barre .fr-btn[aria-disabled="true"] { color: var(--text-disabled-grey); cursor: not-allowed; }
-.outil-barre .fr-btn[aria-expanded="true"], .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
+.outil-barre .fr-btn[aria-expanded="true"]:not(#masquer), .outil-inspecter[aria-pressed="true"] { background-color: var(--background-action-low-blue-france); }
 /* Raccourci clavier dans une info-bulle, en texte plus clair */
 .outil-raccourci { color: var(--text-disabled-grey); }
 
@@ -135,10 +135,30 @@
 /* ---------- Petits écrans : barre en zones de 44 px, inspecteur en volet inférieur ---------- */
 @media (max-width: 575.98px) {
   .outil { grid-template-columns: minmax(0, 1fr); }
-  .outil-barre .fr-btn--sm.outil-barre__icone { max-width: 44px; max-height: 44px; min-height: 44px; padding-left: 14px; padding-right: 14px; }
-  /* Icône de 16 px centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
-  .outil-barre .fr-btn--sm.outil-barre__icone::before { margin-right: 14px; }
+  .outil-barre .fr-btn--sm.outil-barre__icone { max-width: 44px; max-height: 44px; min-height: 44px; padding-left: 12px; padding-right: 12px; }
+  /* Icône de 20 px centrée dans 44 px ; la marge après l'icône repousse le libellé hors du bouton */
+  .outil-barre .fr-btn--sm.outil-barre__icone::before { --icon-size: 1.25rem; margin-right: 12px; }
   .outil-poignee { display: none; }
+  /* Téléphone : toujours au format Mobile, à la largeur de l'écran ; le prototype occupe tout l'écran, la barre flotte par-dessus.
+     Seuls Parcours, Remplir, Recommencer et Rabattre restent dans la barre, centrée en bas */
+  .outil, .outil--sans-barre { padding-bottom: 0; }
+  .outil__vue { padding: 0; }
+  .outil-cadre { width: 100%; height: 100%; }
+  .outil-cadre__libelle, #format-bouton, #inspecter { display: none; }
+  .device { border-radius: 0; }
+  /* Barre flottante alignée à droite, à 16 px du bas (fr-mb-2w) et du bord droit : 4 boutons de 44 px, gap 4 px, padding 4 px = 196 px.
+     Rabattue, elle se resserre sur la flèche (52 px) ; son bord droit ne bouge pas : le bouton reste sous le doigt pour rouvrir */
+  .outil__pied { justify-content: flex-end; padding-right: 16px; }
+  /* Ombre diffuse en deux couches, comme les surfaces flottantes d'iOS : un contact serré qui pose la barre, un halo large et doux */
+  .outil__pied .outil-barre { width: 196px; gap: 4px; padding: 4px; justify-content: flex-end; overflow: hidden;
+    box-shadow: 0 1px 2px var(--shadow-color), 0 12px 32px var(--shadow-color);
+    transition: width 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil__pied--rabattu .outil-barre { width: 52px; }
+  .outil-barre .outil-barre__icone { flex-shrink: 0; transition: opacity 150ms cubic-bezier(.23, 1, .32, 1) 100ms; }
+  .outil__pied--rabattu .outil-barre__icone:not(#masquer) { opacity: 0; transition-duration: 100ms; transition-delay: 0ms; }
+  #masquer::before { transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
+  .outil__pied--rabattu #masquer::before { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .outil__pied .outil-barre, #masquer::before { transition: none; } }
   .outil--inspecteur .outil__scene { padding-bottom: 50vh; }
   .outil-inspecteur, .outil--inspecteur .outil-inspecteur { position: fixed; left: 0; right: 0; bottom: 0; z-index: 900; width: auto; height: 50vh;
     box-shadow: var(--overlap-shadow); transform: translateY(100%); transition: transform 300ms cubic-bezier(.32, .72, 0, 1); }
