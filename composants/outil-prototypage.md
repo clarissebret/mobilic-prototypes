@@ -83,7 +83,11 @@ Données fictives, dans l'ordre des champs (un champ qui en fait apparaître un 
 
 ## Petits écrans
 
-Sous 576 px : boutons de la barre de 44 × 44 px (boutons à icône seule : padding de 14 px autour de l'icône de 16 px), pas de poignée, inspecteur en volet inférieur à mi-hauteur qui monte depuis le bas, agrandissable en plein écran.
+Sous 576 px (téléphone) :
+
+- Le prototype est toujours au format Mobile, à la largeur de l'écran, sans réduction : il occupe tout l'écran au-dessus de la barre, sans marge ni angles arrondis. Pas de libellé du format, pas de poignée ; le format mémorisé n'est pas modifié.
+- La barre occupe toute la largeur en bas (séparation 1 px `--border-default-grey` en haut, sans marge dessous) et ne garde que Parcours, Remplir le formulaire, Recommencer et Rabattre les outils, répartis sur la largeur. Boutons de 44 × 44 px (boutons à icône seule : padding de 14 px autour de l'icône de 16 px). Format d'écran et Inspecteur n'y sont pas, leurs raccourcis M et I sont sans effet, et l'inspecteur se referme si la fenêtre passe sous 576 px.
+- Rabattre les outils (`fr-icon-arrow-down-s-line`, info-bulle « Rabattre les outils @ ») remplace Masquer les outils : la barre descend de la même façon et le prototype prend tout l'écran. Il ne reste qu'un bouton flottant Afficher les outils (`fr-icon-arrow-up-s-line`, bouton tertiaire sans bordure SM de 44 × 44 px, fond `--background-default-grey`, ombre `--overlap-shadow`), en bas à droite à 16 px des bords, qui fait remonter la barre. Le focus passe de l'un à l'autre.
 
 ## Accessibilité
 
