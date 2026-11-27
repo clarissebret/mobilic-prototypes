@@ -152,7 +152,7 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 #### Activité mixte (deux tableaux de salariés)
 
-- **SAL-18** Colonne « Activité mixte VL/PL », après « Type d'activité » : une case à cocher par salarié. Le gestionnaire coche les salariés qui effectuent plus de la moitié de leur temps de travail en poids lourd (PL) ; l'information est prise en compte dans le calcul d'obtention du certificat. La case est disponible quel que soit le type d'activité du salarié (seul un salarié détaché l'a désactivée, SAL-13).
+- **SAL-18** Colonne « Activité mixte VL/PL », après « Type d'activité » : une case à cocher par salarié. Le gestionnaire coche les salariés qui effectuent plus de la moitié de leur temps de travail en poids lourd (PL) ; l'information est prise en compte dans le calcul d'obtention du certificat.
 - **SAL-19** Sur l'en-tête de la colonne, une infobulle : « Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat. »
 - **SAL-22** Un salarié détaché puis rattaché à nouveau repart avec la case décochée : la valeur d'avant le détachement n'est pas conservée.
 - **SAL-23** Quand le rattachement d'un salarié temporaire est prolongé, la case garde sa valeur.
