@@ -113,6 +113,12 @@ Les étapes 2a, 2b et 2c sont des pages de Cerbère : Mobilic ne les maîtrise p
 
 Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés ». Le gestionnaire y suit les salariés rattachés à son entreprise et les invitations envoyées. Les autres onglets et les fenêtres ouvertes depuis cet onglet (inviter, modifier la fin de rattachement, prolonger le rattachement) sont hors de ce parcours.
 
+### Espace gestionnaire
+
+- **ESP-01** L'en-tête et le menu latéral (Accueil, Entreprise, Activités, Respect des seuils, Certificat) restent fixes : seul le contenu de la page défile.
+- **ESP-02** Un lien du menu latéral peut porter une pastille de notification avec un nombre (ex. activités).
+- **ESP-03** En bas du menu latéral, la carte « S'inscrire à un webinaire » ouvre l'inscription aux webinaires (hors de ce parcours).
+
 ### 6. Onglet Salariés
 
 - **SAL-01** En haut de l'onglet : titre « Salariés » avec le nombre de salariés, boutons « Inviter une liste de salariés » et « Inviter un nouveau salarié ». Dessous : le filtre « Tous les groupes » et l'indicateur « Inscrits sur Mobilic : [x] sur [y] », avec une barre de progression : [x] est le nombre de salariés réellement inscrits (hors invitations en attente), [y] le nombre de salariés concernés par Mobilic renseigné dans les paramètres de l'entreprise.
@@ -132,7 +138,7 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 #### Salariés temporaires
 
 - **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
-- **SAL-11** À l'approche de la fin de rattachement, un bandeau d'alerte s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
+- **SAL-11** À l'approche de la fin de rattachement, un bandeau d'avertissement s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
 
 #### Salariés longue durée
 
@@ -166,4 +172,4 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 ## Composants utilisés
 
 - DSFR : en-tête (liens et navigation principale), navigation principale (rubriques de l'entreprise), menu latéral, bandeau d'information importante, badge, tableau, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
-- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Barre de progression](../../composants/barre-progression.md).
+- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Barre de progression](../../composants/barre-progression.md), [Carte webinaire](../../composants/carte-webinaire.md).

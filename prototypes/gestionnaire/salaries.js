@@ -51,10 +51,11 @@ const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-ba
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
 
-/* Bandeau d'information importante du DSFR, variante alerte, refermable */
-const salNotice = (titre, desc, lien, onLien, onFermer) => `<div class="fr-notice fr-notice--alert">
+/* Bandeau d'information importante du DSFR, variante avertissement, refermable.
+   Texte en 14 px sans gras (fr-text--sm fr-text--regular), comme la maquette. */
+const salNotice = (titre, desc, lien, onLien, onFermer) => `<div class="fr-notice fr-notice--warning">
   <div class="fr-container"><div class="fr-notice__body">
-    <p><span class="fr-notice__title">${titre}</span>${desc ? ` <span class="fr-notice__desc">${desc}</span>` : ''} <a class="fr-notice__link" href="#" onclick="${onLien};return false">${lien}</a></p>
+    <p><span class="fr-notice__title fr-text--sm fr-text--regular">${titre}</span>${desc ? ` <span class="fr-notice__desc fr-text--sm">${desc}</span>` : ''} <a class="fr-notice__link fr-text--sm" href="#" onclick="${onLien};return false">${lien}</a></p>
     <button type="button" class="fr-btn--close fr-btn" title="Masquer le message" onclick="${onFermer}">Masquer le message</button>
   </div></div>
 </div>`;
@@ -179,6 +180,8 @@ function ouvrirSalaries(variante) {
   /* Ouverture par défaut : invitations repliées, temporaires et longue durée ouverts */
   ouvrirSection('sec-inv', false); ouvrirSection('sec-tmp', true); ouvrirSection('sec-lgd', true);
   renderSalaries(); go('salaries');
+  /* Le contenu défile seul sous l'en-tête et le menu fixes : il repart du haut */
+  document.querySelector('.espace__page').scrollTop = 0;
 }
 window.addEventListener('message', e => {
   const m = e.data || {};

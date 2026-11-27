@@ -30,6 +30,7 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | [Tableau Mobilic](tableau.md) | Tableau (variante) + liste déroulante | Toutes les interfaces ; contrôleur : derniers contrôles ; gestionnaire : salariés |
 | [Section repliable](section-repliable.md) | Bouton + badge | Gestionnaire : onglet Salariés |
 | [Barre de progression](barre-progression.md) | — | Gestionnaire : onglet Salariés |
+| [Carte webinaire](carte-webinaire.md) | Carte (variante) + lien | Gestionnaire : menu latéral de l'espace |
 | [Outil de prototypage](outil-prototypage.md) | Boutons, contrôle segmenté, onglets, info-bulles | Autour de tous les prototypes (hors application) |
 
 ## Ajustements des composants DSFR
@@ -37,7 +38,8 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | Composant DSFR | Ajustement Mobilic |
 |---|---|
 | En-tête (`fr-header`) | Le bloc des logos ne change pas de fond au survol ni à l'appui |
-| Menu latéral (`fr-sidemenu`) | Pastille de notification possible sur un lien : badge DSFR `fr-badge--sm fr-badge--error fr-badge--no-icon`, aligné à droite. Dans l'espace gestionnaire : colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur de la page |
+| Menu latéral (`fr-sidemenu`) | Pastille de notification possible sur un lien : badge DSFR `fr-badge--sm fr-badge--error fr-badge--no-icon`, aligné à droite. Dans l'espace gestionnaire : colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur, fixe au défilement comme l'en-tête |
+| Bandeau d'information importante (`fr-notice`) | Texte en 14 px sans gras (`fr-text--sm`, et `fr-text--regular` sur le titre), comme dans la maquette : le DSFR le met en 16 px gras à partir de 768 px |
 | Navigation principale (`fr-nav`) | Utilisée dans la page pour les rubriques de l'entreprise (Salariés, Véhicules…) : 24 px entre les liens, trait bas `--border-default-grey` sur toute la largeur ; reste en ligne et défile horizontalement sous 992 px au lieu de s'empiler |
 
 ## Documenter un composant

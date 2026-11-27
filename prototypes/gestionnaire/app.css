@@ -79,14 +79,23 @@
 .webinaire__titre { display: flex; gap: .75rem; flex: 1; min-width: 12rem; }
 
 /* ---------- Espace gestionnaire (connecté) ---------- */
-/* Menu latéral DSFR à gauche à partir de 768 px (270 px, trait de séparation sur toute la hauteur) ; dessous, replié en haut de page */
+/* En-tête DSFR et menu latéral toujours fixes : seul le contenu défile.
+   À partir de 768 px, l'écran occupe la hauteur de la fenêtre et le contenu défile dans sa colonne ;
+   dessous, l'en-tête reste collé en haut et le menu latéral, replié, défile avec la page. */
+#screen-salaries .fr-header { position: sticky; top: 0; z-index: 750; }
 .espace { display: flex; flex-direction: column; }
 .espace__page { flex: 1; min-width: 0; }
+.espace__menu .carte-webinaire { display: none; }
 @media (min-width: 48em) {
-  .espace { flex-direction: row; min-height: calc(100vh - 7.5rem); }
-  .espace__menu { flex: 0 0 16.875rem; padding: 1.5rem 0 0 1.5rem; box-shadow: inset -1px 0 0 0 var(--border-default-grey); }
-  /* Le trait du DSFR s'arrête avec la liste : il est porté par la colonne */
-  .espace__menu .fr-sidemenu__inner { box-shadow: none; }
+  #screen-salaries.active { display: flex; flex-direction: column; height: 100vh; }
+  .espace { flex: 1; min-height: 0; flex-direction: row; }
+  .espace__page { overflow-y: auto; }
+  /* Colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur, carte webinaire en bas */
+  .espace__menu { flex: 0 0 16.875rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1.5rem;
+    overflow-y: auto; padding: 1.5rem 1.5rem 1.5rem 1.5rem; box-shadow: inset -1px 0 0 0 var(--border-default-grey); }
+  /* Le trait du DSFR s'arrête avec la liste : il est porté par la colonne ; le padding droit aussi */
+  .espace__menu .fr-sidemenu__inner { box-shadow: none; padding-right: 0; }
+  .espace__menu .carte-webinaire { display: block; }
 }
 /* Pastille de notification d'un lien du menu latéral (badge DSFR), alignée à droite */
 .espace__menu .fr-sidemenu__link { justify-content: space-between; gap: .5rem; }
@@ -144,3 +153,12 @@
 .sal-acces .fr-select { width: 5.5rem; }
 .sal-groupe .fr-select { width: 9.25rem; }
 .sal-type .fr-select { width: 11.75rem; }
+
+/* Carte webinaire (composant Mobilic inspiré de la carte DSFR, voir composants/carte-webinaire.md) */
+.carte-webinaire { position: relative; flex: none; border: 1px solid var(--border-default-grey); background-color: var(--background-default-grey); }
+.carte-webinaire__img { display: flex; align-items: center; justify-content: center; height: 7.5rem; background-color: var(--background-alt-blue-france); }
+.carte-webinaire__img img { height: 6.25rem; }
+.carte-webinaire__corps { padding: 1rem; }
+/* Lien étendu à toute la carte (fr-enlarge-link) : pas de soulignement, comme le lien d'une carte DSFR */
+.carte-webinaire__lien.fr-link { background-image: none; }
+.carte-webinaire:hover { background-color: var(--background-default-grey-hover); }
