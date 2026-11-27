@@ -8,8 +8,8 @@ const SAL_NB_PARAMETRES = 14;
 const SAL_INACTIFS_AFFICHES = false;
 const SAL_GROUPES = ['Groupe A', 'Groupe B'];
 const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs', 'Déménagement', 'Voyageurs (TRV)', 'Sanitaire (TRS)'];
-/* Activité mixte (plus de la moitié du temps de travail en poids lourd) : transport de marchandises seulement */
-const salMixtePossible = s => s.type.startsWith('TRM') || s.type === 'Déménagement';
+/* Activité mixte (plus de la moitié du temps de travail en poids lourd) : tous les types d'activité sauf sanitaire */
+const salMixtePossible = s => s.type !== 'Sanitaire (TRS)';
 
 const salMail = (prenom, nom) => `${prenom}.${nom}`.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + '@dupont-transport.example.fr';
 /* Identifiant Mobilic fictif à 9 chiffres, stable pour un même salarié */
@@ -34,7 +34,7 @@ const salDonnees = () => ({
     salPers('Émile', 'Barbier', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: SAL_TYPES[1], inactif: true }),
     salPers('Hugo', 'Basset', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[1], inactif: true }),
     salPers('Léa', 'Baudin', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: 'Déménagement', inactif: true }),
-    salPers('Julien', 'Benoît', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe A', type: 'Voyageurs (TRV)' }),
+    salPers('Julien', 'Benoît', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe A', type: 'Sanitaire (TRS)' }),
     salPers('Émilie', 'Petit', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe B', type: SAL_TYPES[1], detache: true }),
   ],
 });
@@ -54,7 +54,7 @@ const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-ba
   : s.inactif && SAL_INACTIFS_AFFICHES ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
-/* Case « Activité mixte » : désactivée hors marchandises et pour un salarié détaché */
+/* Case « Activité mixte » : désactivée pour le sanitaire (TRS) et pour un salarié détaché */
 const salCelluleMixte = s => `<td class="sal-mixte"><div class="fr-checkbox-group fr-checkbox-group--sm">
         <input type="checkbox" id="mixte-${s.id}"${s.mixte ? ' checked' : ''}${salMixtePossible(s) && !salDetache(s) ? '' : ' disabled'} onchange="changerMixte('${s.email}', this.checked)">
         <label class="fr-label" for="mixte-${s.id}"><span class="fr-sr-only">Activité mixte de ${esc(salNomComplet(s))}</span></label>
@@ -194,7 +194,7 @@ function relancerInvitation(n) { sal.d.invitations[n].relance = SAL_AUJOURDHUI; 
 function relancerInvitations() { sal.d.invitations.forEach(i => { if (!i.relance) i.relance = SAL_AUJOURDHUI; }); renderSalaries(); toast('Invitations relancées'); }
 function annulerInvitation(n) { sal.d.invitations.splice(n, 1); renderSalaries(); toast('Invitation annulée'); }
 const salTrouve = email => [...sal.d.tmp, ...sal.d.lgd].find(s => s.email === email);
-/* Passage à un type d'activité sans poids lourd : la case est décochée et désactivée.
+/* Passage au sanitaire (TRS) : la case est décochée et désactivée.
    Si le gestionnaire remet ensuite le type précédent, elle est de nouveau cochée. */
 function changerType(email, type) {
   const s = salTrouve(email), avant = s.type, possibleAvant = salMixtePossible(s);

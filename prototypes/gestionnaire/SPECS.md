@@ -154,8 +154,8 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 - **SAL-18** Colonne « Activité mixte », après « Type d'activité » : une case à cocher par salarié. Le gestionnaire coche les salariés qui effectuent plus de la moitié de leur temps de travail en poids lourd (PL) ; l'information est prise en compte dans le calcul d'obtention du certificat.
 - **SAL-19** Sur l'en-tête de la colonne, une infobulle : « Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat. »
-- **SAL-20** La case n'est disponible que pour les types d'activité de transport de marchandises : Marchandises (TRM, toutes activités) et Déménagement. Pour Voyageurs (TRV) et Sanitaire (TRS), elle est désactivée. Elle est aussi désactivée pour un salarié détaché (SAL-13).
-- **SAL-21** Si le gestionnaire passe un salarié coché à un type d'activité non concerné (SAL-20), la case est décochée et désactivée. S'il remet ensuite le type d'activité précédent, elle est de nouveau cochée.
+- **SAL-20** La case est disponible pour tous les types d'activité, sauf Sanitaire (TRS), pour lequel elle est désactivée. Elle est aussi désactivée pour un salarié détaché (SAL-13).
+- **SAL-21** Si le gestionnaire passe un salarié coché au type d'activité Sanitaire (TRS), la case est décochée et désactivée. S'il remet ensuite le type d'activité précédent, elle est de nouveau cochée.
 - **SAL-22** Un salarié détaché puis rattaché à nouveau repart avec la case décochée : la valeur d'avant le détachement n'est pas conservée.
 - **SAL-23** Quand le rattachement d'un salarié temporaire est prolongé, la case garde sa valeur.
 - **SAL-24** L'activité mixte est propre à chaque rattachement : un salarié rattaché à plusieurs entreprises peut être en activité mixte dans l'une et pas dans l'autre.
