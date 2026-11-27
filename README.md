@@ -24,7 +24,7 @@ Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dép�
 
 ## Structure
 
-Voir aussi [CLAUDE.md](CLAUDE.md) pour les conventions de travail.
+Voir aussi [DESIGN.md](DESIGN.md) pour les conventions de travail.
 
 ```
 prototypes/<interface>/  sources d'un prototype (une interface, plusieurs flux)
