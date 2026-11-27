@@ -116,6 +116,9 @@ function renderControl() {
   $('c-title').textContent = c.prenom + ' ' + c.nom;
   $('c-date').textContent = fmt(c.date);
   $('c-ent').textContent = c.ent; $('c-act').textContent = c.act; $('c-veh').textContent = c.veh;
+  /* Photos du document présenté : feuille de route en TRS, LIC sinon */
+  $('c-photos-title').textContent = isTRS() ? 'Photos de la feuille de route' : 'Photos du LIC';
+  $('c-photos-text').textContent = 'Ajoutez des photos ' + (isTRS() ? 'de la feuille de route' : 'du livret individuel de contrôle') + ' et retrouvez-les dans votre historique de contrôle afin de relever des infractions.';
   const since = new Date(c.date); since.setDate(since.getDate() - 56);
   $('c-since').textContent = 'Depuis le ' + fmt(since).split(' à ')[0];
   $('notes').innerHTML = state.notes.map(n => `<div class="note fr-text--sm fr-mb-1w">${n.replace(/</g, '&lt;')}</div>`).join('');

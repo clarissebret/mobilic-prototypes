@@ -11,7 +11,7 @@ Code : classes `.screen--panel`, `.panel-backdrop`, `body.has-panel` dans `proto
 | Moins de 768 px (48em) | Page pleine largeur, pas de panneau |
 | 768 px et plus | Panneau fixé à droite, largeur `min(100 %, 800 px)`, défilement interne ; la page principale reste visible derrière un fond assombri |
 
-- Fermeture : lien « Fermer » du contenu, touche Échap ou clic sur le fond assombri. Les mêmes confirmations que sur mobile s'appliquent (ex. bulletin non créé).
+- Fermeture : lien « Fermer » du contenu, touche Échap ou clic sur le fond assombri. Les mêmes confirmations que sur mobile s'appliquent (ex. bulletin non créé).
 - Les modales DSFR s'ouvrent au-dessus du panneau.
 - La [barre d'actions fixe](barre-actions-fixe.md) et les messages temporaires prennent la largeur du panneau.
 

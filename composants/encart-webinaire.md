@@ -6,14 +6,14 @@ Code : `.webinaire` dans `prototypes/gestionnaire/app.css`.
 
 ## Anatomie
 
-Titre `fr-h5`, texte, puis la session dans un cadre (contour 1 px `--border-default-grey`, sans fond) : la date en colonne centrée (jour abrégé, numéro en `fr-h3` `--text-title-blue-france`, mois et année en `fr-text--xs`), l'heure en gras suivie du titre de la session, et le bouton tertiaire sans bordure « S'inscrire » à droite. La ligne passe à la ligne si la place manque.
+Titre `fr-h5`, texte, puis la session dans un cadre (contour 1 px `--border-default-grey`, sans fond) : la date en colonne centrée (jour abrégé, numéro en `fr-h3` `--text-title-blue-france`, mois et année en `fr-text--xs`), l'heure en gras suivie du titre de la session, et le bouton tertiaire sans bordure « S'inscrire » à droite. La ligne passe à la ligne si la place manque.
 
 ## États
 
 | État | Rendu |
 |---|---|
-| Repos | Bouton « S'inscrire » |
-| Inscrit | Bouton inactif « Inscription confirmée » |
+| Repos | Bouton « S'inscrire » |
+| Inscrit | Bouton inactif « Inscription confirmée » |
 
 ## Tokens et espacements
 
