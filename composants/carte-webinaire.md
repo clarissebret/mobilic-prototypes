@@ -2,11 +2,11 @@
 
 Invite le gestionnaire à s'inscrire à un webinaire, en bas du menu latéral de l'espace gestionnaire. Inspirée de la carte DSFR (lien étendu à toute la carte), en plus compacte.
 
-Code : `.carte-webinaire` dans `prototypes/gestionnaire/app.css`. Pictogramme : `prototypes/gestionnaire/picto-webinaire.svg`, dessiné dans le style des pictogrammes DSFR (le DSFR n'a pas de pictogramme de conversation).
+Code : `.carte-webinaire` dans `prototypes/gestionnaire/app.css`. Pictogramme : « community » du DSFR, dans sa version de 120 px (`prototypes/gestionnaire/picto-community.svg`, plus récente que celle du paquet npm 1.15.4).
 
 ## Anatomie
 
-- Zone image de 120 px de haut, fond `--background-alt-blue-france`, pictogramme centré de 100 px de haut.
+- Zone image de 120 px de haut, fond `--background-alt-blue-france`, pictogramme centré de 120 px (marges comprises).
 - Zone texte, padding 16 px : lien DSFR petit format avec flèche à droite (`fr-link fr-link--sm fr-link--icon-right fr-icon-arrow-right-line`), sans soulignement.
 - Bordure 1 px `--border-default-grey`, fond `--background-default-grey`.
 

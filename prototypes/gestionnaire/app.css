@@ -157,7 +157,7 @@
 /* Carte webinaire (composant Mobilic inspiré de la carte DSFR, voir composants/carte-webinaire.md) */
 .carte-webinaire { position: relative; flex: none; border: 1px solid var(--border-default-grey); background-color: var(--background-default-grey); }
 .carte-webinaire__img { display: flex; align-items: center; justify-content: center; height: 7.5rem; background-color: var(--background-alt-blue-france); }
-.carte-webinaire__img img { height: 6.25rem; }
+.carte-webinaire__img img { height: 7.5rem; }
 .carte-webinaire__corps { padding: 1rem; }
 /* Lien étendu à toute la carte (fr-enlarge-link) : pas de soulignement, comme le lien d'une carte DSFR */
 .carte-webinaire__lien.fr-link { background-image: none; }
