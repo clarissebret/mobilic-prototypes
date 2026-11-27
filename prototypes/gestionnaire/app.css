@@ -80,9 +80,9 @@
 
 /* ---------- Espace gestionnaire (connecté) ---------- */
 /* En-tête connecté : DSFR en pleine largeur, logo aligné sur le texte du menu latéral (32 px),
-   outils alignés sur le bord droit du contenu (40 px) */
+   outils alignés sur le bord droit du contenu (32 px) */
 @media (min-width: 62em) {
-  .entete-connecte .fr-header__body .fr-container { max-width: none; padding: 0 2.5rem 0 2rem; }
+  .entete-connecte .fr-header__body .fr-container { max-width: none; padding: 0 2rem; }
 }
 /* Sous 992 px, nom et entreprise passent dans le menu de l'en-tête (bouton Menu du DSFR) */
 .entete-connecte__outils { display: none; }
@@ -112,7 +112,7 @@
 /* Pastille de notification d'un lien du menu latéral (badge DSFR), alignée à droite */
 .espace__menu .fr-sidemenu__link { justify-content: space-between; gap: .5rem; }
 
-/* En-tête de l'entreprise : 40 px de marge latérale, comme le contenu de l'onglet */
+/* En-tête de l'entreprise : 32 px de marge latérale, alignée sur le trait de l'onglet actif, comme le contenu de l'onglet */
 .entreprise { display: flex; flex-direction: column; gap: .5rem; padding: 1.5rem 1rem .5rem; }
 .entreprise__ligne { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 .entreprise__nom { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
@@ -138,9 +138,9 @@
 /* Neutralise la marge haute du DSFR (pas de libellé au-dessus du filtre) ; largeur de la maquette */
 .salaries__groupe.fr-select { margin-top: 0; width: 10.75rem; }
 @media (min-width: 48em) {
-  .entreprise { padding: 2rem 2.5rem .75rem; }
+  .entreprise { padding: 2rem 2rem .75rem; }
   .entreprise__nav { padding-left: 2rem; }
-  .salaries { padding: 1.5rem 2.5rem 2.5rem; }
+  .salaries { padding: 1.5rem 2rem 2.5rem; }
 }
 
 /* Barre de progression (composant Mobilic, voir composants/barre-progression.md) */
