@@ -48,5 +48,5 @@ Espacements : padding de l'en-tête 12 × 16 px, corps 12 / 16 / 16 px, 12 px en
 ## Accessibilité
 
 - En-tête : `<button>` avec `aria-expanded`, inclus dans un titre.
-- Jours du calendrier : boutons avec `aria-pressed` et un `aria-label` complet (« lundi 3 novembre 2026 »). Jours futurs désactivés.
+- Jours du calendrier : boutons avec `aria-pressed` et un `aria-label` complet (« lundi 3 novembre 2026 »). Jours futurs désactivés.
 - Tags supprimables : `aria-label="Retirer …"`.

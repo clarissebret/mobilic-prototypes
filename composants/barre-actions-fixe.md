@@ -12,7 +12,7 @@ Conteneur pleine largeur fixé en bas de l'écran, contenant 1 ou 2 boutons DSFR
 
 | Variante | Boutons |
 |---|---|
-| Double | Secondaire « Annuler » + primaire « Enregistrer » |
+| Double | Secondaire « Annuler » + primaire « Enregistrer » |
 | Simple | Un seul bouton |
 
 ## Tokens

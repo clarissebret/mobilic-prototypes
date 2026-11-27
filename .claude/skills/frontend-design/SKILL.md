@@ -12,7 +12,7 @@ Mobilic est un service de l'État : son identité visuelle est celle du DSFR, pa
 
 - **Couleurs** : uniquement les tokens DSFR (`var(--…)`). Pas de palette ni de valeurs hexadécimales à choisir.
 - **Typographie** : les polices du DSFR et ses classes (`fr-h1` à `fr-h6`, `fr-text--*`). Pas de choix de police, d'échelle typographique, de `font-size`, `letter-spacing` ou `text-transform`, pas de capitales.
-- **Mise en page et composants** : composants et classes DSFR d'abord ; espacements avec les utilitaires `fr-m*-*` sur la grille de 4 px. Pas de « hero », de prise de risque esthétique ni de plan de tokens : les écrans sont ceux d'une application mobile, dans le cadre commun `shared/shell-mobile.html`.
+- **Mise en page et composants** : composants et classes DSFR d'abord ; espacements avec les utilitaires `fr-m*-*` sur la grille de 4 px. Pas de « hero », de prise de risque esthétique ni de plan de tokens : les écrans sont ceux d'une application mobile, dans le cadre commun `shared/shell-mobile.html`.
 - **Animations** : durées du DSFR et respect de `prefers-reduced-motion`.
 - **Textes** : les textes exacts viennent des specs. Ne jamais en inventer : un texte manquant se demande à la propriétaire du dépôt avant d'être écrit.
 
