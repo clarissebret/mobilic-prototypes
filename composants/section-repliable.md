@@ -7,7 +7,7 @@ Code : `.section-repliable` dans `prototypes/gestionnaire/app.css`.
 ## Anatomie
 
 - En-tête : bouton titre sur toute la largeur restante (titre `h3` en `fr-text--md`, 56 px de haut au minimum, padding 12 px × 16 px, chevron `fr-icon-arrow-down-s-line` de 16 px à gauche, badge DSFR `fr-badge--sm` optionnel pour un nombre), puis une action optionnelle à droite (bouton DSFR tertiaire sans bordure, petit format).
-- Corps : `__corps` (grille animée) > `__clip` (masque) > `__contenu` (bandeaux éventuels puis contenu, 16 px entre eux ; 8 px au-dessus, 12 px en dessous).
+- Corps : `__corps` (grille animée, colonne bornée à `minmax(0, 1fr)` pour qu'un tableau trop large défile dans son conteneur sans élargir la section) > `__clip` (masque) > `__contenu` (bandeaux éventuels puis contenu, 16 px entre eux ; 8 px au-dessus, 12 px en dessous).
 
 ## États
 

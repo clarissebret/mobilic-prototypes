@@ -38,9 +38,9 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | Composant DSFR | Ajustement Mobilic |
 |---|---|
 | En-tête (`fr-header`) | Le bloc des logos ne change pas de fond au survol ni à l'appui |
-| Menu latéral (`fr-sidemenu`) | Pastille de notification possible sur un lien : badge DSFR `fr-badge--sm fr-badge--error fr-badge--no-icon`, aligné à droite. Dans l'espace gestionnaire : colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur, fixe au défilement comme l'en-tête |
+| Menu latéral (`fr-sidemenu`) | Sous 768 px, hors `fr-container`, ses marges négatives sont neutralisées. Pastille de notification possible sur un lien : badge DSFR `fr-badge--sm fr-badge--error fr-badge--no-icon`, aligné à droite. Dans l'espace gestionnaire : colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur, fixe au défilement comme l'en-tête |
 | Bandeau d'information importante (`fr-notice`) | Texte en 14 px sans gras (`fr-text--sm`, et `fr-text--regular` sur le titre), comme dans la maquette : le DSFR le met en 16 px gras à partir de 768 px |
-| Navigation principale (`fr-nav`) | Utilisée dans la page pour les rubriques de l'entreprise (Salariés, Véhicules…) : 24 px entre les liens, trait bas `--border-default-grey` sur toute la largeur ; reste en ligne et défile horizontalement sous 992 px au lieu de s'empiler |
+| Navigation principale (`fr-nav`) | Utilisée dans la page pour les rubriques de l'entreprise (Salariés, Véhicules…) : 24 px entre les liens, trait bas `--border-default-grey` sur toute la largeur ; liens en `fr-text--sm fr-text--regular` ; sous 992 px, reste en ligne, défile horizontalement et garde le soulignement du lien actif au lieu de passer en style menu mobile |
 
 ## Documenter un composant
 
