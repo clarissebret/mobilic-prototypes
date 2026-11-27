@@ -337,10 +337,10 @@
         <!-- Invitations en attente : masquée quand il n'y en a plus -->
         <section class="section-repliable" id="sec-inv">
           <div class="section-repliable__haut">
-            <h3 class="fr-text--lg fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="false" aria-controls="sec-inv-corps" onclick="basculerSection(this)">Invitations en attente <span class="fr-badge fr-badge--sm" id="inv-nb"></span></button></h3>
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="false" aria-controls="sec-inv-corps" onclick="basculerSection(this)">Invitations en attente <span class="fr-badge fr-badge--sm" id="inv-nb"></span></button></h3>
             <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-arrow-go-back-line" id="inv-relancer" onclick="relancerInvitations()">Relancer les invitations</button>
           </div>
-          <div class="section-repliable__corps" id="sec-inv-corps">
+          <div class="section-repliable__corps" id="sec-inv-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
             <div class="fr-table fr-table--no-caption mobilic-table">
               <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
                 <table>
@@ -357,15 +357,15 @@
                 </table>
               </div></div></div>
             </div>
-          </div>
+          </div></div></div>
         </section>
 
         <!-- Salariés temporaires : masquée quand il n'y en a pas -->
-        <section class="section-repliable" id="sec-tmp">
+        <section class="section-repliable section-repliable--ouverte" id="sec-tmp">
           <div class="section-repliable__haut">
-            <h3 class="fr-text--lg fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-tmp-corps" onclick="basculerSection(this)">Salariés temporaires</button></h3>
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-tmp-corps" onclick="basculerSection(this)">Salariés temporaires</button></h3>
           </div>
-          <div class="section-repliable__corps" id="sec-tmp-corps">
+          <div class="section-repliable__corps" id="sec-tmp-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
             <div id="tmp-alertes"></div>
             <div class="fr-table fr-table--no-caption mobilic-table">
               <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
@@ -383,15 +383,15 @@
                 </table>
               </div></div></div>
             </div>
-          </div>
+          </div></div></div>
         </section>
 
         <!-- Salariés longue durée : toujours affichée, ouverte par défaut -->
-        <section class="section-repliable" id="sec-lgd">
+        <section class="section-repliable section-repliable--ouverte" id="sec-lgd">
           <div class="section-repliable__haut">
-            <h3 class="fr-text--lg fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-lgd-corps" onclick="basculerSection(this)">Salariés longue durée</button></h3>
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-lgd-corps" onclick="basculerSection(this)">Salariés longue durée</button></h3>
           </div>
-          <div class="section-repliable__corps" id="sec-lgd-corps">
+          <div class="section-repliable__corps" id="sec-lgd-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
             <div id="sal-inactifs" hidden></div>
             <div class="fr-table fr-table--no-caption mobilic-table">
               <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
@@ -409,7 +409,7 @@
                 </table>
               </div></div></div>
             </div>
-          </div>
+          </div></div></div>
         </section>
         </div>
       </div>

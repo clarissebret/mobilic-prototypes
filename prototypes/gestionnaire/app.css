@@ -131,16 +131,33 @@
 .barre-progression__valeur { height: 100%; background-color: var(--artwork-major-blue-france); }
 .barre-progression__valeur--basse { background-color: var(--background-flat-warning); }
 
-/* Section repliable (composant Mobilic, voir composants/section-repliable.md) */
-.section-repliable__haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
+/* Section repliable (composant Mobilic, voir composants/section-repliable.md), dans l'esprit de l'accordéon DSFR */
+.section-repliable__haut { display: flex; flex-wrap: wrap; align-items: center; gap: 0 1rem; padding-right: .5rem; }
+.section-repliable__haut h3 { flex: 1; min-width: 0; }
 /* Repliée : un trait la sépare de la section suivante */
-.section-repliable:has(.section-repliable__btn[aria-expanded="false"]) .section-repliable__haut { box-shadow: inset 0 -1px 0 var(--border-default-grey); }
-.section-repliable__btn { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; border: 0; background: none; color: var(--text-title-grey); font: inherit; font-weight: 500; text-align: left; cursor: pointer; }
+.section-repliable:not(.section-repliable--ouverte) .section-repliable__haut { box-shadow: inset 0 -1px 0 var(--border-default-grey); }
+/* Bouton sur toute la largeur restante ; le fond de survol couvre toute la ligne, comme l'accordéon DSFR */
+.section-repliable__btn { display: flex; align-items: center; gap: .5rem; width: 100%; min-height: 3.5rem; padding: .75rem 1rem; border: 0; background: none;
+  color: var(--text-title-grey); font: inherit; font-weight: 500; text-align: left; cursor: pointer; }
 .section-repliable__btn[aria-expanded="true"] { color: var(--text-action-high-blue-france); }
+@media (hover: hover) and (pointer: fine) {
+  .section-repliable__haut:has(.section-repliable__btn:hover) { background-color: var(--background-default-grey-hover); }
+}
+.section-repliable__haut:has(.section-repliable__btn:active) { background-color: var(--background-default-grey-active); }
 .section-repliable__btn::before { --icon-size: 1rem; background-color: var(--background-action-high-blue-france); transition: transform 200ms cubic-bezier(.23, 1, .32, 1); }
 .section-repliable__btn[aria-expanded="false"]::before { transform: rotate(-90deg); }
-@media (prefers-reduced-motion: reduce) { .section-repliable__btn::before { transition: none; } }
-.section-repliable__corps { display: flex; flex-direction: column; gap: 1rem; padding: .5rem 0 .75rem; }
+/* Ouverture : la grille passe de 0fr à 1fr (pas d'équivalent en transform), le contenu apparaît en fondu */
+.section-repliable__corps { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms cubic-bezier(.23, 1, .32, 1); }
+.section-repliable--ouverte .section-repliable__corps { grid-template-rows: 1fr; }
+.section-repliable__clip { min-height: 0; overflow: hidden; }
+.section-repliable--posee .section-repliable__clip { overflow: visible; }
+.section-repliable__contenu { display: flex; flex-direction: column; gap: 1rem; padding: .5rem 0 .75rem; opacity: 0; transform: translateY(-.5rem);
+  transition: opacity 200ms cubic-bezier(.23, 1, .32, 1), transform 250ms cubic-bezier(.23, 1, .32, 1); }
+.section-repliable--ouverte .section-repliable__contenu { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .section-repliable__btn::before, .section-repliable__corps { transition: none; }
+  .section-repliable__contenu { transform: none; transition: opacity 200ms ease; }
+}
 /* Neutralise la marge basse du DSFR sous un tableau placé dans une section */
 .section-repliable .fr-table { margin-bottom: 0; }
 

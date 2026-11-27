@@ -153,10 +153,16 @@ function renderSalaries() {
 }
 
 /* ---------- Actions ---------- */
+/* Ouverture animée (grille 0fr → 1fr, comme la carte d'établissement). Fermée, le contenu est inerte ;
+   une fois ouverte, le masque est levé pour ne pas couper le contour de focus DSFR. */
 function basculerSection(btn) {
   const ouvrir = btn.getAttribute('aria-expanded') !== 'true';
+  const section = btn.closest('.section-repliable');
   btn.setAttribute('aria-expanded', String(ouvrir));
-  $(btn.getAttribute('aria-controls')).hidden = !ouvrir;
+  section.classList.toggle('section-repliable--ouverte', ouvrir);
+  $(btn.getAttribute('aria-controls')).inert = !ouvrir;
+  clearTimeout(section._posee); section.classList.remove('section-repliable--posee');
+  if (ouvrir) section._posee = setTimeout(() => section.classList.add('section-repliable--posee'), 250);
 }
 function ouvrirSection(id, ouvrir) { const b = document.querySelector(`[aria-controls="${id}-corps"]`); b.setAttribute('aria-expanded', String(!ouvrir)); basculerSection(b); }
 /* Menu latéral replié sous 768 px (bouton « Dans cette rubrique ») */
