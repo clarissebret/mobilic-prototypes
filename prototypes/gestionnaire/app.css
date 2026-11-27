@@ -160,15 +160,15 @@
 .section-repliable--ouverte .section-repliable__corps { grid-template-rows: 1fr; }
 .section-repliable__clip { min-width: 0; min-height: 0; overflow: hidden; }
 .section-repliable--posee .section-repliable__clip { overflow: visible; }
-.section-repliable__contenu { display: flex; flex-direction: column; gap: 1rem; padding: .5rem 0 .75rem; opacity: 0; transform: translateY(-.5rem);
+.section-repliable__contenu { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 0; opacity: 0; transform: translateY(-.5rem);
   transition: opacity 200ms cubic-bezier(.23, 1, .32, 1), transform 250ms cubic-bezier(.23, 1, .32, 1); }
 .section-repliable--ouverte .section-repliable__contenu { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   .section-repliable__btn::before, .section-repliable__corps { transition: none; }
   .section-repliable__contenu { transform: none; transition: opacity 200ms ease; }
 }
-/* Neutralise la marge basse du DSFR sous un tableau placé dans une section */
-.section-repliable .fr-table { margin-bottom: 0; }
+/* Neutralise les marges haute et basse du DSFR autour d'un tableau placé dans une section : l'espacement vient de la section (16 px partout) */
+.section-repliable .fr-table { margin-top: 0; margin-bottom: 0; }
 
 /* Cellules des tableaux de salariés : largeurs de la maquette */
 .sal-nom { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 13rem; }
