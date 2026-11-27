@@ -33,7 +33,7 @@ function go(name) {
   current = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + name));
   window.scrollTo(0, 0);
-  parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'profil', 'fin'].includes(name) }, '*');
+  parent.postMessage({ type: 'screen', name, form: !['metier', 'compte', 'profil', 'fin', 'salaries'].includes(name) }, '*');
 }
 /* Menu de l'en-tête sous 992 px : modale DSFR ouverte sans le JS du DSFR */
 function openMenu(btn) {
@@ -50,6 +50,8 @@ function closeMenu() {
 /* Retour Android / Échap. Le compte est créé à la sortie de Cerbère : pas de retour vers Cerbère depuis Mobilic. */
 function back() {
   if (document.querySelector('.fr-header__menu.fr-modal--opened')) return closeMenu();
+  /* Infobulle ouverte (onglet Salariés) : Échap la referme */
+  if (document.querySelector('#screen-salaries .fr-tooltip--shown')) return cacherInfobulles();
   if (current === 'compte') return go('metier');
   if (current === 'cerbere-1') return go('compte');
   if (current === 'cerbere-2') return go('cerbere-1');
@@ -59,6 +61,7 @@ function back() {
   /* Inscription de l'entreprise : le compte Cerbère existe, Retour ne fait rien */
   if (current === 'source' && !state.repriseFinalisation) return go('etab');
   if (current === 'fin') return go('source');
+  /* Onglet Salariés : premier écran de l'espace, Retour ne fait rien */
 }
 function toast(msg) {
   const t = $('toast'); t.textContent = msg; t.classList.add('show');

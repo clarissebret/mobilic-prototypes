@@ -27,14 +27,20 @@ Composants propres à Mobilic, qui n'existent pas dans le DSFR ou qui en sont un
 | [Champ téléphone](champ-telephone.md) | Liste déroulante + champ de saisie | Gestionnaire : inscription, détails de l'entreprise |
 | [Encadré d'étape](encadre-etape.md) | Indicateur d'étapes + groupe de boutons | Gestionnaire : inscription, étapes Mobilic |
 | [Encart webinaire](encart-webinaire.md) | Bouton tertiaire | Gestionnaire : inscription, confirmation |
-| [Tableau Mobilic](tableau.md) | Tableau (variante) | Toutes les interfaces ; contrôleur : derniers contrôles |
+| [Tableau Mobilic](tableau.md) | Tableau (variante) + liste déroulante | Toutes les interfaces ; contrôleur : derniers contrôles ; gestionnaire : salariés |
+| [Section repliable](section-repliable.md) | Bouton + badge | Gestionnaire : onglet Salariés |
+| [Barre de progression](barre-progression.md) | — | Gestionnaire : onglet Salariés |
+| [Carte webinaire](carte-webinaire.md) | Carte (variante) + lien | Gestionnaire : menu latéral de l'espace |
 | [Outil de prototypage](outil-prototypage.md) | Boutons, contrôle segmenté, onglets, info-bulles | Autour de tous les prototypes (hors application) |
 
 ## Ajustements des composants DSFR
 
 | Composant DSFR | Ajustement Mobilic |
 |---|---|
-| En-tête (`fr-header`) | Le bloc des logos ne change pas de fond au survol ni à l'appui |
+| En-tête (`fr-header`) | Le bloc des logos ne change pas de fond au survol ni à l'appui. En-tête connecté de l'espace gestionnaire (`entete-connecte`) : pleine largeur à partir de 992 px, logo aligné sur le texte du menu latéral (32 px du bord), outils alignés sur le bord droit du contenu (32 px) ; outils : nom du gestionnaire en texte, entreprise en bouton tertiaire petit format (icône immeuble, chevron), bouton Menu icône seule ; sous 992 px, nom et entreprise passent dans le menu |
+| Menu latéral (`fr-sidemenu`) | Sous 768 px, hors `fr-container`, ses marges négatives sont neutralisées. Pastille de notification possible sur un lien : badge DSFR `fr-badge--sm fr-badge--error fr-badge--no-icon`, aligné à droite. Dans l'espace gestionnaire : colonne de 270 px, 24 px à gauche, trait de séparation sur toute la hauteur, fixe au défilement comme l'en-tête |
+| Bandeau d'information importante (`fr-notice`) | Texte en 14 px sans gras (`fr-text--sm`, et `fr-text--regular` sur le titre), comme dans la maquette : le DSFR le met en 16 px gras à partir de 768 px |
+| Navigation principale (`fr-nav`) | Utilisée dans la page pour les rubriques de l'entreprise (Salariés, Véhicules…) : 24 px entre les liens, trait bas `--border-default-grey` sur toute la largeur ; liens en `fr-text--sm fr-text--regular` ; sous 992 px, reste en ligne, défile horizontalement et garde le soulignement du lien actif au lieu de passer en style menu mobile |
 
 ## Documenter un composant
 

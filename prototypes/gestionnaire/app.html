@@ -258,3 +258,167 @@
     </div>
   </div>
 </section>
+
+<!-- 6. ENTREPRISE : ONGLET SALARIÉS (espace gestionnaire, connecté) -->
+<section class="screen" id="screen-salaries">
+  {{FILE:header-connecte.html}}
+  <div class="espace">
+    <nav class="fr-sidemenu espace__menu" aria-label="Menu de l'espace gestionnaire">
+      <div class="fr-sidemenu__inner">
+        <button type="button" class="fr-sidemenu__btn" aria-controls="espace-menu" aria-expanded="false" onclick="basculerMenuLateral(this)">Dans cette rubrique</button>
+        <div class="fr-collapse" id="espace-menu">
+          <ul class="fr-sidemenu__list">
+            <li class="fr-sidemenu__item"><a class="fr-sidemenu__link" href="#" onclick="toast('Accueil&nbsp;: hors scope');return false">Accueil</a></li>
+            <li class="fr-sidemenu__item fr-sidemenu__item--active"><a class="fr-sidemenu__link" href="#" aria-current="page" onclick="return false">Entreprise</a></li>
+            <li class="fr-sidemenu__item"><a class="fr-sidemenu__link" href="#" onclick="toast('Activités&nbsp;: hors scope');return false">Activités <span class="fr-badge fr-badge--sm fr-badge--error fr-badge--no-icon">3</span></a></li>
+            <li class="fr-sidemenu__item"><a class="fr-sidemenu__link" href="#" onclick="toast('Respect des seuils&nbsp;: hors scope');return false">Respect des seuils</a></li>
+            <li class="fr-sidemenu__item"><a class="fr-sidemenu__link" href="#" onclick="toast('Certificat&nbsp;: hors scope');return false">Certificat</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Carte webinaire (composant Mobilic inspiré de la carte DSFR), en bas du menu -->
+      <div class="carte-webinaire fr-enlarge-link">
+        <div class="carte-webinaire__img"><img src="{{IMG:picto-community.svg}}" alt=""></div>
+        <p class="carte-webinaire__corps fr-mb-0"><a class="carte-webinaire__lien fr-link fr-link--sm fr-link--icon-right fr-icon-arrow-right-line" href="#" onclick="toast('Inscription au webinaire&nbsp;: hors scope');return false">S'inscrire à un webinaire</a></p>
+      </div>
+    </nav>
+
+    <main class="espace__page">
+      <div class="entreprise">
+        <div class="entreprise__ligne">
+          <div class="entreprise__nom">
+            <h1 class="fr-h4 fr-mb-0">Dupont Transport SARL</h1>
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="toast('Modifier l\'entreprise&nbsp;: hors scope')">Modifier</button>
+          </div>
+          <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="toast('Inscrire une nouvelle entreprise&nbsp;: hors scope')">Inscrire une nouvelle entreprise</button>
+        </div>
+        <p class="entreprise__infos fr-mb-0">
+          <span><span class="mention">Numéro de téléphone</span> 01 99 00 12 34</span>
+          <span><span class="mention">Activité principale</span> TRM - Courte distance</span>
+        </p>
+      </div>
+
+      <nav class="fr-nav entreprise__nav" role="navigation" aria-label="Rubriques de l'entreprise">
+        <ul class="fr-nav__list">
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" aria-current="page" onclick="return false">Salariés</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" onclick="toast('Véhicules&nbsp;: hors scope');return false">Véhicules</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" onclick="toast('Adresses&nbsp;: hors scope');return false">Adresses</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" onclick="toast('Paramètres&nbsp;: hors scope');return false">Paramètres</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" onclick="toast('Groupe(s)&nbsp;: hors scope');return false">Groupe(s)</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link fr-text--sm fr-text--regular" href="#" onclick="toast('API&nbsp;: hors scope');return false">API</a></li>
+        </ul>
+      </nav>
+
+      <div class="salaries">
+        <div class="salaries__entete">
+          <div class="salaries__titre">
+            <h2 class="fr-h5 fr-mb-0">Salariés</h2>
+            <p class="fr-badge fr-badge--sm" id="sal-nb"></p>
+          </div>
+          <div class="salaries__actions">
+            <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="toast('Inviter une liste de salariés&nbsp;: hors scope')">Inviter une liste de salariés</button>
+            <button type="button" class="fr-btn fr-btn--sm" onclick="toast('Inviter un nouveau salarié&nbsp;: hors scope')">Inviter un nouveau salarié</button>
+          </div>
+        </div>
+
+        <div class="salaries__filtres">
+          <select class="fr-select fr-text--sm fr-mb-0 salaries__groupe" id="sal-groupe" aria-label="Filtrer par groupe" onchange="renderSalaries()">
+            <option value="">Tous les groupes</option>
+            <option>Groupe A</option>
+            <option>Groupe B</option>
+          </select>
+          <div class="barre-progression">
+            <p class="fr-text--sm fr-mb-0">Inscrits sur Mobilic&nbsp;: <span class="fr-text--bold" id="sal-inscrits"></span></p>
+            <div class="barre-progression__fond" aria-hidden="true"><div class="barre-progression__valeur" id="sal-barre"></div></div>
+          </div>
+        </div>
+
+        <div class="salaries__sections">
+        <!-- Invitations en attente : masquée quand il n'y en a plus -->
+        <section class="section-repliable" id="sec-inv">
+          <div class="section-repliable__haut">
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="false" aria-controls="sec-inv-corps" onclick="basculerSection(this)">Invitations en attente <span class="fr-badge fr-badge--sm" id="inv-nb"></span></button></h3>
+            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-arrow-go-back-line" id="inv-relancer" onclick="relancerInvitations()">Relancer les invitations</button>
+          </div>
+          <div class="section-repliable__corps" id="sec-inv-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
+            <div class="fr-table fr-table--no-caption mobilic-table">
+              <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+                <table>
+                  <caption>Invitations en attente</caption>
+                  <thead><tr>
+                    <th scope="col">Identifiant ou email</th>
+                    <th scope="col">Accès gestionnaire</th>
+                    <th scope="col">Fin rattachement</th>
+                    <th scope="col">Invité le</th>
+                    <th scope="col">Relancé le</th>
+                    <th scope="col"><span class="fr-sr-only">Actions</span></th>
+                  </tr></thead>
+                  <tbody id="inv-lignes"></tbody>
+                </table>
+              </div></div></div>
+            </div>
+          </div></div></div>
+        </section>
+
+        <!-- Salariés temporaires : masquée quand il n'y en a pas -->
+        <section class="section-repliable section-repliable--ouverte" id="sec-tmp">
+          <div class="section-repliable__haut">
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-tmp-corps" onclick="basculerSection(this)">Salariés temporaires</button></h3>
+          </div>
+          <div class="section-repliable__corps" id="sec-tmp-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
+            <div class="section-repliable__bandeaux" id="tmp-alertes"></div>
+            <div class="fr-table fr-table--no-caption mobilic-table">
+              <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+                <table>
+                  <caption>Salariés temporaires</caption>
+                  <thead><tr>
+                    <th scope="col"><div class="fr-cell--sort">Salarié<button type="button" class="fr-btn--sort fr-btn fr-btn--sm" id="tmp-tri" onclick="trier('tmp')">Trier par nom</button></div></th>
+                    <th scope="col">Email</th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Début rattachement</span></th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Fin rattachement</span></th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Groupe d’affectation</span></th>
+                    <th scope="col">Type d’activité</th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th-info"><span class="sal-th">Activité mixte VL/PL</span><button type="button" class="fr-btn--tooltip fr-btn" aria-describedby="tt-mixte-tmp" onmouseenter="salInfobulle(this, true)" onmouseleave="salInfobulle(this, false)" onfocus="salInfobulle(this, true)" onblur="salInfobulle(this, false)">Information sur l’activité mixte VL/PL</button></span><span class="fr-tooltip fr-placement fr-placement--bottom fr-text--regular" id="tt-mixte-tmp" role="tooltip" aria-hidden="true">Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat.</span></th>
+                    <th scope="col">Identifiant</th>
+                    <th scope="col"><span class="fr-sr-only">Actions</span></th>
+                  </tr></thead>
+                  <tbody id="tmp-lignes"></tbody>
+                </table>
+              </div></div></div>
+            </div>
+          </div></div></div>
+        </section>
+
+        <!-- Salariés longue durée : toujours affichée, ouverte par défaut -->
+        <section class="section-repliable section-repliable--ouverte" id="sec-lgd">
+          <div class="section-repliable__haut">
+            <h3 class="fr-text--md fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-lgd-corps" onclick="basculerSection(this)">Salariés longue durée</button></h3>
+          </div>
+          <div class="section-repliable__corps" id="sec-lgd-corps"><div class="section-repliable__clip"><div class="section-repliable__contenu">
+            <div class="section-repliable__bandeaux" id="sal-inactifs" hidden></div>
+            <div class="fr-table fr-table--no-caption mobilic-table">
+              <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
+                <table>
+                  <caption>Salariés longue durée</caption>
+                  <thead><tr>
+                    <th scope="col"><div class="fr-cell--sort">Salarié<button type="button" class="fr-btn--sort fr-btn fr-btn--sm" id="lgd-tri" onclick="trier('lgd')">Trier par nom</button></div></th>
+                    <th scope="col">Email</th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Début rattachement</span></th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Accès gestionnaire</span></th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th">Groupe d’affectation</span></th>
+                    <th scope="col">Type d’activité</th>
+                    <th scope="col" class="fr-cell--multiline"><span class="sal-th-info"><span class="sal-th">Activité mixte VL/PL</span><button type="button" class="fr-btn--tooltip fr-btn" aria-describedby="tt-mixte-lgd" onmouseenter="salInfobulle(this, true)" onmouseleave="salInfobulle(this, false)" onfocus="salInfobulle(this, true)" onblur="salInfobulle(this, false)">Information sur l’activité mixte VL/PL</button></span><span class="fr-tooltip fr-placement fr-placement--bottom fr-text--regular" id="tt-mixte-lgd" role="tooltip" aria-hidden="true">Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat.</span></th>
+                    <th scope="col">Identifiant</th>
+                    <th scope="col"><span class="fr-sr-only">Actions</span></th>
+                  </tr></thead>
+                  <tbody id="lgd-lignes"></tbody>
+                </table>
+              </div></div></div>
+            </div>
+          </div></div></div>
+        </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>

@@ -195,6 +195,79 @@ Dessous, le texte « Pas encore de compte ? » et le lien « Je m'inscris »
 </details>
 
 <details>
+<summary><h2 id="parcours--salariés-de-lentreprise">Parcours : salariés de l'entreprise</h2></summary>
+
+Le gestionnaire suit les salariés rattachés à son entreprise et les invitations qu'il a envoyées, depuis l'onglet « Salariés » de la page « Entreprise » de son espace (connecté). Les autres onglets et les fenêtres ouvertes depuis cet onglet (inviter, modifier ou prolonger un rattachement, détacher, rattacher) ne font pas partie de ce parcours.
+
+### 1. Onglet Salariés
+
+L'onglet présente les salariés en trois sections repliables, sous un en-tête qui donne leur nombre et la progression des inscriptions.
+
+#### En-tête de l'onglet
+
+**SAL-01** En haut de l'onglet, le titre « Salariés » porte le nombre de salariés, à côté des boutons « Inviter une liste de salariés » et « Inviter un nouveau salarié ». Dessous, le filtre « Tous les groupes » et l'indicateur « Inscrits sur Mobilic : [x] sur [y] », avec une barre de progression. [x] est le nombre de salariés réellement inscrits, sans compter les invitations en attente ; [y] est le nombre de salariés concernés par Mobilic renseigné dans les paramètres de l'entreprise.
+
+**SAL-16** Quand moins de 50 % des salariés renseignés sont inscrits, la barre de progression passe en couleur d'avertissement.
+
+**SAL-02** Le filtre par groupe d'affectation restreint les tableaux « Salariés temporaires » et « Salariés longue durée » au groupe choisi.
+
+#### Les sections
+
+**SAL-03** Trois sections repliables se suivent : « Invitations en attente », « Salariés temporaires », « Salariés longue durée ».
+
+**SAL-04** « Salariés longue durée » est toujours affichée, et ouverte quand le gestionnaire arrive sur l'onglet.
+
+**SAL-05** « Invitations en attente » n'est affichée que s'il reste au moins une invitation en attente. Son titre porte le nombre d'invitations ; elle est repliée quand le gestionnaire arrive sur l'onglet.
+
+**SAL-06** « Salariés temporaires » n'est affichée que si l'entreprise a au moins un salarié temporaire. Il y en a généralement peu.
+
+#### Invitations en attente
+
+**SAL-07** Le tableau a les colonnes « Identifiant ou email », « Accès gestionnaire », « Fin rattachement », « Invité le » et « Relancé le », puis les actions « Relancer » et « Annuler » de chaque invitation.
+
+**SAL-08** À droite du titre de la section, le bouton « Relancer les invitations ».
+
+**SAL-09** « Annuler » retire l'invitation de la liste. Quand la dernière est annulée, la section disparaît (SAL-05).
+
+#### Salariés temporaires
+
+**SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Le tableau a les colonnes « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Activité mixte VL/PL » (SAL-18), « Identifiant », puis l'action de la ligne (SAL-17).
+
+**SAL-11** À l'approche de la fin de rattachement, un bandeau d'avertissement s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
+
+#### Salariés longue durée
+
+**SAL-12** Le tableau a les colonnes « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Activité mixte VL/PL » (SAL-18), « Identifiant », puis l'action de la ligne (SAL-17).
+
+#### Salariés détachés
+
+Ces règles valent pour les deux tableaux de salariés.
+
+**SAL-13** Un salarié détaché reste dans son tableau : son nom est grisé, avec le badge « Détaché », et ses listes déroulantes et sa case « Activité mixte VL/PL » sont désactivées.
+
+**SAL-17** La dernière colonne propose « Détacher » pour un salarié rattaché, « Rattacher » pour un salarié détaché.
+
+#### Activité mixte VL/PL
+
+Ces règles valent pour les deux tableaux de salariés. Elles servent au calcul d'obtention du certificat, qui doit tenir compte des salariés qui conduisent surtout des poids lourds.
+
+**SAL-18** La colonne « Activité mixte VL/PL », après « Type d'activité », a une case à cocher par salarié. Le gestionnaire coche les salariés qui effectuent plus de la moitié de leur temps de travail en poids lourd (PL) ; l'information est prise en compte dans le calcul d'obtention du certificat.
+
+**SAL-19** L'en-tête de la colonne porte une infobulle : « Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat. »
+
+**SAL-22** Un salarié détaché puis rattaché à nouveau repart avec la case décochée : la valeur d'avant le détachement n'est pas conservée.
+
+**SAL-23** Quand le rattachement d'un salarié temporaire est prolongé, la case garde sa valeur.
+
+**SAL-24** L'activité mixte est propre à chaque rattachement : un salarié rattaché à plusieurs entreprises peut être en activité mixte dans l'une et pas dans l'autre.
+
+### Navigation
+
+**NAV-02** Le bouton Retour (Android ou Échap) est sans effet sur l'onglet Salariés, sauf pour refermer le menu de l'en-tête ou une infobulle ouverte.
+
+</details>
+
+<details>
 <summary><h2 id="éléments-communs">Éléments communs</h2></summary>
 
 Ce qui apparaît dans plusieurs parcours. Les parcours y renvoient.
@@ -207,12 +280,22 @@ Ce qui apparaît dans plusieurs parcours. Les parcours y renvoient.
 
 **ENT-03** Sous 992 px, les liens et la navigation sont regroupés dans un menu (bouton « Menu ») ; « Fermer », Échap ou Retour le referment.
 
+### Espace gestionnaire (connecté)
+
+**ESP-01** L'en-tête et le menu latéral (« Accueil », « Entreprise », « Activités », « Respect des seuils », « Certificat ») restent fixes : seul le contenu de la page défile.
+
+**ESP-04** À droite de l'en-tête connecté : le nom du gestionnaire, le bouton de l'entreprise en cours (son nom, pour en changer) et le bouton « Menu ». Sur petit écran, le nom et l'entreprise passent dans le menu.
+
+**ESP-02** Un lien du menu latéral peut porter une pastille de notification avec un nombre (ex. les activités).
+
+**ESP-03** En bas du menu latéral, la carte « S'inscrire à un webinaire » ouvre l'inscription aux webinaires, qui ne fait pas partie de ce parcours.
+
 </details>
 
 <details>
 <summary><h2 id="composants-utilisés">Composants utilisés</h2></summary>
 
-- DSFR : en-tête (liens et navigation principale), tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
-- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md).
+- DSFR : en-tête (liens et navigation principale), navigation principale (rubriques de l'entreprise), menu latéral, bandeau d'information importante, badge, tableau, infobulle, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
+- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Barre de progression](../../composants/barre-progression.md), [Carte webinaire](../../composants/carte-webinaire.md).
 
 </details>
