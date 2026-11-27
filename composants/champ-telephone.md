@@ -6,8 +6,8 @@ Code : `telField()` dans `prototypes/gestionnaire/app.js`, styles `.tel` dans `p
 
 ## Anatomie
 
-- Libellé DSFR et texte d'aide « Format attendu : 01 99 00 12 34 ».
-- Ligne : liste déroulante DSFR de l'indicatif (drapeau et indicatif, ex. « 🇫🇷 +33 », France par défaut, largeur du contenu), puis champ de saisie DSFR `type="tel"` qui prend le reste de la largeur.
+- Libellé DSFR et texte d'aide « Format attendu : 01 99 00 12 34 ».
+- Ligne : liste déroulante DSFR de l'indicatif (drapeau et indicatif, ex. « 🇫🇷 +33 », France par défaut, largeur du contenu), puis champ de saisie DSFR `type="tel"` qui prend le reste de la largeur.
 
 ## États
 
@@ -19,4 +19,4 @@ Ceux des composants DSFR liste déroulante et champ de saisie.
 
 ## Accessibilité
 
-La liste de l'indicatif a son propre nom accessible (« Indicatif du pays ») ; le libellé visible est relié au champ du numéro.
+La liste de l'indicatif a son propre nom accessible (« Indicatif du pays ») ; le libellé visible est relié au champ du numéro.
