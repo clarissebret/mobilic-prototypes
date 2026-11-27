@@ -117,6 +117,7 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 - **ESP-01** L'en-tête et le menu latéral (Accueil, Entreprise, Activités, Respect des seuils, Certificat) restent fixes : seul le contenu de la page défile.
 - **ESP-02** Un lien du menu latéral peut porter une pastille de notification avec un nombre (ex. activités).
+- **ESP-04** En-tête connecté : à droite, le nom du gestionnaire, le bouton de l'entreprise en cours (nom de l'entreprise, pour en changer) et le bouton Menu. Sur petit écran, le nom et l'entreprise sont dans le menu.
 - **ESP-03** En bas du menu latéral, la carte « S'inscrire à un webinaire » ouvre l'inscription aux webinaires (hors de ce parcours).
 
 ### 6. Onglet Salariés
