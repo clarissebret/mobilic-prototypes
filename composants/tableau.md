@@ -39,7 +39,7 @@ Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectatio
 
 ## Case à cocher dans une cellule
 
-Quand une valeur oui/non se modifie dans le tableau (ex. activité mixte d'un salarié), la cellule contient une case DSFR petit format (`fr-checkbox-group fr-checkbox-group--sm`), avec un libellé réservé aux lecteurs d'écran (`fr-sr-only`, ex. « Activité mixte de Karim Benali »). Le libellé garde la hauteur d'une ligne (24 px) pour que la case soit centrée verticalement. L'explication de la colonne va dans une infobulle DSFR sur son en-tête (`fr-btn--tooltip`).
+Quand une valeur oui/non se modifie dans le tableau (ex. activité mixte d'un salarié), la cellule contient une case DSFR petit format (`fr-checkbox-group fr-checkbox-group--sm`), avec un libellé réservé aux lecteurs d'écran (`fr-sr-only`, ex. « Activité mixte de Karim Benali »). Le libellé garde la hauteur d'une ligne (24 px) pour que la case soit centrée verticalement. L'explication de la colonne va dans une infobulle DSFR sur son en-tête (`fr-btn--tooltip`), en `fr-text--regular` pour ne pas hériter du gras de l'en-tête.
 
 ## Ligne désactivée
 
