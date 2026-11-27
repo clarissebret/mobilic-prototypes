@@ -28,28 +28,33 @@ Le ticket est une introduction au prototype, pas une copie de la spec. Il dit qu
 
 ## 3. Format
 
-Écrire en Markdown (Trello l'affiche), en français, dans un bloc de code pour qu'on puisse le copier tel quel.
+Écrire en Markdown, en français, **rendu directement dans la réponse, jamais dans un bloc de code** : copié depuis un bloc de code, le texte arrive dans Trello en code ou avec les astérisques visibles ; copié depuis le rendu, le gras et les listes suivent. Le modèle ci-dessous est en bloc de code seulement pour qu'on voie sa structure.
 
 ```markdown
 **<Titre : verbe + résultat pour l'utilisateur>**
 
-**Problème**
+## 🤔 Problème
 <1 à 3 phrases : ce qui ne va pas aujourd'hui, du point de vue de l'utilisateur.>
 
-**Solution**
+## 💡 Solution
 <Une phrase qui résume, puis le parcours en étapes numérotées. Sous-puces pour les variantes d'une étape (« s'il a déjà un compte… », « s'il n'y a qu'un établissement… »).>
 
-**Design**
-Prototype : [<nom du parcours>](<lien>)<, et les variantes à choisir dans le sélecteur de parcours s'il y en a.>
-Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sections>.
+## 🎨 Design
+Prototype : [<libellé du parcours>](<lien direct vers le parcours>)<, puis un lien par variante utile.>
+Spec détaillée : [<nom de la section>](<lien GitHub vers la section de SPECS.md>)<, un lien par section concernée.>
 
-**Dev**
+## 🤖 Dev
 - **<Cas particulier en gras>** : <règle métier, de gestion ou technique à ne pas rater>
   - <sous-cas, un par puce>
+
+## 💬 Questions ouvertes
+<Seulement s'il y en a.>
+- **<Sujet en gras>** : <question à trancher avant ou pendant le développement>
 ```
 
 ## 4. Règles d'écriture
 
+- **Sections** : titres de niveau 2 (`##`), sans gras, chacun précédé de son emoji : 🤔 Problème, 💡 Solution, 🎨 Design, 🤖 Dev, 💬 Questions ouvertes. Dans Trello, ils restent des titres de niveau 2.
 - **Titre** : le résultat pour l'utilisateur (« Faire passer l'inscription des gestionnaires par Cerbère »), jamais un identifiant ou un nom de fichier.
 - **Langage de l'utilisateur**, pas celui de la spec : « il coche les établissements qu'il inscrit », pas « case à cocher ETA-04 ».
 - **Pas d'identifiants de règles** (`ETA-11`…) et **pas de textes exacts** de l'interface, sauf un libellé indispensable pour se repérer (« Terminer »). Le ticket peut dire « un message confirme la création du compte » ; la spec donne le texte.
@@ -62,15 +67,23 @@ Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sectio
   - les données échangées avec un service tiers, et ce qui ne doit pas être développé (pages d'un tiers simulées dans le prototype) ;
   - les champs conditionnels, préremplis ou vidés.
   Chaque puce commence par le sujet en gras. Un sous-cas par sous-puce, au format « situation → résultat » quand il y a plusieurs issues.
+- **Pas d'évidence** : n'écrire que les vraies règles et exceptions.
+  - Pas de négation redondante : quand le périmètre est donné (« dans les tableaux des salariés temporaires et longue durée »), ne pas ajouter ce qui n'est pas concerné (« pas dans le tableau des invitations »).
+  - Pas d'absence de règle : ne pas écrire qu'un élément est « toujours disponible », « quel que soit… », ou qu'il n'y a pas de condition. Sans règle écrite, le comportement par défaut va de soi.
+  - Ne pas non plus garder la trace d'une règle abandonnée en cours de conception : le ticket décrit ce qu'on construit, pas l'historique des décisions.
 - **Longueur** : Problème et Solution lisibles en une minute. La section Dev peut être plus longue : c'est une liste de vérification.
 - Ponctuation française : espace insécable avant `:`, `;`, `?`, `!` et à l'intérieur des guillemets, comme dans le reste du dépôt.
 
-## 5. Lien du prototype
+## 5. Liens
 
-Le prototype est publié sur GitHub Pages depuis `main` : l'adresse est celle de `gh api repos/{owner}/{repo}/pages -q .html_url`, suivie de `<interface>/`. Un parcours qui n'est que sur la branche n'est pas encore en ligne : le signaler sous le ticket. Le sélecteur de parcours affiche les libellés de `prototypes/<interface>/prototype.json` ; citer ceux qui concernent le ticket.
+Toujours de vrais liens cliquables, jamais un chemin de fichier seul.
+
+- **Prototype** : un lien direct vers chaque parcours concerné. Adresse GitHub Pages (`gh api repos/{owner}/{repo}/pages -q .html_url`), puis `<interface>/#parcours=<commande>`, la commande étant celle du parcours dans `prototypes/<interface>/prototype.json`. Le texte du lien est le libellé du parcours dans ce même fichier. Exemple : `https://<compte>.github.io/mobilic-prototypes/gestionnaire/#parcours=flow-salaries`.
+- **Spec** : un lien vers chaque section concernée de `SPECS.md` sur GitHub : `<adresse du dépôt>/blob/main/prototypes/<interface>/SPECS.md#<ancre>` (adresse du dépôt : `gh repo view --json url -q .url`). Ancre GitHub d'un titre : en minuscules, espaces remplacées par des tirets, ponctuation retirée sauf `-` et `_`, accents gardés (« 6. Onglet Salariés » → `#6-onglet-salariés`).
+- Les deux liens pointent vers `main`. Si la branche n'est pas encore fusionnée, le dire sous le ticket : les liens fonctionneront après la fusion.
 
 ## 6. Rendu
 
-- Afficher le ticket dans la réponse, dans un bloc de code Markdown.
+- Afficher le ticket dans la réponse en Markdown rendu, sans bloc de code, entre deux traits horizontaux (`---`) pour qu'on voie où commencer et finir la sélection.
 - En dessous, hors du ticket : ce qui reste à vérifier (problème formulé sans confirmation, lien pas encore en ligne, avant supposé).
 - Ne rien créer dans Trello et ne rien écrire dans le dépôt, sauf si on le demande.
