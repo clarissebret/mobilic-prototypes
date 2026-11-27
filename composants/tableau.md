@@ -37,6 +37,10 @@ Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectatio
 - pas de marge haute (elle sert au libellé, absent ici) ;
 - fond `--background-contrast-grey` du DSFR, inchangé ; état désactivé du DSFR, sans soulignement.
 
+## Case à cocher dans une cellule
+
+Quand une valeur oui/non se modifie dans le tableau (ex. activité mixte d'un salarié), la cellule contient une case DSFR petit format (`fr-checkbox-group fr-checkbox-group--sm`), avec un libellé réservé aux lecteurs d'écran (`fr-sr-only`, ex. « Activité mixte de Karim Benali »). Le libellé garde la hauteur d'une ligne (24 px) pour que la case soit centrée verticalement. L'explication de la colonne va dans une infobulle DSFR sur son en-tête (`fr-btn--tooltip`).
+
 ## Ligne désactivée
 
 Classe `mobilic-row--disabled` sur le `<tr>` (ex. salarié détaché) : libellé de la première cellule en `--text-disabled-grey`, sans gras ; les autres textes restent lisibles ; listes déroulantes désactivées (`disabled`). Un badge DSFR dans la première cellule dit pourquoi (ex. « Détaché »). L'action de la ligne reste disponible quand elle a un sens (ex. « Rattacher »).

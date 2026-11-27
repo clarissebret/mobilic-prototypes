@@ -138,22 +138,29 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 #### Salariés temporaires
 
-- **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Identifiant », puis l'action de la ligne (SAL-17).
+- **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Activité mixte » (SAL-18), « Identifiant », puis l'action de la ligne (SAL-17).
 - **SAL-11** À l'approche de la fin de rattachement, un bandeau d'avertissement s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
 
 #### Salariés longue durée
 
-- **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Identifiant », puis l'action de la ligne (SAL-17).
+- **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Activité mixte » (SAL-18), « Identifiant », puis l'action de la ligne (SAL-17).
 
 #### Salariés détachés (deux tableaux de salariés)
 
-- **SAL-13** Un salarié détaché reste dans son tableau : son nom est grisé, avec le badge « Détaché » ; ses listes déroulantes sont désactivées.
+- **SAL-13** Un salarié détaché reste dans son tableau : son nom est grisé, avec le badge « Détaché » ; ses listes déroulantes et sa case « Activité mixte » sont désactivées.
 - **SAL-17** Dernière colonne des deux tableaux de salariés : « Détacher » pour un salarié rattaché, « Rattacher » pour un salarié détaché. Les fenêtres qu'elles ouvrent sont hors de ce parcours.
+
+#### Activité mixte (deux tableaux de salariés)
+
+- **SAL-18** Colonne « Activité mixte », après « Type d'activité » : une case à cocher par salarié. Le gestionnaire coche les salariés qui effectuent plus de la moitié de leur temps de travail en poids lourd (PL) ; l'information est prise en compte dans le calcul d'obtention du certificat.
+- **SAL-19** Sur l'en-tête de la colonne, une infobulle : « Cochez si votre salarié effectue plus de la moitié de son temps de travail en poids lourd (PL). Cette information permettra d’adapter le calcul d’obtention du certificat. »
+- **SAL-20** La case n'est disponible que pour les types d'activité de transport de marchandises : Marchandises (TRM, toutes activités) et Déménagement. Pour Voyageurs (TRV) et Sanitaire (TRS), elle est désactivée. Elle est aussi désactivée pour un salarié détaché (SAL-13).
+- **SAL-21** Si le gestionnaire passe un salarié coché à un type d'activité non concerné (SAL-20), la case est décochée et désactivée. S'il remet ensuite le type d'activité précédent, elle est de nouveau cochée.
 
 ## Navigation
 
 - **NAV-01** Retour (bouton Android ou Échap) : de 1b vers le choix du métier, de 2a vers 1b, de 2c vers la page de connexion, de 2b vers 2a, de la finalisation vers l'inscription de l'entreprise (sauf en reprise, SRC-07), sans effet sur l'inscription de l'entreprise (ETA-15), de la confirmation vers la finalisation. Sans effet sur le choix du métier.
-- **NAV-02** Retour est sans effet sur l'onglet Salariés, sauf pour refermer le menu de l'en-tête.
+- **NAV-02** Retour est sans effet sur l'onglet Salariés, sauf pour refermer le menu de l'en-tête ou une infobulle ouverte.
 
 ## Connexion
 

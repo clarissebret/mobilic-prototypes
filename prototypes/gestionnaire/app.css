@@ -192,6 +192,9 @@
 .sal-action { text-align: right; white-space: nowrap; }
 /* En-tête de colonne sur deux lignes au plus */
 .sal-th { display: block; max-width: 7rem; }
+/* En-tête avec bouton d'infobulle DSFR à droite du libellé */
+.sal-th-info { display: flex; align-items: center; gap: .25rem; }
+.sal-th-info .sal-th { max-width: 5rem; }
 .salaries .mobilic-table .fr-select { text-overflow: ellipsis; }
 .sal-acces .fr-select { width: 5.5rem; }
 .sal-groupe .fr-select { width: 9.25rem; }

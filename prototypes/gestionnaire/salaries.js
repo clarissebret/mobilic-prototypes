@@ -7,7 +7,9 @@ const SAL_NB_PARAMETRES = 14;
 /* Salariés inactifs (badge et alerte) : fonction masquée pour l'instant, les cas sont rares */
 const SAL_INACTIFS_AFFICHES = false;
 const SAL_GROUPES = ['Groupe A', 'Groupe B'];
-const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs'];
+const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs', 'Déménagement', 'Voyageurs (TRV)', 'Sanitaire (TRS)'];
+/* Activité mixte (plus de la moitié du temps de travail en poids lourd) : transport de marchandises seulement */
+const salMixtePossible = s => s.type.startsWith('TRM') || s.type === 'Déménagement';
 
 const salMail = (prenom, nom) => `${prenom}.${nom}`.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + '@dupont-transport.example.fr';
 /* Identifiant Mobilic fictif à 9 chiffres, stable pour un même salarié */
@@ -22,17 +24,17 @@ const salDonnees = () => ({
   ],
   tmp: [
     salPers('Karim', 'Benali', { debut: '01/09/2027', fin: '30/01/2028', groupe: 'Groupe A', type: SAL_TYPES[1] }),
-    salPers('Nicolas', 'Girard', { debut: '01/01/2028', fin: '01/06/2028', groupe: 'Groupe A', type: SAL_TYPES[1] }),
+    salPers('Nicolas', 'Girard', { debut: '01/01/2028', fin: '01/06/2028', groupe: 'Groupe A', type: SAL_TYPES[1], mixte: true }),
     salPers('Lucie', 'Pleyel', { debut: '01/01/2028', fin: '01/06/2028', groupe: 'Groupe A', type: SAL_TYPES[1] }),
     salPers('Camille', 'Rousseau', { debut: '01/09/2027', fin: '30/11/2027', groupe: 'Groupe B', type: SAL_TYPES[1] }),
   ],
   lgd: [
     salPers('Sophie', 'Allard', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: SAL_TYPES[1], inactif: true }),
-    salPers('Thomas', 'Aubert', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[1] }),
+    salPers('Thomas', 'Aubert', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[1], mixte: true }),
     salPers('Émile', 'Barbier', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: SAL_TYPES[1], inactif: true }),
     salPers('Hugo', 'Basset', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[1], inactif: true }),
-    salPers('Léa', 'Baudin', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: SAL_TYPES[1], inactif: true }),
-    salPers('Julien', 'Benoît', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe A', type: SAL_TYPES[1] }),
+    salPers('Léa', 'Baudin', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: 'Déménagement', inactif: true }),
+    salPers('Julien', 'Benoît', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe A', type: 'Voyageurs (TRV)' }),
     salPers('Émilie', 'Petit', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe B', type: SAL_TYPES[1], detache: true }),
   ],
 });
@@ -46,12 +48,17 @@ const salDetache = s => s.detache || (s.fin !== undefined && s.fin !== '' && sal
 const salNomComplet = s => `${s.prenom} ${s.nom}`;
 
 /* ---------- Rendu ---------- */
-const salSelect = (label, liste, valeur, off) =>
-  `<select class="fr-select fr-text--sm fr-mb-0" aria-label="${esc(label)}"${off ? ' disabled' : ''}>${liste.map(o => `<option${o === valeur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+const salSelect = (label, liste, valeur, off, onChange) =>
+  `<select class="fr-select fr-text--sm fr-mb-0" aria-label="${esc(label)}"${off ? ' disabled' : ''}${onChange ? ` onchange="${onChange}"` : ''}>${liste.map(o => `<option${o === valeur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
 const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-badge--no-icon">Détaché</span>'
   : s.inactif && SAL_INACTIFS_AFFICHES ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
+/* Case « Activité mixte » : désactivée hors marchandises et pour un salarié détaché */
+const salCelluleMixte = s => `<td class="sal-mixte"><div class="fr-checkbox-group fr-checkbox-group--sm">
+        <input type="checkbox" id="mixte-${s.id}"${s.mixte ? ' checked' : ''}${salMixtePossible(s) && !salDetache(s) ? '' : ' disabled'} onchange="changerMixte('${s.email}', this.checked)">
+        <label class="fr-label" for="mixte-${s.id}"><span class="fr-sr-only">Activité mixte de ${esc(salNomComplet(s))}</span></label>
+      </div></td>`;
 /* Identifiant puis action : « Détacher » un salarié rattaché, « Rattacher » un salarié détaché */
 const salCellulesFin = s => `<td>${s.id}</td>
       <td class="sal-action">${salDetache(s)
@@ -112,7 +119,8 @@ function renderTemporaires() {
       <td>${s.debut}</td>
       <td><div class="sal-fin">${s.fin}${off ? '' : `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm" onclick="toast('Modifier la fin de rattachement : hors scope')">Modifier</button>`}</div></td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off, `changerType('${s.email}', this.value)`)}</td>
+      ${salCelluleMixte(s)}
       ${salCellulesFin(s)}
     </tr>`;
   }).join('');
@@ -127,7 +135,8 @@ function renderLongueDuree() {
       <td>${s.debut}</td>
       <td class="sal-acces">${salSelect(`Accès gestionnaire de ${qui}`, ['Oui', 'Non'], s.acces, off)}</td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off, `changerType('${s.email}', this.value)`)}</td>
+      ${salCelluleMixte(s)}
       ${salCellulesFin(s)}
     </tr>`;
   }).join('');
@@ -184,6 +193,31 @@ function trier(t) { sal.tri[t] = sal.tri[t] === 'ascending' ? 'descending' : 'as
 function relancerInvitation(n) { sal.d.invitations[n].relance = SAL_AUJOURDHUI; renderSalaries(); toast('Invitation relancée'); }
 function relancerInvitations() { sal.d.invitations.forEach(i => { if (!i.relance) i.relance = SAL_AUJOURDHUI; }); renderSalaries(); toast('Invitations relancées'); }
 function annulerInvitation(n) { sal.d.invitations.splice(n, 1); renderSalaries(); toast('Invitation annulée'); }
+const salTrouve = email => [...sal.d.tmp, ...sal.d.lgd].find(s => s.email === email);
+/* Passage à un type d'activité sans poids lourd : la case est décochée et désactivée.
+   Si le gestionnaire remet ensuite le type précédent, elle est de nouveau cochée. */
+function changerType(email, type) {
+  const s = salTrouve(email), avant = s.type, possibleAvant = salMixtePossible(s);
+  s.type = type;
+  const possible = salMixtePossible(s);
+  if (possibleAvant && !possible && s.mixte) { s.mixte = false; s.mixteRetour = avant; }
+  else if (possible && s.mixteRetour === type) { s.mixte = true; s.mixteRetour = null; }
+  const cb = $('mixte-' + s.id); cb.checked = !!s.mixte; cb.disabled = !possible || salDetache(s);
+}
+function changerMixte(email, coche) { const s = salTrouve(email); s.mixte = coche; s.mixteRetour = null; }
+
+/* Infobulle DSFR (affichée sans le JS du DSFR) : au survol et au focus, sous le bouton, flèche pointée sur lui */
+function salInfobulle(btn, montrer) {
+  const tt = $(btn.getAttribute('aria-describedby'));
+  tt.classList.toggle('fr-tooltip--shown', montrer); tt.setAttribute('aria-hidden', String(!montrer));
+  if (!montrer) return;
+  const r = btn.getBoundingClientRect(), w = tt.offsetWidth, centre = r.left + r.width / 2;
+  const gauche = Math.min(Math.max(8, centre - w / 2), innerWidth - w - 8);
+  tt.style.left = gauche + 'px'; tt.style.top = r.bottom + 'px';
+  tt.style.setProperty('--arrow-x', (centre - gauche - w / 2) + 'px');
+}
+function cacherInfobulles() { document.querySelectorAll('#screen-salaries .fr-tooltip--shown').forEach(t => { t.classList.remove('fr-tooltip--shown'); t.setAttribute('aria-hidden', 'true'); }); }
+document.addEventListener('scroll', cacherInfobulles, true);
 function fermerAlerteDetachement(email) { sal.fermees.add(email); renderTemporaires(); }
 function fermerAlerteInactifs() { sal.inactifsFerme = true; renderInactifs(); }
 

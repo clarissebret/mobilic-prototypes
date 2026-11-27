@@ -50,6 +50,8 @@ function closeMenu() {
 /* Retour Android / Échap. Le compte est créé à la sortie de Cerbère : pas de retour vers Cerbère depuis Mobilic. */
 function back() {
   if (document.querySelector('.fr-header__menu.fr-modal--opened')) return closeMenu();
+  /* Infobulle ouverte (onglet Salariés) : Échap la referme */
+  if (document.querySelector('#screen-salaries .fr-tooltip--shown')) return cacherInfobulles();
   if (current === 'compte') return go('metier');
   if (current === 'cerbere-1') return go('compte');
   if (current === 'cerbere-2') return go('cerbere-1');

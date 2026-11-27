@@ -26,5 +26,9 @@
 .fr-table.mobilic-table .fr-select { margin-top: 0; box-shadow: none; border-radius: .25rem; }
 .fr-table.mobilic-table .fr-select:disabled { box-shadow: none; }
 
+/* Case à cocher dans une cellule, sans libellé visible (libellé fr-sr-only) : le libellé garde la hauteur d'une ligne pour centrer la case */
+.fr-table.mobilic-table .fr-checkbox-group--sm { display: flex; align-items: center; min-height: 1.5rem; }
+.fr-table.mobilic-table .fr-checkbox-group--sm label { min-height: 1.5rem; }
+
 /* Ligne désactivée (ex. salarié détaché) : libellé de la première cellule grisé, listes déroulantes inactives */
 .fr-table.mobilic-table .mobilic-row--disabled td:first-child { color: var(--text-disabled-grey); }
