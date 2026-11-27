@@ -194,7 +194,8 @@
 .sal-th { display: block; max-width: 7rem; }
 /* En-tête avec bouton d'infobulle DSFR à droite du libellé */
 .sal-th-info { display: flex; align-items: center; gap: .25rem; }
-.sal-th-info .sal-th { max-width: 5rem; }
+/* Colonne étroite (cases à cocher) : le libellé garde la largeur de « Activité mixte » pour tenir sur deux lignes */
+.sal-th-info .sal-th { min-width: 6.5rem; }
 .salaries .mobilic-table .fr-select { text-overflow: ellipsis; }
 .sal-acces .fr-select { width: 5.5rem; }
 .sal-groupe .fr-select { width: 9.25rem; }

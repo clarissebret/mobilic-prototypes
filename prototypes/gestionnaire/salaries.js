@@ -57,7 +57,7 @@ const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}<
 /* Case « Activité mixte » : désactivée pour le sanitaire (TRS) et pour un salarié détaché */
 const salCelluleMixte = s => `<td class="sal-mixte"><div class="fr-checkbox-group fr-checkbox-group--sm">
         <input type="checkbox" id="mixte-${s.id}"${s.mixte ? ' checked' : ''}${salMixtePossible(s) && !salDetache(s) ? '' : ' disabled'} onchange="changerMixte('${s.email}', this.checked)">
-        <label class="fr-label" for="mixte-${s.id}"><span class="fr-sr-only">Activité mixte de ${esc(salNomComplet(s))}</span></label>
+        <label class="fr-label" for="mixte-${s.id}"><span class="fr-sr-only">Activité mixte VL/PL de ${esc(salNomComplet(s))}</span></label>
       </div></td>`;
 /* Identifiant puis action : « Détacher » un salarié rattaché, « Rattacher » un salarié détaché */
 const salCellulesFin = s => `<td>${s.id}</td>
