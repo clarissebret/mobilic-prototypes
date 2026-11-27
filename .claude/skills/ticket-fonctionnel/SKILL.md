@@ -40,8 +40,8 @@ Le ticket est une introduction au prototype, pas une copie de la spec. Il dit qu
 <Une phrase qui résume, puis le parcours en étapes numérotées. Sous-puces pour les variantes d'une étape (« s'il a déjà un compte… », « s'il n'y a qu'un établissement… »).>
 
 **Design**
-Prototype : [<nom du parcours>](<lien>)<, et les variantes à choisir dans le sélecteur de parcours s'il y en a.>
-Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sections>.
+Prototype : [<libellé du parcours>](<lien direct vers le parcours>)<, puis un lien par variante utile.>
+Spec détaillée : [<nom de la section>](<lien GitHub vers la section de SPECS.md>)<, un lien par section concernée.>
 
 **Dev**
 - **<Cas particulier en gras>** : <règle métier, de gestion ou technique à ne pas rater>
@@ -69,9 +69,13 @@ Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sectio
 - **Longueur** : Problème et Solution lisibles en une minute. La section Dev peut être plus longue : c'est une liste de vérification.
 - Ponctuation française : espace insécable avant `:`, `;`, `?`, `!` et à l'intérieur des guillemets, comme dans le reste du dépôt.
 
-## 5. Lien du prototype
+## 5. Liens
 
-Le prototype est publié sur GitHub Pages depuis `main` : l'adresse est celle de `gh api repos/{owner}/{repo}/pages -q .html_url`, suivie de `<interface>/`. Un parcours qui n'est que sur la branche n'est pas encore en ligne : le signaler sous le ticket. Le sélecteur de parcours affiche les libellés de `prototypes/<interface>/prototype.json` ; citer ceux qui concernent le ticket.
+Toujours de vrais liens cliquables, jamais un chemin de fichier seul.
+
+- **Prototype** : un lien direct vers chaque parcours concerné. Adresse GitHub Pages (`gh api repos/{owner}/{repo}/pages -q .html_url`), puis `<interface>/#parcours=<commande>`, la commande étant celle du parcours dans `prototypes/<interface>/prototype.json`. Le texte du lien est le libellé du parcours dans ce même fichier. Exemple : `https://<compte>.github.io/mobilic-prototypes/gestionnaire/#parcours=flow-salaries`.
+- **Spec** : un lien vers chaque section concernée de `SPECS.md` sur GitHub : `<adresse du dépôt>/blob/main/prototypes/<interface>/SPECS.md#<ancre>` (adresse du dépôt : `gh repo view --json url -q .url`). Ancre GitHub d'un titre : en minuscules, espaces remplacées par des tirets, ponctuation retirée sauf `-` et `_`, accents gardés (« 6. Onglet Salariés » → `#6-onglet-salariés`).
+- Les deux liens pointent vers `main`. Si la branche n'est pas encore fusionnée, le dire sous le ticket : les liens fonctionneront après la fusion.
 
 ## 6. Rendu
 
