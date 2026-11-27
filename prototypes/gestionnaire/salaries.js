@@ -2,6 +2,10 @@
 /* Date du jour fictive : Karim Benali (temporaire) est détaché dans 7 jours ; Camille Rousseau l'est depuis le 30/11/2027. */
 const SAL_AUJOURDHUI = '23/01/2028';
 const SAL_ALERTE_JOURS = 7;
+/* Nombre de salariés concernés par Mobilic, renseigné dans les paramètres de l'entreprise (fictif) */
+const SAL_NB_PARAMETRES = 14;
+/* Salariés inactifs (badge et alerte) : fonction masquée pour l'instant, les cas sont rares */
+const SAL_INACTIFS_AFFICHES = false;
 const SAL_GROUPES = ['Groupe A', 'Groupe B'];
 const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs'];
 
@@ -41,14 +45,14 @@ const salNomComplet = s => `${s.prenom} ${s.nom}`;
 
 /* ---------- Rendu ---------- */
 const salSelect = (label, liste, valeur, off) =>
-  `<select class="fr-select fr-text--sm" aria-label="${esc(label)}"${off ? ' disabled' : ''}>${liste.map(o => `<option${o === valeur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+  `<select class="fr-select fr-text--sm fr-mb-0" aria-label="${esc(label)}"${off ? ' disabled' : ''}>${liste.map(o => `<option${o === valeur ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
 const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-badge--no-icon">Détaché</span>'
-  : s.inactif ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
+  : s.inactif && SAL_INACTIFS_AFFICHES ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
 
-/* Bandeau d'information importante du DSFR (avertissement), refermable */
-const salNotice = (titre, desc, lien, onLien, onFermer) => `<div class="fr-notice fr-notice--warning">
+/* Bandeau d'information importante du DSFR, variante alerte, refermable */
+const salNotice = (titre, desc, lien, onLien, onFermer) => `<div class="fr-notice fr-notice--alert">
   <div class="fr-container"><div class="fr-notice__body">
     <p><span class="fr-notice__title">${titre}</span>${desc ? ` <span class="fr-notice__desc">${desc}</span>` : ''} <a class="fr-notice__link" href="#" onclick="${onLien};return false">${lien}</a></p>
     <button type="button" class="fr-btn--close fr-btn" title="Masquer le message" onclick="${onFermer}">Masquer le message</button>
@@ -99,8 +103,8 @@ function renderTemporaires() {
       ${salCelluleEmail(s.email)}
       <td>${s.debut}</td>
       <td><div class="sal-fin">${s.fin}${off ? '' : `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm" onclick="toast('Modifier la fin de rattachement : hors scope')">Modifier</button>`}</div></td>
-      <td>${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td>${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
     </tr>`;
   }).join('');
 }
@@ -112,18 +116,20 @@ function renderLongueDuree() {
       ${salCelluleNom(s)}
       ${salCelluleEmail(s.email)}
       <td>${s.debut}</td>
-      <td>${salSelect(`Accès gestionnaire de ${qui}`, ['Oui', 'Non'], s.acces, off)}</td>
-      <td>${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td>${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      <td class="sal-acces">${salSelect(`Accès gestionnaire de ${qui}`, ['Oui', 'Non'], s.acces, off)}</td>
+      <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
     </tr>`;
   }).join('');
 }
 
-/* Salariés inactifs : aucun temps de travail enregistré depuis 6 mois */
+/* Salariés inactifs : aucun temps de travail enregistré depuis 6 mois. Alerte en tête de « Salariés longue durée ». */
 function renderInactifs() {
   const inactifs = [...sal.d.tmp, ...sal.d.lgd].filter(s => s.inactif && !salDetache(s))
     .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
-  if (!inactifs.length || sal.inactifsFerme) { $('sal-inactifs').innerHTML = ''; return; }
+  const zone = $('sal-inactifs');
+  zone.hidden = !SAL_INACTIFS_AFFICHES || !inactifs.length || sal.inactifsFerme;
+  if (zone.hidden) { zone.innerHTML = ''; return; }
   const n = inactifs.length, premier = esc(salNomComplet(inactifs[0]));
   const titre = n === 1 ? `${premier} n'a pas enregistré de temps de travail depuis 6 mois.`
     : `${premier} et ${n - 1} autre${n > 2 ? 's' : ''} salarié${n > 2 ? 's' : ''} n'ont pas enregistré de temps de travail depuis 6 mois.`;
@@ -134,12 +140,14 @@ function renderInactifs() {
 
 function renderSalaries() {
   renderInvitations(); renderTemporaires(); renderLongueDuree(); renderInactifs();
-  /* Compteurs : salariés rattachés (hors détachés) ; inscrits sur le total rattachés + invitations en attente */
-  const rattaches = [...sal.d.tmp, ...sal.d.lgd].filter(s => !salDetache(s)).length;
-  const total = rattaches + sal.d.invitations.length;
-  $('sal-nb').textContent = rattaches;
-  $('sal-inscrits').textContent = `${rattaches} sur ${total}`;
-  $('sal-barre').style.width = (total ? Math.round(rattaches / total * 100) : 0) + '%';
+  /* Salariés réellement inscrits (hors invitations et détachés), sur le nombre renseigné dans les paramètres.
+     Sous 50 %, la barre passe en couleur d'avertissement. */
+  const inscrits = [...sal.d.tmp, ...sal.d.lgd].filter(s => !salDetache(s)).length;
+  const part = Math.min(100, Math.round(inscrits / SAL_NB_PARAMETRES * 100));
+  $('sal-nb').textContent = inscrits;
+  $('sal-inscrits').textContent = `${inscrits} sur ${SAL_NB_PARAMETRES}`;
+  $('sal-barre').style.width = part + '%';
+  $('sal-barre').classList.toggle('barre-progression__valeur--basse', inscrits / SAL_NB_PARAMETRES < .5);
   ['tmp', 'lgd'].forEach(t => { const b = $(t + '-tri'); if (sal.tri[t]) b.setAttribute('aria-sort', sal.tri[t]); else b.removeAttribute('aria-sort'); });
 }
 

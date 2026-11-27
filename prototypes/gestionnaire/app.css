@@ -79,49 +79,48 @@
 .webinaire__titre { display: flex; gap: .75rem; flex: 1; min-width: 12rem; }
 
 /* ---------- Espace gestionnaire (connecté) ---------- */
-/* Menu latéral DSFR à gauche à partir de 768 px ; dessous, replié en haut de page */
+/* Menu latéral DSFR à gauche à partir de 768 px (270 px, trait de séparation sur toute la hauteur) ; dessous, replié en haut de page */
 .espace { display: flex; flex-direction: column; }
 .espace__page { flex: 1; min-width: 0; }
 @media (min-width: 48em) {
-  .espace { flex-direction: row; }
-  .espace__menu { flex: 0 0 17rem; }
+  .espace { flex-direction: row; min-height: calc(100vh - 7.5rem); }
+  .espace__menu { flex: 0 0 16.875rem; padding: 1.5rem 0 0 1.5rem; box-shadow: inset -1px 0 0 0 var(--border-default-grey); }
+  /* Le trait du DSFR s'arrête avec la liste : il est porté par la colonne */
+  .espace__menu .fr-sidemenu__inner { box-shadow: none; }
 }
-/* Compteur d'un lien du menu latéral (ex. activités à valider), aligné à droite */
-.espace__menu .fr-sidemenu__link { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+/* Pastille de notification d'un lien du menu latéral (badge DSFR), alignée à droite */
+.espace__menu .fr-sidemenu__link { justify-content: space-between; gap: .5rem; }
 
-/* En-tête de l'entreprise */
-.entreprise { display: flex; flex-direction: column; gap: .75rem; padding: 1.5rem 1rem 0; }
+/* En-tête de l'entreprise : 40 px de marge latérale, comme le contenu de l'onglet */
+.entreprise { display: flex; flex-direction: column; gap: .5rem; padding: 1.5rem 1rem .5rem; }
 .entreprise__ligne { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
-.entreprise__nom { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.entreprise__nom { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
 .entreprise__infos { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
-
-/* Onglets de l'entreprise (composant Mobilic, voir composants/onglets-entreprise.md) */
-.onglets-entreprise { padding: 0 1rem; overflow-x: auto; box-shadow: inset 0 -1px 0 var(--border-default-grey); }
-.onglets-entreprise ul { display: flex; gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
-.onglets-entreprise li { padding: 0; }
-.onglets-entreprise a { display: block; padding: .75rem 1rem; color: var(--text-default-grey); background-image: none; white-space: nowrap; }
-.onglets-entreprise a:hover { background-color: var(--background-default-grey-hover); }
-/* Graisse 500 : valeur de la maquette, sans classe DSFR équivalente */
-.onglets-entreprise a[aria-current="page"] { color: var(--text-active-blue-france); font-weight: 500; box-shadow: inset 0 -2px 0 var(--border-active-blue-france); }
+/* Rubriques de l'entreprise : navigation principale DSFR, trait bas sur toute la largeur.
+   Sous 992 px le DSFR l'empile : elle reste en ligne et défile horizontalement. */
+.entreprise__nav { padding: 0; overflow-x: auto; box-shadow: inset 0 -1px 0 0 var(--border-default-grey); }
+.entreprise__nav .fr-nav__list { flex-direction: row; flex-wrap: nowrap; gap: 1.5rem; }
+.entreprise__nav .fr-nav__link { white-space: nowrap; }
 
 /* Onglet Salariés */
 .salaries { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem 1rem 2.5rem; }
 .salaries__entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 .salaries__titre { display: flex; align-items: center; gap: .75rem; }
 .salaries__actions { display: flex; flex-wrap: wrap; gap: .75rem; }
-.salaries__filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 1.5rem; }
-/* Neutralise la marge haute du DSFR (pas de libellé au-dessus du filtre) */
-.salaries__groupe.fr-select { margin-top: 0; width: auto; min-width: 11rem; }
+.salaries__filtres { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem 1.5rem; }
+/* Neutralise la marge haute du DSFR (pas de libellé au-dessus du filtre) ; largeur de la maquette */
+.salaries__groupe.fr-select { margin-top: 0; width: 10.75rem; }
 @media (min-width: 48em) {
-  .entreprise { padding: 1.5rem 2rem 0; }
-  .onglets-entreprise { padding: 0 2rem; }
-  .salaries { padding: 1.5rem 2rem 2.5rem; }
+  .entreprise { padding: 2rem 2.5rem .75rem; }
+  .entreprise__nav { padding-left: 2rem; }
+  .salaries { padding: 1.5rem 2.5rem 2.5rem; }
 }
 
 /* Barre de progression (composant Mobilic, voir composants/barre-progression.md) */
 .barre-progression { display: flex; flex-direction: column; gap: .5rem; width: 23rem; max-width: 100%; }
 .barre-progression__fond { height: .5rem; overflow: hidden; background-color: var(--background-disabled-grey); }
 .barre-progression__valeur { height: 100%; background-color: var(--artwork-major-blue-france); }
+.barre-progression__valeur--basse { background-color: var(--background-flat-warning); }
 
 /* Section repliable (composant Mobilic, voir composants/section-repliable.md) */
 .section-repliable__haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
@@ -136,9 +135,12 @@
 /* Neutralise la marge basse du DSFR sous un tableau placé dans une section */
 .section-repliable .fr-table { margin-bottom: 0; }
 
-/* Cellules des tableaux de salariés */
-.sal-nom { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-width: 12rem; }
-.sal-email { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Cellules des tableaux de salariés : largeurs de la maquette */
+.sal-nom { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 13rem; }
+.sal-email { max-width: 10.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sal-fin { display: flex; align-items: center; gap: 1rem; }
 .sal-actions { display: flex; justify-content: flex-end; gap: .5rem; }
-.salaries .mobilic-table .fr-select { min-width: 9rem; }
+.salaries .mobilic-table .fr-select { text-overflow: ellipsis; }
+.sal-acces .fr-select { width: 5.5rem; }
+.sal-groupe .fr-select { width: 9.25rem; }
+.sal-type .fr-select { width: 11.75rem; }

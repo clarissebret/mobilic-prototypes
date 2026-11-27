@@ -31,7 +31,7 @@ Quand une ligne ouvre un élément (ex. rouvrir un contrôle), ajouter `mobilic-
 
 ## Liste déroulante dans une cellule
 
-Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectation d'un salarié), la cellule contient une liste déroulante DSFR (`fr-select fr-text--sm`, avec un `aria-label`), adaptée pour se fondre dans la ligne :
+Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectation d'un salarié), la cellule contient une liste déroulante DSFR (`fr-select fr-text--sm fr-mb-0`, avec un `aria-label`), adaptée pour se fondre dans la ligne :
 
 - pas de soulignement (`box-shadow` du DSFR retiré), coins arrondis de 4 px ;
 - pas de marge haute (elle sert au libellé, absent ici) ;

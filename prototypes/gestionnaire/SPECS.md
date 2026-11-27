@@ -115,7 +115,8 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 ### 6. Onglet Salariés
 
-- **SAL-01** En haut de l'onglet : titre « Salariés » avec le nombre de salariés, boutons « Inviter une liste de salariés » et « Inviter un nouveau salarié ». Dessous : le filtre « Tous les groupes » et l'indicateur « Inscrits sur Mobilic : [x] sur [y] », avec une barre de progression.
+- **SAL-01** En haut de l'onglet : titre « Salariés » avec le nombre de salariés, boutons « Inviter une liste de salariés » et « Inviter un nouveau salarié ». Dessous : le filtre « Tous les groupes » et l'indicateur « Inscrits sur Mobilic : [x] sur [y] », avec une barre de progression : [x] est le nombre de salariés réellement inscrits (hors invitations en attente), [y] le nombre de salariés concernés par Mobilic renseigné dans les paramètres de l'entreprise.
+- **SAL-16** Quand moins de 50 % des salariés renseignés sont inscrits, la barre de progression passe en couleur d'avertissement.
 - **SAL-02** Le filtre par groupe d'affectation restreint les tableaux « Salariés temporaires » et « Salariés longue durée » au groupe choisi.
 - **SAL-03** Trois sections repliables, dans cet ordre : « Invitations en attente », « Salariés temporaires », « Salariés longue durée ».
 - **SAL-04** « Salariés longue durée » est toujours affichée et ouverte à l'arrivée sur l'onglet.
@@ -131,17 +132,15 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 #### Salariés temporaires
 
 - **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
-- **SAL-11** À l'approche de la fin de rattachement, une alerte s'affiche en tête de la section, une par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut la fermer.
+- **SAL-11** À l'approche de la fin de rattachement, un bandeau d'alerte s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
 
 #### Salariés longue durée
 
 - **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
 
-#### Salariés détachés et inactifs (deux tableaux de salariés)
+#### Salariés détachés (deux tableaux de salariés)
 
 - **SAL-13** Un salarié détaché reste dans son tableau, grisé, avec le badge « Détaché » ; ses valeurs ne sont plus modifiables.
-- **SAL-14** Un salarié qui n'a pas enregistré de temps de travail depuis 6 mois porte le badge « Inactif ».
-- **SAL-15** Quand des salariés sont inactifs, une alerte s'affiche au-dessus des sections : « [Prénom Nom] et [n] autres salariés n'ont pas enregistré de temps de travail depuis 6 mois. Pensez à détacher ces salariés s'ils ne font plus partie de votre entreprise, en sélectionnant l'option “mettre fin au rattachement”, ou en cliquant ici ». Le gestionnaire peut la fermer.
 
 ## Navigation
 
@@ -166,5 +165,5 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 ## Composants utilisés
 
-- DSFR : en-tête (liens et navigation principale), menu latéral, bandeau d'information importante, badge, tableau, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
-- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Onglets de l'entreprise](../../composants/onglets-entreprise.md), [Barre de progression](../../composants/barre-progression.md).
+- DSFR : en-tête (liens et navigation principale), navigation principale (rubriques de l'entreprise), menu latéral, bandeau d'information importante, badge, tableau, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
+- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Barre de progression](../../composants/barre-progression.md).

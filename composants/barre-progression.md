@@ -15,6 +15,7 @@ Code : `.barre-progression` dans `prototypes/gestionnaire/app.css`.
 |---|---|
 | Fond | `--background-disabled-grey` |
 | Valeur | `--artwork-major-blue-france` |
+| Valeur basse (moins de 50 %) | `--background-flat-warning` |
 
 ## Accessibilité
 

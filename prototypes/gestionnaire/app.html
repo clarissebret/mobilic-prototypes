@@ -282,25 +282,25 @@
       <div class="entreprise">
         <div class="entreprise__ligne">
           <div class="entreprise__nom">
-            <h1 class="fr-h5 fr-mb-0">Dupont Transport SARL</h1>
-            <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="toast('Modifier l\'entreprise&nbsp;: hors scope')">Modifier</button>
+            <h1 class="fr-h4 fr-mb-0">Dupont Transport SARL</h1>
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm" onclick="toast('Modifier l\'entreprise&nbsp;: hors scope')">Modifier</button>
           </div>
           <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" onclick="toast('Inscrire une nouvelle entreprise&nbsp;: hors scope')">Inscrire une nouvelle entreprise</button>
         </div>
-        <p class="entreprise__infos fr-text--sm fr-mb-0">
+        <p class="entreprise__infos fr-mb-0">
           <span><span class="mention">Numéro de téléphone</span> 01 99 00 12 34</span>
           <span><span class="mention">Activité principale</span> TRM - Courte distance</span>
         </p>
       </div>
 
-      <nav class="onglets-entreprise fr-mt-3w" aria-label="Rubriques de l'entreprise">
-        <ul class="fr-text--sm fr-mb-0">
-          <li><a href="#" aria-current="page" onclick="return false">Salariés</a></li>
-          <li><a href="#" onclick="toast('Véhicules&nbsp;: hors scope');return false">Véhicules</a></li>
-          <li><a href="#" onclick="toast('Adresses&nbsp;: hors scope');return false">Adresses</a></li>
-          <li><a href="#" onclick="toast('Paramètres&nbsp;: hors scope');return false">Paramètres</a></li>
-          <li><a href="#" onclick="toast('Groupe(s)&nbsp;: hors scope');return false">Groupe(s)</a></li>
-          <li><a href="#" onclick="toast('API&nbsp;: hors scope');return false">API</a></li>
+      <nav class="fr-nav entreprise__nav" role="navigation" aria-label="Rubriques de l'entreprise">
+        <ul class="fr-nav__list">
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" aria-current="page" onclick="return false">Salariés</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="toast('Véhicules&nbsp;: hors scope');return false">Véhicules</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="toast('Adresses&nbsp;: hors scope');return false">Adresses</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="toast('Paramètres&nbsp;: hors scope');return false">Paramètres</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="toast('Groupe(s)&nbsp;: hors scope');return false">Groupe(s)</a></li>
+          <li class="fr-nav__item"><a class="fr-nav__link" href="#" onclick="toast('API&nbsp;: hors scope');return false">API</a></li>
         </ul>
       </nav>
 
@@ -317,7 +317,7 @@
         </div>
 
         <div class="salaries__filtres">
-          <select class="fr-select fr-text--sm salaries__groupe" id="sal-groupe" aria-label="Filtrer par groupe" onchange="renderSalaries()">
+          <select class="fr-select fr-text--sm fr-mb-0 salaries__groupe" id="sal-groupe" aria-label="Filtrer par groupe" onchange="renderSalaries()">
             <option value="">Tous les groupes</option>
             <option>Groupe A</option>
             <option>Groupe B</option>
@@ -327,8 +327,6 @@
             <div class="barre-progression__fond" aria-hidden="true"><div class="barre-progression__valeur" id="sal-barre"></div></div>
           </div>
         </div>
-
-        <div id="sal-inactifs"></div>
 
         <div class="salaries__sections">
         <!-- Invitations en attente : masquée quand il n'y en a plus -->
@@ -389,6 +387,7 @@
             <h3 class="fr-text--lg fr-mb-0"><button type="button" class="section-repliable__btn fr-icon-arrow-down-s-line" aria-expanded="true" aria-controls="sec-lgd-corps" onclick="basculerSection(this)">Salariés longue durée</button></h3>
           </div>
           <div class="section-repliable__corps" id="sec-lgd-corps">
+            <div id="sal-inactifs" hidden></div>
             <div class="fr-table fr-table--no-caption mobilic-table">
               <div class="fr-table__wrapper"><div class="fr-table__container"><div class="fr-table__content">
                 <table>
