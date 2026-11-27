@@ -48,7 +48,7 @@ Walk every correction through this tree:
 Would a fresh agent building a DIFFERENT component in this repo make the same mistake?
 ├── No (a one-off: this campaign's color, this page's layout) → Skipped
 └── Yes
-    ├── Does an existing rule cover it? Check DESIGN.md, CLAUDE.md / AGENTS.md, project skills.
+    ├── Does an existing rule cover it? Check DESIGN.md, AGENTS.md, project skills.
     │   ├── Yes, and it says the same thing → The rule failed. Rewrite it stricter
     │   │   (a number, a token, "never") instead of adding a duplicate.
     │   ├── Yes, and it contradicts → Conflict. Show both; the user picks.
@@ -96,7 +96,7 @@ Check candidate?
 
 Create DESIGN.md or the section if it's missing.
 
-**Make sure it gets read.** A DESIGN.md that no agent loads changes nothing. If neither CLAUDE.md nor AGENTS.md points to it, propose adding this line to whichever one the project uses: `Before building or changing UI, read DESIGN.md.`
+**Make sure it gets read.** A DESIGN.md that no agent loads changes nothing. If no agent instruction file (such as AGENTS.md) points to it, propose adding this line to whichever one the project uses: `Before building or changing UI, read DESIGN.md.`
 
 Entry format:
 

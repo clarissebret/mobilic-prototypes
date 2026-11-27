@@ -26,7 +26,7 @@ Source : dépôt public `anthropics/skills` sur GitHub, licence Apache 2.0 (copi
 
 ## Priorité
 
-Les conventions du dépôt (`CLAUDE.md`, DSFR, specs, fiches `composants/`) priment sur les recommandations de ces skills. Exemple : une animation proposée doit utiliser les durées du DSFR et respecter `prefers-reduced-motion`.
+Les conventions du dépôt (`DESIGN.md`, DSFR, specs, fiches `composants/`) priment sur les recommandations de ces skills. Exemple : une animation proposée doit utiliser les durées du DSFR et respecter `prefers-reduced-motion`.
 
 ## Mettre à jour
 

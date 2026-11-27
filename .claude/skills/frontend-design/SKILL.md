@@ -8,7 +8,7 @@ license: Complete terms in LICENSE.txt
 
 Section ajoutée pour le dépôt Mobilic (seule modification du skill d'origine). Elle prime sur tout le reste de ce fichier.
 
-Mobilic est un service de l'État : son identité visuelle est celle du DSFR, pas une identité à inventer. Le `CLAUDE.md`, le DSFR 1.15.4, les `SPECS.md` et les fiches `composants/` font foi. Dans ce dépôt :
+Mobilic est un service de l'État : son identité visuelle est celle du DSFR, pas une identité à inventer. Le `DESIGN.md`, le DSFR 1.15.4, les `SPECS.md` et les fiches `composants/` font foi. Dans ce dépôt :
 
 - **Couleurs** : uniquement les tokens DSFR (`var(--…)`). Pas de palette ni de valeurs hexadécimales à choisir.
 - **Typographie** : les polices du DSFR et ses classes (`fr-h1` à `fr-h6`, `fr-text--*`). Pas de choix de police, d'échelle typographique, de `font-size`, `letter-spacing` ou `text-transform`, pas de capitales.
