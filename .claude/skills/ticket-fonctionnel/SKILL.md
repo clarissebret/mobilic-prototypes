@@ -39,7 +39,7 @@ Le ticket est une introduction au prototype, pas une copie de la spec. Il dit qu
 ## 💡 Solution
 <Une phrase qui résume, puis le parcours en étapes numérotées. Sous-puces pour les variantes d'une étape (« s'il a déjà un compte… », « s'il n'y a qu'un établissement… »).>
 
-## 🖌️ Design
+## 🎨 Design
 Prototype : [<libellé du parcours>](<lien direct vers le parcours>)<, puis un lien par variante utile.>
 Spec détaillée : [<nom de la section>](<lien GitHub vers la section de SPECS.md>)<, un lien par section concernée.>
 
@@ -54,7 +54,7 @@ Spec détaillée : [<nom de la section>](<lien GitHub vers la section de SPECS.m
 
 ## 4. Règles d'écriture
 
-- **Sections** : titres de niveau 2 (`##`), sans gras, chacun précédé de son emoji : 🤔 Problème, 💡 Solution, 🖌️ Design, 🤖 Dev, 💬 Questions ouvertes. Dans Trello, ils restent des titres de niveau 2.
+- **Sections** : titres de niveau 2 (`##`), sans gras, chacun précédé de son emoji : 🤔 Problème, 💡 Solution, 🎨 Design, 🤖 Dev, 💬 Questions ouvertes. Dans Trello, ils restent des titres de niveau 2.
 - **Titre** : le résultat pour l'utilisateur (« Faire passer l'inscription des gestionnaires par Cerbère »), jamais un identifiant ou un nom de fichier.
 - **Langage de l'utilisateur**, pas celui de la spec : « il coche les établissements qu'il inscrit », pas « case à cocher ETA-04 ».
 - **Pas d'identifiants de règles** (`ETA-11`…) et **pas de textes exacts** de l'interface, sauf un libellé indispensable pour se repérer (« Terminer »). Le ticket peut dire « un message confirme la création du compte » ; la spec donne le texte.
