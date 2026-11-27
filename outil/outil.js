@@ -636,8 +636,10 @@ function installer() {
     .observe(d.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
   majRemplir();
   formApp = false; majRemplir();
+  /* Lien direct vers un parcours (#parcours=…) : seulement une fois l'application chargée dans le cadre,
+     pas sur la page vide qui la précède (la commande serait perdue et le lien effacé) */
   const h = location.hash.match(/^#parcours=(.+)$/);
-  if (h) { history.replaceState(null, '', location.pathname); const c = decodeURIComponent(h[1]); if (iface.parcours.some(p => p.commande === c)) setTimeout(() => choisirParcours(DATA.interface, c), 0); }
+  if (h && d.querySelector('.screen')) { history.replaceState(null, '', location.pathname); const c = decodeURIComponent(h[1]); if (iface.parcours.some(p => p.commande === c)) setTimeout(() => choisirParcours(DATA.interface, c), 0); }
 }
 let recharge = false;
 frame.addEventListener('load', () => { if (recharge) { recharge = false; fonduCadre(); } installer(); });
