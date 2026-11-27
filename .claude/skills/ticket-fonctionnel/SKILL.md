@@ -28,7 +28,7 @@ Le ticket est une introduction au prototype, pas une copie de la spec. Il dit qu
 
 ## 3. Format
 
-Écrire en Markdown (Trello l'affiche), en français, dans un bloc de code pour qu'on puisse le copier tel quel.
+Écrire en Markdown, en français, **rendu directement dans la réponse, jamais dans un bloc de code** : copié depuis un bloc de code, le texte arrive dans Trello en code ou avec les astérisques visibles ; copié depuis le rendu, le gras et les listes suivent. Le modèle ci-dessous est en bloc de code seulement pour qu'on voie sa structure.
 
 ```markdown
 **<Titre : verbe + résultat pour l'utilisateur>**
@@ -46,6 +46,9 @@ Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sectio
 **Dev**
 - **<Cas particulier en gras>** : <règle métier, de gestion ou technique à ne pas rater>
   - <sous-cas, un par puce>
+
+**Questions ouvertes** (seulement s'il y en a)
+- **<Sujet en gras>** : <question à trancher avant ou pendant le développement>
 ```
 
 ## 4. Règles d'écriture
@@ -62,6 +65,7 @@ Spec détaillée : `prototypes/<interface>/SPECS.md`, section(s) <nom des sectio
   - les données échangées avec un service tiers, et ce qui ne doit pas être développé (pages d'un tiers simulées dans le prototype) ;
   - les champs conditionnels, préremplis ou vidés.
   Chaque puce commence par le sujet en gras. Un sous-cas par sous-puce, au format « situation → résultat » quand il y a plusieurs issues.
+- **Pas de négation redondante** : quand le périmètre est donné (« dans les tableaux des salariés temporaires et longue durée »), ne pas ajouter ce qui n'est pas concerné (« pas dans le tableau des invitations »). Ne dire ce qu'une fonctionnalité ne fait pas que si on s'attendrait raisonnablement à l'inverse et que rien avant ne le dit.
 - **Longueur** : Problème et Solution lisibles en une minute. La section Dev peut être plus longue : c'est une liste de vérification.
 - Ponctuation française : espace insécable avant `:`, `;`, `?`, `!` et à l'intérieur des guillemets, comme dans le reste du dépôt.
 
@@ -71,6 +75,6 @@ Le prototype est publié sur GitHub Pages depuis `main` : l'adresse est celle de
 
 ## 6. Rendu
 
-- Afficher le ticket dans la réponse, dans un bloc de code Markdown.
+- Afficher le ticket dans la réponse en Markdown rendu, sans bloc de code, entre deux traits horizontaux (`---`) pour qu'on voie où commencer et finir la sélection.
 - En dessous, hors du ticket : ce qui reste à vérifier (problème formulé sans confirmation, lien pas encore en ligne, avant supposé).
 - Ne rien créer dans Trello et ne rien écrire dans le dépôt, sauf si on le demande.
