@@ -26,5 +26,5 @@
 .fr-table.mobilic-table .fr-select { margin-top: 0; box-shadow: none; border-radius: .25rem; }
 .fr-table.mobilic-table .fr-select:disabled { box-shadow: none; }
 
-/* Ligne désactivée (ex. salarié détaché) : textes grisés, listes déroulantes inactives */
-.fr-table.mobilic-table .mobilic-row--disabled td { color: var(--text-disabled-grey); }
+/* Ligne désactivée (ex. salarié détaché) : libellé de la première cellule grisé, listes déroulantes inactives */
+.fr-table.mobilic-table .mobilic-row--disabled td:first-child { color: var(--text-disabled-grey); }

@@ -39,7 +39,11 @@ Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectatio
 
 ## Ligne désactivée
 
-Classe `mobilic-row--disabled` sur le `<tr>` (ex. salarié détaché) : textes en `--text-disabled-grey`, listes déroulantes désactivées (`disabled`), actions de la ligne masquées. Un badge DSFR dans la première cellule dit pourquoi (ex. « Détaché »).
+Classe `mobilic-row--disabled` sur le `<tr>` (ex. salarié détaché) : libellé de la première cellule en `--text-disabled-grey`, sans gras ; les autres textes restent lisibles ; listes déroulantes désactivées (`disabled`). Un badge DSFR dans la première cellule dit pourquoi (ex. « Détaché »). L'action de la ligne reste disponible quand elle a un sens (ex. « Rattacher »).
+
+## En-têtes sur deux lignes
+
+Un libellé de colonne long (ex. « Début rattachement ») passe sur deux lignes : `fr-cell--multiline` sur le `<th>` et le libellé dans un `<span>` de 7 rem au plus.
 
 ## Usage
 

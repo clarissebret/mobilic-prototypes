@@ -10,7 +10,9 @@ const SAL_GROUPES = ['Groupe A', 'Groupe B'];
 const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs'];
 
 const salMail = (prenom, nom) => `${prenom}.${nom}`.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + '@dupont-transport.example.fr';
-const salPers = (prenom, nom, o) => ({ prenom, nom, email: salMail(prenom, nom), ...o });
+/* Identifiant Mobilic fictif à 9 chiffres, stable pour un même salarié */
+const salIdentifiant = s => String(100000000 + [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 899999999, 7));
+const salPers = (prenom, nom, o) => ({ prenom, nom, email: salMail(prenom, nom), id: salIdentifiant(prenom + nom), ...o });
 /* Données fictives de l'entreprise Dupont Transport SARL */
 const salDonnees = () => ({
   invitations: [
@@ -31,7 +33,7 @@ const salDonnees = () => ({
     salPers('Hugo', 'Basset', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[1], inactif: true }),
     salPers('Léa', 'Baudin', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe A', type: SAL_TYPES[1], inactif: true }),
     salPers('Julien', 'Benoît', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe A', type: SAL_TYPES[1] }),
-    salPers('Jeanne', 'Carpentier', { debut: '01/02/2027', acces: 'Non', groupe: 'Groupe B', type: SAL_TYPES[0], detache: true }),
+    salPers('Émilie', 'Petit', { debut: '01/02/2027', acces: 'Oui', groupe: 'Groupe B', type: SAL_TYPES[1], detache: true }),
   ],
 });
 let sal = {};
@@ -50,6 +52,11 @@ const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-ba
   : s.inactif && SAL_INACTIFS_AFFICHES ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
+/* Identifiant puis action : « Détacher » un salarié rattaché, « Rattacher » un salarié détaché */
+const salCellulesFin = s => `<td>${s.id}</td>
+      <td class="sal-action">${salDetache(s)
+        ? `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-loop-right-line" onclick="toast('Rattacher le salarié\u00a0: hors scope')">Rattacher</button>`
+        : `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-logout-box-r-line" onclick="toast('Détacher le salarié\u00a0: hors scope')">Détacher</button>`}</td>`;
 
 /* Bandeau d'information importante du DSFR, variante avertissement, refermable.
    Texte en 14 px sans gras (fr-text--sm fr-text--regular), comme la maquette. */
@@ -106,6 +113,7 @@ function renderTemporaires() {
       <td><div class="sal-fin">${s.fin}${off ? '' : `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm" onclick="toast('Modifier la fin de rattachement : hors scope')">Modifier</button>`}</div></td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
       <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      ${salCellulesFin(s)}
     </tr>`;
   }).join('');
 }
@@ -120,6 +128,7 @@ function renderLongueDuree() {
       <td class="sal-acces">${salSelect(`Accès gestionnaire de ${qui}`, ['Oui', 'Non'], s.acces, off)}</td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
       <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
+      ${salCellulesFin(s)}
     </tr>`;
   }).join('');
 }

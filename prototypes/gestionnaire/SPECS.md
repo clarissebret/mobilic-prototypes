@@ -138,16 +138,17 @@ Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés 
 
 #### Salariés temporaires
 
-- **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
+- **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Identifiant », puis l'action de la ligne (SAL-17).
 - **SAL-11** À l'approche de la fin de rattachement, un bandeau d'avertissement s'affiche en tête de la section, un par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut le fermer.
 
 #### Salariés longue durée
 
-- **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
+- **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante), « Identifiant », puis l'action de la ligne (SAL-17).
 
 #### Salariés détachés (deux tableaux de salariés)
 
-- **SAL-13** Un salarié détaché reste dans son tableau, grisé, avec le badge « Détaché » ; ses valeurs ne sont plus modifiables.
+- **SAL-13** Un salarié détaché reste dans son tableau : son nom est grisé, avec le badge « Détaché » ; ses listes déroulantes sont désactivées.
+- **SAL-17** Dernière colonne des deux tableaux de salariés : « Détacher » pour un salarié rattaché, « Rattacher » pour un salarié détaché. Les fenêtres qu'elles ouvrent sont hors de ce parcours.
 
 ## Navigation
 
