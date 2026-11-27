@@ -8,8 +8,6 @@ const SAL_NB_PARAMETRES = 14;
 const SAL_INACTIFS_AFFICHES = false;
 const SAL_GROUPES = ['Groupe A', 'Groupe B'];
 const SAL_TYPES = ['TRM - Courte distance', 'TRM - Longue distance', 'TRM - Messagerie, Fonds et valeurs', 'Déménagement', 'Voyageurs (TRV)', 'Sanitaire (TRS)'];
-/* Activité mixte (plus de la moitié du temps de travail en poids lourd) : tous les types d'activité sauf sanitaire */
-const salMixtePossible = s => s.type !== 'Sanitaire (TRS)';
 
 const salMail = (prenom, nom) => `${prenom}.${nom}`.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') + '@dupont-transport.example.fr';
 /* Identifiant Mobilic fictif à 9 chiffres, stable pour un même salarié */
@@ -54,9 +52,9 @@ const salBadges = s => salDetache(s) ? '<span class="fr-badge fr-badge--sm fr-ba
   : s.inactif && SAL_INACTIFS_AFFICHES ? '<span class="fr-badge fr-badge--sm fr-badge--warning fr-badge--no-icon">Inactif</span>' : '';
 const salCelluleNom = s => `<td><div class="sal-nom"><span${salDetache(s) ? '' : ' class="fr-text--bold"'}>${esc(s.nom)} ${esc(s.prenom)}</span>${salBadges(s)}</div></td>`;
 const salCelluleEmail = e => `<td class="sal-email" title="${esc(e)}">${esc(e)}</td>`;
-/* Case « Activité mixte » : désactivée pour le sanitaire (TRS) et pour un salarié détaché */
+/* Case « Activité mixte VL/PL » : toujours disponible, sauf pour un salarié détaché */
 const salCelluleMixte = s => `<td class="sal-mixte"><div class="fr-checkbox-group fr-checkbox-group--sm">
-        <input type="checkbox" id="mixte-${s.id}"${s.mixte ? ' checked' : ''}${salMixtePossible(s) && !salDetache(s) ? '' : ' disabled'} onchange="changerMixte('${s.email}', this.checked)">
+        <input type="checkbox" id="mixte-${s.id}"${s.mixte ? ' checked' : ''}${salDetache(s) ? ' disabled' : ''} onchange="changerMixte('${s.email}', this.checked)">
         <label class="fr-label" for="mixte-${s.id}"><span class="fr-sr-only">Activité mixte VL/PL de ${esc(salNomComplet(s))}</span></label>
       </div></td>`;
 /* Identifiant puis action : « Détacher » un salarié rattaché, « Rattacher » un salarié détaché */
@@ -119,7 +117,7 @@ function renderTemporaires() {
       <td>${s.debut}</td>
       <td><div class="sal-fin">${s.fin}${off ? '' : `<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm" onclick="toast('Modifier la fin de rattachement : hors scope')">Modifier</button>`}</div></td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off, `changerType('${s.email}', this.value)`)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
       ${salCelluleMixte(s)}
       ${salCellulesFin(s)}
     </tr>`;
@@ -135,7 +133,7 @@ function renderLongueDuree() {
       <td>${s.debut}</td>
       <td class="sal-acces">${salSelect(`Accès gestionnaire de ${qui}`, ['Oui', 'Non'], s.acces, off)}</td>
       <td class="sal-groupe">${salSelect(`Groupe d'affectation de ${qui}`, SAL_GROUPES, s.groupe, off)}</td>
-      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off, `changerType('${s.email}', this.value)`)}</td>
+      <td class="sal-type">${salSelect(`Type d'activité de ${qui}`, SAL_TYPES, s.type, off)}</td>
       ${salCelluleMixte(s)}
       ${salCellulesFin(s)}
     </tr>`;
@@ -194,17 +192,7 @@ function relancerInvitation(n) { sal.d.invitations[n].relance = SAL_AUJOURDHUI; 
 function relancerInvitations() { sal.d.invitations.forEach(i => { if (!i.relance) i.relance = SAL_AUJOURDHUI; }); renderSalaries(); toast('Invitations relancées'); }
 function annulerInvitation(n) { sal.d.invitations.splice(n, 1); renderSalaries(); toast('Invitation annulée'); }
 const salTrouve = email => [...sal.d.tmp, ...sal.d.lgd].find(s => s.email === email);
-/* Passage au sanitaire (TRS) : la case est décochée et désactivée.
-   Si le gestionnaire remet ensuite le type précédent, elle est de nouveau cochée. */
-function changerType(email, type) {
-  const s = salTrouve(email), avant = s.type, possibleAvant = salMixtePossible(s);
-  s.type = type;
-  const possible = salMixtePossible(s);
-  if (possibleAvant && !possible && s.mixte) { s.mixte = false; s.mixteRetour = avant; }
-  else if (possible && s.mixteRetour === type) { s.mixte = true; s.mixteRetour = null; }
-  const cb = $('mixte-' + s.id); cb.checked = !!s.mixte; cb.disabled = !possible || salDetache(s);
-}
-function changerMixte(email, coche) { const s = salTrouve(email); s.mixte = coche; s.mixteRetour = null; }
+function changerMixte(email, coche) { salTrouve(email).mixte = coche; }
 
 /* Infobulle DSFR (affichée sans le JS du DSFR) : au survol et au focus, sous le bouton, flèche pointée sur lui */
 function salInfobulle(btn, montrer) {
