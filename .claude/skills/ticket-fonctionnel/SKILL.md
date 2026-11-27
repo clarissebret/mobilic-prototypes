@@ -67,7 +67,10 @@ Spec détaillée : [<nom de la section>](<lien GitHub vers la section de SPECS.m
   - les données échangées avec un service tiers, et ce qui ne doit pas être développé (pages d'un tiers simulées dans le prototype) ;
   - les champs conditionnels, préremplis ou vidés.
   Chaque puce commence par le sujet en gras. Un sous-cas par sous-puce, au format « situation → résultat » quand il y a plusieurs issues.
-- **Pas de négation redondante** : quand le périmètre est donné (« dans les tableaux des salariés temporaires et longue durée »), ne pas ajouter ce qui n'est pas concerné (« pas dans le tableau des invitations »). Ne dire ce qu'une fonctionnalité ne fait pas que si on s'attendrait raisonnablement à l'inverse et que rien avant ne le dit.
+- **Pas d'évidence** : n'écrire que les vraies règles et exceptions.
+  - Pas de négation redondante : quand le périmètre est donné (« dans les tableaux des salariés temporaires et longue durée »), ne pas ajouter ce qui n'est pas concerné (« pas dans le tableau des invitations »).
+  - Pas d'absence de règle : ne pas écrire qu'un élément est « toujours disponible », « quel que soit… », ou qu'il n'y a pas de condition. Sans règle écrite, le comportement par défaut va de soi.
+  - Ne pas non plus garder la trace d'une règle abandonnée en cours de conception : le ticket décrit ce qu'on construit, pas l'historique des décisions.
 - **Longueur** : Problème et Solution lisibles en une minute. La section Dev peut être plus longue : c'est une liste de vérification.
 - Ponctuation française : espace insécable avant `:`, `;`, `?`, `!` et à l'intérieur des guillemets, comme dans le reste du dépôt.
 
