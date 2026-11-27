@@ -1,0 +1,24 @@
+<header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo"><p class="fr-logo">République<br>française</p></div>
+              <div class="fr-header__operator"><a href="#" onclick="return false" title="Accueil - Mobilic"><img class="fr-responsive-img" style="width:6rem" src="{{LOGO}}" alt="Mobilic"></a></div>
+              <div class="fr-header__navbar"><button type="button" class="fr-btn--menu fr-btn" title="Menu" aria-expanded="false" onclick="openMenu(this)">Menu</button></div>
+            </div>
+          </div>
+          <div class="fr-header__tools">
+            <div class="fr-header__tools-links">{{FILE:header-connecte-liens.html}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fr-header__menu fr-modal" aria-label="Menu principal">
+      <div class="fr-container">
+        <button type="button" class="fr-btn--close fr-btn" title="Fermer" onclick="closeMenu()">Fermer</button>
+        <div class="fr-header__menu-links">{{FILE:header-connecte-liens.html}}</div>
+      </div>
+    </div>
+  </header>

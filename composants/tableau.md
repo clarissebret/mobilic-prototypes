@@ -29,6 +29,18 @@ Quand une ligne ouvre un élément (ex. rouvrir un contrôle), ajouter `mobilic-
 - toute la ligne est cliquable, avec un fond `--background-default-grey-hover` au survol et `--background-default-grey-active` à l'appui ;
 - la première cellule contient un lien (classe `row-link`, même apparence que le texte) qui permet d'ouvrir la ligne au clavier.
 
+## Liste déroulante dans une cellule
+
+Quand une valeur se modifie directement dans le tableau (ex. groupe d'affectation d'un salarié), la cellule contient une liste déroulante DSFR (`fr-select fr-text--sm`, avec un `aria-label`), adaptée pour se fondre dans la ligne :
+
+- pas de soulignement (`box-shadow` du DSFR retiré), coins arrondis de 4 px ;
+- pas de marge haute (elle sert au libellé, absent ici) ;
+- fond `--background-contrast-grey` du DSFR, inchangé ; état désactivé du DSFR, sans soulignement.
+
+## Ligne désactivée
+
+Classe `mobilic-row--disabled` sur le `<tr>` (ex. salarié détaché) : textes en `--text-disabled-grey`, listes déroulantes désactivées (`disabled`), actions de la ligne masquées. Un badge DSFR dans la première cellule dit pourquoi (ex. « Détaché »).
+
 ## Usage
 
 - Sur mobile, le tableau défile horizontalement dans son conteneur ; la page ne défile pas.

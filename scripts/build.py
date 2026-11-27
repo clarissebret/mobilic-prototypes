@@ -43,6 +43,8 @@ ICONS = {
     # Outil de prototypage (barre de contrôle et inspecteur)
     'magic-line': 'magic-line', 'check-line': 'check-line', 'restart-line': 'restart-line', 'external-link-line': 'external-link-line', 'cursor-line': 'cursor-line',
     'smartphone-line': 'smartphone-line', 'computer-line': 'computer-line', 'arrow-left-s-line': 'arrow-left-s-line',
+    # Espace gestionnaire : sélecteur d'entreprise, relance des invitations
+    'building-line': 'building-line', 'arrow-go-back-line': 'arrow-go-back-line',
     # En-tête gestionnaire
     'mail-line': 'mail-line', 'account-circle-fill': 'account-circle-fill',
 }

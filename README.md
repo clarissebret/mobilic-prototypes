@@ -11,7 +11,7 @@ Un prototype par interface de Mobilic : contrôleur, gestionnaire, salarié. Cha
 | Interface | Dossier | Flux | Spec |
 |---|---|---|---|
 | Contrôleur (mobile) | `prototypes/controleur` | Contrôle LIC papier / feuille de route | [SPECS.md](prototypes/controleur/SPECS.md) |
-| Gestionnaire (web) | `prototypes/gestionnaire` | Inscription ; reprise à l'étape 2 ; reprise à l'étape 3 ; aucun webinaire programmé | [SPECS.md](prototypes/gestionnaire/SPECS.md) |
+| Gestionnaire (web) | `prototypes/gestionnaire` | Inscription ; reprise à l'étape 2 ; reprise à l'étape 3 ; aucun webinaire programmé ; entreprise : salariés ; salariés sans invitation ni temporaire | [SPECS.md](prototypes/gestionnaire/SPECS.md) |
 
 Les prototypes publiés sont listés sur la page d'accueil GitHub Pages du dépôt.
 

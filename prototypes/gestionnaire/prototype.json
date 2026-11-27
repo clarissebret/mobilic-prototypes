@@ -18,7 +18,16 @@
     {
       "libelle": "Inscription : aucun webinaire programmé",
       "commande": "flow-sans-webinaire"
+    },
+    {
+      "libelle": "Entreprise : salariés",
+      "commande": "flow-salaries"
+    },
+    {
+      "libelle": "Entreprise : salariés, sans invitation ni temporaire",
+      "commande": "flow-salaries-sans-invitation"
     }
   ],
+  "scripts": ["app.js", "salaries.js"],
   "init": "go('metier');"
 }

@@ -77,3 +77,68 @@
 .webinaire__date { display: flex; flex-direction: column; align-items: center; }
 .webinaire__jour { color: var(--text-title-blue-france); }
 .webinaire__titre { display: flex; gap: .75rem; flex: 1; min-width: 12rem; }
+
+/* ---------- Espace gestionnaire (connecté) ---------- */
+/* Menu latéral DSFR à gauche à partir de 768 px ; dessous, replié en haut de page */
+.espace { display: flex; flex-direction: column; }
+.espace__page { flex: 1; min-width: 0; }
+@media (min-width: 48em) {
+  .espace { flex-direction: row; }
+  .espace__menu { flex: 0 0 17rem; }
+}
+/* Compteur d'un lien du menu latéral (ex. activités à valider), aligné à droite */
+.espace__menu .fr-sidemenu__link { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+
+/* En-tête de l'entreprise */
+.entreprise { display: flex; flex-direction: column; gap: .75rem; padding: 1.5rem 1rem 0; }
+.entreprise__ligne { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.entreprise__nom { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.entreprise__infos { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+
+/* Onglets de l'entreprise (composant Mobilic, voir composants/onglets-entreprise.md) */
+.onglets-entreprise { padding: 0 1rem; overflow-x: auto; box-shadow: inset 0 -1px 0 var(--border-default-grey); }
+.onglets-entreprise ul { display: flex; gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
+.onglets-entreprise li { padding: 0; }
+.onglets-entreprise a { display: block; padding: .75rem 1rem; color: var(--text-default-grey); background-image: none; white-space: nowrap; }
+.onglets-entreprise a:hover { background-color: var(--background-default-grey-hover); }
+/* Graisse 500 : valeur de la maquette, sans classe DSFR équivalente */
+.onglets-entreprise a[aria-current="page"] { color: var(--text-active-blue-france); font-weight: 500; box-shadow: inset 0 -2px 0 var(--border-active-blue-france); }
+
+/* Onglet Salariés */
+.salaries { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem 1rem 2.5rem; }
+.salaries__entete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.salaries__titre { display: flex; align-items: center; gap: .75rem; }
+.salaries__actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.salaries__filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 1.5rem; }
+/* Neutralise la marge haute du DSFR (pas de libellé au-dessus du filtre) */
+.salaries__groupe.fr-select { margin-top: 0; width: auto; min-width: 11rem; }
+@media (min-width: 48em) {
+  .entreprise { padding: 1.5rem 2rem 0; }
+  .onglets-entreprise { padding: 0 2rem; }
+  .salaries { padding: 1.5rem 2rem 2.5rem; }
+}
+
+/* Barre de progression (composant Mobilic, voir composants/barre-progression.md) */
+.barre-progression { display: flex; flex-direction: column; gap: .5rem; width: 23rem; max-width: 100%; }
+.barre-progression__fond { height: .5rem; overflow: hidden; background-color: var(--background-disabled-grey); }
+.barre-progression__valeur { height: 100%; background-color: var(--artwork-major-blue-france); }
+
+/* Section repliable (composant Mobilic, voir composants/section-repliable.md) */
+.section-repliable__haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
+/* Repliée : un trait la sépare de la section suivante */
+.section-repliable:has(.section-repliable__btn[aria-expanded="false"]) .section-repliable__haut { box-shadow: inset 0 -1px 0 var(--border-default-grey); }
+.section-repliable__btn { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; border: 0; background: none; color: var(--text-title-grey); font: inherit; font-weight: 500; text-align: left; cursor: pointer; }
+.section-repliable__btn[aria-expanded="true"] { color: var(--text-action-high-blue-france); }
+.section-repliable__btn::before { --icon-size: 1rem; background-color: var(--background-action-high-blue-france); transition: transform 200ms cubic-bezier(.23, 1, .32, 1); }
+.section-repliable__btn[aria-expanded="false"]::before { transform: rotate(-90deg); }
+@media (prefers-reduced-motion: reduce) { .section-repliable__btn::before { transition: none; } }
+.section-repliable__corps { display: flex; flex-direction: column; gap: 1rem; padding: .5rem 0 .75rem; }
+/* Neutralise la marge basse du DSFR sous un tableau placé dans une section */
+.section-repliable .fr-table { margin-bottom: 0; }
+
+/* Cellules des tableaux de salariés */
+.sal-nom { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-width: 12rem; }
+.sal-email { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sal-fin { display: flex; align-items: center; gap: 1rem; }
+.sal-actions { display: flex; justify-content: flex-end; gap: .5rem; }
+.salaries .mobilic-table .fr-select { min-width: 9rem; }

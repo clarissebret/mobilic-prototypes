@@ -109,9 +109,44 @@ Les étapes 2a, 2b et 2c sont des pages de Cerbère : Mobilic ne les maîtrise p
 - **FIN-03** Encart « Offrez-vous une formation gratuite de 45 minutes ! » : « Apprenez à maîtriser Mobilic grâce à un accompagnement personnalisé et gagnez du temps : formation à la mise en place, démonstration et réponse à toutes vos questions ! », puis la prochaine session : date, heure, « Mobilic - Formation gestionnaires » et « S'inscrire ». Après inscription, il devient « Inscription confirmée », inactif.
 - **FIN-04** Si aucun webinaire n'est programmé, l'encart n'est pas affiché.
 
+## Parcours : salariés de l'entreprise
+
+Page « Entreprise » de l'espace gestionnaire (connecté), onglet « Salariés ». Le gestionnaire y suit les salariés rattachés à son entreprise et les invitations envoyées. Les autres onglets et les fenêtres ouvertes depuis cet onglet (inviter, modifier la fin de rattachement, prolonger le rattachement) sont hors de ce parcours.
+
+### 6. Onglet Salariés
+
+- **SAL-01** En haut de l'onglet : titre « Salariés » avec le nombre de salariés, boutons « Inviter une liste de salariés » et « Inviter un nouveau salarié ». Dessous : le filtre « Tous les groupes » et l'indicateur « Inscrits sur Mobilic : [x] sur [y] », avec une barre de progression.
+- **SAL-02** Le filtre par groupe d'affectation restreint les tableaux « Salariés temporaires » et « Salariés longue durée » au groupe choisi.
+- **SAL-03** Trois sections repliables, dans cet ordre : « Invitations en attente », « Salariés temporaires », « Salariés longue durée ».
+- **SAL-04** « Salariés longue durée » est toujours affichée et ouverte à l'arrivée sur l'onglet.
+- **SAL-05** « Invitations en attente » n'est affichée que s'il reste au moins une invitation en attente. Son titre porte le nombre d'invitations ; elle est repliée à l'arrivée sur l'onglet.
+- **SAL-06** « Salariés temporaires » n'est affichée que si l'entreprise a au moins un salarié temporaire. Il y en a généralement peu.
+
+#### Invitations en attente
+
+- **SAL-07** Colonnes : « Identifiant ou email », « Accès gestionnaire », « Fin rattachement », « Invité le », « Relancé le », puis les actions « Relancer » et « Annuler » de chaque invitation.
+- **SAL-08** À droite du titre de la section : « Relancer les invitations ».
+- **SAL-09** « Annuler » retire l'invitation de la liste. Quand la dernière est annulée, la section disparaît (SAL-05).
+
+#### Salariés temporaires
+
+- **SAL-10** Un salarié temporaire a une date de fin de rattachement dès son ajout. Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Fin rattachement » avec le lien « Modifier », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
+- **SAL-11** À l'approche de la fin de rattachement, une alerte s'affiche en tête de la section, une par salarié concerné : « [Prénom Nom] sera détaché dans [n] jours, le [date]. » et le lien « Prolonger le rattachement ». Le gestionnaire peut la fermer.
+
+#### Salariés longue durée
+
+- **SAL-12** Colonnes : « Salarié » (triable), « Email », « Début rattachement », « Accès gestionnaire », « Groupe d'affectation » et « Type d'activité » (modifiables par liste déroulante).
+
+#### Salariés détachés et inactifs (deux tableaux de salariés)
+
+- **SAL-13** Un salarié détaché reste dans son tableau, grisé, avec le badge « Détaché » ; ses valeurs ne sont plus modifiables.
+- **SAL-14** Un salarié qui n'a pas enregistré de temps de travail depuis 6 mois porte le badge « Inactif ».
+- **SAL-15** Quand des salariés sont inactifs, une alerte s'affiche au-dessus des sections : « [Prénom Nom] et [n] autres salariés n'ont pas enregistré de temps de travail depuis 6 mois. Pensez à détacher ces salariés s'ils ne font plus partie de votre entreprise, en sélectionnant l'option “mettre fin au rattachement”, ou en cliquant ici ». Le gestionnaire peut la fermer.
+
 ## Navigation
 
 - **NAV-01** Retour (bouton Android ou Échap) : de 1b vers le choix du métier, de 2a vers 1b, de 2c vers la page de connexion, de 2b vers 2a, de la finalisation vers l'inscription de l'entreprise (sauf en reprise, SRC-07), sans effet sur l'inscription de l'entreprise (ETA-15), de la confirmation vers la finalisation. Sans effet sur le choix du métier.
+- **NAV-02** Retour est sans effet sur l'onglet Salariés, sauf pour refermer le menu de l'en-tête.
 
 ## Connexion
 
@@ -131,5 +166,5 @@ Les étapes 2a, 2b et 2c sont des pages de Cerbère : Mobilic ne les maîtrise p
 
 ## Composants utilisés
 
-- DSFR : en-tête (liens et navigation principale), tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
-- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md).
+- DSFR : en-tête (liens et navigation principale), menu latéral, bandeau d'information importante, badge, tableau, tuile, champ de saisie, liste déroulante, bouton radio, case à cocher, alerte, lien, indicateur d'étapes, groupe de boutons.
+- Mobilic : [Carte d'établissement](../../composants/carte-etablissement.md), [Champ téléphone](../../composants/champ-telephone.md), [Encadré d'étape](../../composants/encadre-etape.md), [Encart webinaire](../../composants/encart-webinaire.md), [Tableau Mobilic](../../composants/tableau.md), [Section repliable](../../composants/section-repliable.md), [Onglets de l'entreprise](../../composants/onglets-entreprise.md), [Barre de progression](../../composants/barre-progression.md).
