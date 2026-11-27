@@ -167,6 +167,10 @@
   .section-repliable__btn::before, .section-repliable__corps { transition: none; }
   .section-repliable__contenu { transform: none; transition: opacity 200ms ease; }
 }
+/* Conteneur vide (bandeau refermé) : retiré de la colonne pour ne pas doubler l'écart */
+.section-repliable__contenu > :empty { display: none; }
+/* Bandeaux en tête de section : collés sous l'en-tête */
+.section-repliable__contenu:has(> .section-repliable__bandeaux:first-child:not(:empty):not([hidden])) { padding-top: 0; }
 /* Neutralise les marges haute et basse du DSFR autour d'un tableau placé dans une section : l'espacement vient de la section (16 px partout) */
 .section-repliable .fr-table { margin-top: 0; margin-bottom: 0; }
 
